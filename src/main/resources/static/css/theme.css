@@ -1,13 +1,13 @@
 ﻿/*
  * Sprint 235 — Tokens visuais corporativos (--corp-*)
  * Referência: Login Sprint 229 (#loginScreen), Blueprint 234.
- * Uso: sprints 236+ (shell, páginas). Não substituem --primary/--surface até migração explícita.
+ * Uso: sprints 236+ (shell, páginas). Sprint 249: --primary alinhado ao teal corporativo.
  * Login permanece com valores locais em css/pages/login.css (sem dependência obrigatória destes tokens).
  */
 :root {
-    --primary: #1e40af;
-    --primary-dark: #1e3a8a;
-    --primary-light: #3b82f6;
+    --primary: #0f2f3a;
+    --primary-dark: #0a232c;
+    --primary-light: #1a5568;
     --secondary: #64748b;
     --success: #16a34a;
     --warning: #ea580c;
@@ -30,10 +30,10 @@
     --pri-alta-surface-border: #fde68a;
     --pri-alta-surface-text: #92400e;
     --pri-alta-surface-label: #b45309;
-    --pri-media-surface-bg: rgba(219, 234, 254, 0.65);
-    --pri-media-surface-border: #bfdbfe;
-    --pri-media-surface-text: #1d4ed8;
-    --pri-media-surface-label: #2563eb;
+    --pri-media-surface-bg: rgba(0, 255, 170, 0.1);
+    --pri-media-surface-border: rgba(0, 255, 170, 0.35);
+    --pri-media-surface-text: #0f2f3a;
+    --pri-media-surface-label: #1a5568;
     --pri-baixa-surface-bg: rgba(220, 252, 231, 0.65);
     --pri-baixa-surface-border: #bbf7d0;
     --pri-baixa-surface-text: #166534;
@@ -49,9 +49,9 @@
     --pri-alta-badge-bg: #fef3c7;
     --pri-alta-badge-border: #d97706;
     --pri-alta-badge-text: #92400e;
-    --pri-media-badge-bg: #eff6ff;
-    --pri-media-badge-border: #3b82f6;
-    --pri-media-badge-text: #1d4ed8;
+    --pri-media-badge-bg: rgba(15, 47, 58, 0.08);
+    --pri-media-badge-border: rgba(0, 255, 170, 0.45);
+    --pri-media-badge-text: #0f2f3a;
     --pri-baixa-badge-bg: #ecfdf5;
     --pri-baixa-badge-border: #22c55e;
     --pri-baixa-badge-text: #166534;
@@ -113,12 +113,18 @@
         var(--corp-bg-deep) 100%
     );
     --corp-disabled-opacity: 0.5;
+
+    /* Destaques informativos (substitui azul #dbeafe no corpo) */
+    --corp-info-soft: rgba(15, 47, 58, 0.06);
+    --corp-info-soft-border: rgba(0, 255, 170, 0.28);
+    --corp-info-soft-text: #0f2f3a;
+    --color-info-soft: var(--corp-info-soft);
 }
 
 html[data-theme="dark"] {
-    --primary: #60a5fa;
-    --primary-dark: #3b82f6;
-    --primary-light: #93c5fd;
+    --primary: #00ffaa;
+    --primary-dark: #00cc88;
+    --primary-light: #66ffc8;
     --secondary: #94a3b8;
     --bg: #0f172a;
     --surface: #1e293b;
@@ -138,10 +144,10 @@ html[data-theme="dark"] {
     --pri-alta-surface-border: #fbbf24;
     --pri-alta-surface-text: #fde68a;
     --pri-alta-surface-label: #fcd34d;
-    --pri-media-surface-bg: rgba(30, 58, 138, 0.4);
-    --pri-media-surface-border: #60a5fa;
-    --pri-media-surface-text: #bfdbfe;
-    --pri-media-surface-label: #93c5fd;
+    --pri-media-surface-bg: rgba(0, 255, 170, 0.12);
+    --pri-media-surface-border: rgba(0, 255, 170, 0.4);
+    --pri-media-surface-text: #ccfbf1;
+    --pri-media-surface-label: #99f6e4;
     --pri-baixa-surface-bg: rgba(20, 83, 45, 0.38);
     --pri-baixa-surface-border: #4ade80;
     --pri-baixa-surface-text: #bbf7d0;
@@ -157,9 +163,9 @@ html[data-theme="dark"] {
     --pri-alta-badge-bg: rgba(120, 53, 15, 0.55);
     --pri-alta-badge-border: #fbbf24;
     --pri-alta-badge-text: #fde68a;
-    --pri-media-badge-bg: rgba(30, 58, 138, 0.45);
-    --pri-media-badge-border: #60a5fa;
-    --pri-media-badge-text: #bfdbfe;
+    --pri-media-badge-bg: rgba(0, 255, 170, 0.14);
+    --pri-media-badge-border: rgba(0, 255, 170, 0.5);
+    --pri-media-badge-text: #99f6e4;
     --pri-baixa-badge-bg: rgba(20, 83, 45, 0.45);
     --pri-baixa-badge-border: #4ade80;
     --pri-baixa-badge-text: #bbf7d0;
@@ -186,6 +192,11 @@ html[data-theme="dark"] {
     --corp-btn-primary-text: #0f172a;
     --corp-btn-secondary-text: var(--corp-text-on-light);
     --corp-btn-secondary-border: rgba(148, 163, 184, 0.35);
+
+    --corp-info-soft: rgba(0, 255, 170, 0.1);
+    --corp-info-soft-border: rgba(0, 255, 170, 0.32);
+    --corp-info-soft-text: #ccfbf1;
+    --color-info-soft: var(--corp-info-soft);
 }
 
 /* Overrides de superfície — tema escuro (shell: tokens corporativos) */

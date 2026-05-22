@@ -237,3 +237,18 @@ Registro das sprints da fase de reestruturação. Sprints anteriores à 234 est�
 | **Pendências** | Push depende de autenticação Git na máquina do operador |
 | **Riscos** | `application.properties` de dev com placeholder — trocar em cada ambiente |
 | **Próximo passo** | `mvn package` + smoke visual manual; marcar REESTRUTURAÇÃO CONCLUIDA após produto |
+
+---
+
+## Sprint 249 — Limpeza global de cores legadas no corpo
+
+| Campo | Conteúdo |
+|-------|----------|
+| **Objetivo** | Substituir azul legado por tokens `--corp-*` em títulos, avatares, badges, cards, notificações, SLA, focos |
+| **Backup** | N/A (somente CSS/HTML cache + default cor etiqueta) |
+| **Arquivos principais** | `theme.css`, `layout.css`, `components.css`, `modals.css`, `perfil.css`, `atendentes.css`, `chats.css`, `index.html` |
+| **Resumo** | `--primary` → teal; `--corp-info-soft`; logo SVG #0f2f3a; Perfil/atendentes/topbar avatares corporativos |
+| **Testes** | Nenhum Maven/npm (1 linha JS default cor) |
+| **Smoke** | Visual claro/escuro nas telas do blueprint |
+| **Pendências** | Rebuild JAR para servir estáticos empacotados; commit/push GitHub |
+| **Próximo passo** | Smoke manual completo + fechamento REESTRUTURAÇÃO CONCLUIDA |

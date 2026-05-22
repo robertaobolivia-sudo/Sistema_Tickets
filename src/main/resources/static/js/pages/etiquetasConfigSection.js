@@ -100,7 +100,7 @@ function limparFormularioEtiqueta() {
         etiquetaCor.value = '';
     }
     if (etiquetaCorPicker) {
-        etiquetaCorPicker.value = '#2563eb';
+        etiquetaCorPicker.value = '#0f2f3a';
     }
 }
 

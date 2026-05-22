@@ -35,7 +35,7 @@
     cursor: pointer;
     border: 3px solid var(--surface);
     box-shadow: var(--shadow-lg);
-    background: var(--primary);
+    background: var(--corp-bg-deep);
 }
 
 .profile-photo-wrapper.has-profile-photo {
@@ -44,7 +44,7 @@
 
 .profile-photo-wrapper:focus {
     outline: none;
-    box-shadow: var(--shadow-lg), 0 0 0 3px rgba(30, 64, 175, 0.25);
+    box-shadow: var(--shadow-lg), var(--corp-focus-ring);
 }
 
 .profile-photo-wrapper .analyst-avatar.analyst-avatar-profile {
@@ -58,7 +58,7 @@
     border-radius: 50%;
     overflow: hidden;
     display: block;
-    background: var(--primary);
+    background: var(--corp-bg-deep);
 }
 
 .profile-photo-wrapper .analyst-avatar.analyst-avatar-profile.has-photo {

@@ -1,5 +1,5 @@
 ﻿/* Sprint 109 — componentes reutilizáveis */
-/* Sprint 235+: preferir tokens --corp-* de theme.css em novos estilos (shell, cards, botões). Legado mantém var(--primary) até sprint de repaginação. */
+/* Sprint 249: corpo alinhado a --corp-* (títulos, cards, botões, badges, notificações). */
 
 .notificacoes-wrap {
     position: relative;
@@ -81,9 +81,9 @@
 }
 
 .notificacoes-filtro.ativo {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #fff;
+    background: var(--corp-bg-deep);
+    border-color: var(--corp-accent-neon);
+    color: var(--corp-text-on-dark);
     font-weight: 600;
 }
 
@@ -102,8 +102,8 @@
 }
 
 .notificacao-item.nao-lida {
-    background: #eff6ff;
-    border-color: #93c5fd;
+    background: var(--corp-info-soft);
+    border-color: var(--corp-info-soft-border);
 }
 
 .notificacao-item-titulo {
@@ -171,7 +171,7 @@
 .card-value {
     font-size: 28px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--corp-text-on-light);
     margin-top: 4px;
 }
 .content-section {
@@ -274,8 +274,9 @@
 }
 
 .perfil-acesso-supervisor {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: var(--corp-info-soft);
+    color: var(--corp-info-soft-text);
+    border: 1px solid var(--corp-info-soft-border);
 }
 
 .perfil-acesso-analista {
@@ -293,8 +294,9 @@
 }
 
 .status-AGUARDANDO_CLIENTE {
-    background: #dbeafe;
-    color: #0c4a6e;
+    background: var(--corp-info-soft);
+    color: var(--corp-info-soft-text);
+    border: 1px solid var(--corp-info-soft-border);
 }
 
 .status-RESOLVIDO {
@@ -439,8 +441,8 @@ html[data-theme="dark"] .data-table tbody tr.ticket-row-priority-alta td {
 .form-col select:focus,
 .form-col textarea:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
 }
 
 .form-group textarea,
@@ -549,8 +551,9 @@ html[data-theme="dark"] .data-table tbody tr.ticket-row-priority-alta td {
 }
 
 .sla-cumprido {
-    background: #dbeafe;
-    color: #1e40af;
+    background: var(--corp-info-soft);
+    color: var(--corp-info-soft-text);
+    border: 1px solid var(--corp-info-soft-border);
 }
 
 .sla-violado {
@@ -567,9 +570,9 @@ html[data-theme="dark"] .data-table tbody tr.ticket-row-priority-alta td {
 }
 
 .sla-pausado {
-    background: #e0e7ff;
-    color: #3730a3;
-    border: 1px solid #6366f1;
+    background: rgba(15, 47, 58, 0.08);
+    color: var(--corp-text-on-light);
+    border: 1px solid var(--corp-border-strong);
 }
 
 .sla-escalonado,
@@ -589,13 +592,13 @@ html[data-theme="dark"] .data-table tbody tr.ticket-row-priority-alta td {
 }
 
 .button-primary {
-    background: var(--primary);
-    color: white;
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
 }
 
 .button-primary:hover:not(:disabled) {
-    background: var(--primary-dark);
-    box-shadow: var(--shadow);
+    background: var(--corp-btn-primary-hover-bg);
+    box-shadow: var(--corp-shadow-soft);
 }
 
 .button-secondary {

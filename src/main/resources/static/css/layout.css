@@ -491,7 +491,17 @@ body.ticket-alert-active .nav-item[data-page="tickets"] {
 .page-header h1 {
     font-size: 28px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--corp-text-on-light);
+}
+
+html[data-theme='dark'] .page-header h1 {
+    color: var(--corp-text-on-light);
+}
+
+/* Sprint 249 — avatares sem azul legado */
+.analyst-avatar {
+    background: var(--corp-bg-deep);
+    color: var(--corp-text-on-dark);
 }
 
 @keyframes fadeIn {

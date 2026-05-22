@@ -561,7 +561,7 @@ html[data-theme="dark"] #page-chats .chats-canal-pill--api {
     justify-content: center;
     border-radius: 50%;
     font-weight: 700;
-    background: var(--color-info-soft, #dbeafe);
+    background: var(--color-info-soft);
     color: var(--corp-bg-deep);
     flex-shrink: 0;
 }
@@ -981,7 +981,7 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--brand-only .chats-con
 }
 
 #page-chats .chats-conexao-header .chats-status-pill--aberto {
-    background: color-mix(in srgb, var(--color-info-soft, #dbeafe) 50%, transparent);
+    background: color-mix(in srgb, var(--color-info-soft) 50%, transparent);
 }
 
 #page-chats .chats-conexao-header .chats-status-pill--em-atendimento {
@@ -1088,7 +1088,7 @@ html[data-theme="dark"] #page-chats .chats-conexao-canal-label--sistema {
 }
 
 #page-chats .chats-status-pill--aberto {
-    background: var(--color-info-soft, #dbeafe);
+    background: var(--color-info-soft);
     color: var(--corp-bg-deep);
     border-color: rgba(var(--corp-accent-neon-rgb), 0.2);
 }
@@ -1131,8 +1131,8 @@ html[data-theme="dark"] #page-chats .chats-status-pill--cancelado {
 
 html[data-theme="dark"] #page-chats .chats-status-pill--aberto {
     background: rgba(var(--corp-accent-neon-rgb), 0.22);
-    color: #bfdbfe;
-    border-color: rgba(191, 219, 254, 0.25);
+    color: var(--corp-info-soft-text);
+    border-color: rgba(var(--corp-accent-neon-rgb), 0.35);
 }
 
 html[data-theme="dark"] #page-chats .chats-status-pill--em-atendimento {
@@ -1341,7 +1341,7 @@ html[data-theme="dark"] #page-chats .chats-timeline::before {
 #page-chats .chats-msg-out {
     align-self: flex-end;
     margin-left: auto;
-    background: color-mix(in srgb, var(--color-info-soft, #dbeafe) 88%, var(--surface));
+    background: color-mix(in srgb, var(--color-info-soft) 88%, var(--surface));
     border: 1px solid color-mix(in srgb, var(--corp-accent-neon) 22%, transparent);
     border-radius: 12px 12px 4px 12px;
 }
@@ -1935,7 +1935,7 @@ html[data-theme="dark"] #page-chats .chats-panel-block {
 
 #page-chats .chats-tag-chip.selected {
     border-color: var(--corp-accent-neon);
-    background: var(--color-info-soft, #dbeafe);
+    background: var(--color-info-soft);
     color: var(--corp-bg-deep);
 }
 
@@ -2213,7 +2213,7 @@ html[data-theme="dark"] #page-chats .chats-tag-chip {
 
 html[data-theme="dark"] #page-chats .chats-tag-chip.selected {
     background: color-mix(in srgb, var(--corp-accent-neon) 24%, var(--surface));
-    color: #bfdbfe;
+    color: var(--corp-info-soft-text);
     border-color: color-mix(in srgb, var(--corp-accent-neon) 38%, var(--border));
 }
 

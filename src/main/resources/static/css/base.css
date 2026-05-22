@@ -47,6 +47,6 @@ button, input, select, textarea {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
 }
