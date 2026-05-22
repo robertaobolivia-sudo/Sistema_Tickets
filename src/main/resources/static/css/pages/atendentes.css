@@ -1,0 +1,630 @@
+﻿/* Sprint 110 — atendentes */
+.operator-status-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.operator-status-panel strong {
+    display: block;
+    margin-top: 4px;
+}
+
+.operator-status {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.operator-status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.operator-status-online {
+    color: var(--success);
+}
+
+.operator-status-online .operator-status-dot {
+    background: var(--success);
+}
+
+.operator-status-ausente {
+    color: var(--warning);
+}
+
+.operator-status-ausente .operator-status-dot {
+    background: var(--warning);
+}
+
+.operator-status-offline {
+    color: var(--secondary);
+}
+
+.operator-status-offline .operator-status-dot {
+    background: var(--secondary);
+}
+
+.analistas-kanban-panel {
+    max-height: 620px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+}
+
+.kanban-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-content: start;
+}
+
+.connection-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.connection-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-hover);
+    padding: 16px;
+    min-width: 0;
+}
+
+.connection-card-header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.connection-card-header strong,
+.connection-card-header span {
+    display: block;
+}
+
+.connection-card-header strong {
+    font-size: 16px;
+}
+
+.connection-card-header span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.connection-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.connection-ticket-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.connection-ticket-card strong,
+.connection-ticket-card p,
+.connection-ticket-card span {
+    display: block;
+}
+
+.connection-ticket-card p {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.35;
+    margin: 4px 0 8px;
+}
+
+.connection-ticket-card span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.waiting-time {
+    font-weight: 600;
+}
+
+.waiting-time-ok {
+    color: var(--success);
+}
+
+.waiting-time-warning {
+    color: var(--warning);
+}
+
+.waiting-time-danger {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.waiting-alert {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-left: 4px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white !important;
+    font-size: 12px !important;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.analyst-card,
+.kanban-column {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-hover);
+    padding: 16px;
+}
+
+.analyst-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.analyst-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.analyst-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.analyst-card-header strong,
+.analyst-card-header span {
+    display: block;
+}
+
+.analyst-card-header span,
+.analyst-card-meta {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.analyst-card-meta {
+    margin-bottom: 16px;
+}
+
+.analyst-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.analyst-avatar img,
+.analyst-avatar-large img,
+.analyst-avatar-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 50%;
+}
+
+.analyst-avatar-photo {
+    padding: 0;
+    background: transparent;
+}
+
+.analyst-avatar-large {
+    width: 84px;
+    height: 84px;
+    font-size: 24px;
+}
+
+.modal-content-large {
+    max-width: 860px;
+}
+
+.analyst-expanded-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.analyst-expanded-header h3 {
+    margin-bottom: 4px;
+}
+
+.analyst-expanded-header p {
+    color: var(--text-muted);
+}
+
+.analyst-ticket-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 8px;
+}
+
+.expanded-ticket-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.expanded-ticket-card p,
+.expanded-ticket-grid span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.expanded-ticket-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.analyst-card-tickets {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 322px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-top: 4px;
+}
+
+.kanban-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.kanban-ticket-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    min-height: 156px;
+    flex-shrink: 0;
+}
+
+.kanban-ticket-mini-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.kanban-ticket-mini-head strong {
+    font-size: 13px;
+}
+
+.kanban-ticket-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+}
+
+.kanban-ticket-mini-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.kanban-ticket-mini .button {
+    align-self: flex-start;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.kanban-ticket {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.kanban-ticket span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+@media (max-width: 1100px) {
+    .kanban-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .connection-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .kanban-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .connection-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analistas-kanban-panel {
+        max-height: none;
+    }
+}
+
+.analyst-perfil-admin {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color, #e2e8f0);
+}
+
+.analyst-perfil-admin-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted, #64748b);
+    margin-bottom: 6px;
+}
+
+.analyst-perfil-admin-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.analyst-perfil-select {
+    flex: 1;
+    min-width: 120px;
+    max-width: 100%;
+}
+
+.section-subtitle {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+}
+
+.admin-perfis-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-perfil-row {
+    padding: 14px 16px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 10px;
+    background: var(--surface, #fff);
+}
+
+.admin-perfil-row-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin-bottom: 4px;
+}
+
+.admin-perfil-nome {
+    font-size: 1rem;
+}
+
+.admin-perfil-email {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+}
+
+.admin-perfil-row .analyst-perfil-admin {
+    margin-top: 12px;
+}
+
+.admin-panel-title {
+    margin: 16px 0 10px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.admin-cadastro-panel {
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px 16px;
+    margin-bottom: 12px;
+}
+
+.admin-analista-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-muted, #64748b);
+}
+
+.admin-analista-form input,
+.admin-analista-form select {
+    font-size: 0.9rem;
+}
+
+.admin-checkbox-label {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px !important;
+    padding-top: 1.4rem;
+}
+
+.admin-analista-edit-form {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color, #e2e8f0);
+}
+
+.admin-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-ativo-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.admin-ativo-sim {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.admin-ativo-nao {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.analyst-card-header .perfil-acesso-badge {
+    display: block;
+}
+
+/* Bordas kanban crítica/alta: ver components.css (--pri-kanban-*-accent) */
+
+/* --- Sprint 246: Atendentes — padrão corporativo --- */
+
+#page-atendentes .page-header {
+    border-bottom-color: var(--corp-border-strong);
+}
+
+#page-atendentes .page-header h1 {
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+#page-atendentes .content-section {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    background: var(--corp-surface-card);
+}
+
+html[data-theme='dark'] #page-atendentes .content-section {
+    background: var(--corp-surface-elevated);
+}
+
+#page-atendentes .section-header h2,
+#page-atendentes .admin-panel-title {
+    color: var(--corp-text-on-light);
+    font-weight: 700;
+}
+
+html[data-theme='dark'] #page-atendentes .section-header h2 {
+    color: var(--corp-accent-neon);
+}
+
+#page-atendentes .section-subtitle,
+#page-atendentes .card-label {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-atendentes label {
+    color: var(--corp-text-on-light);
+}
+
+#page-atendentes input,
+#page-atendentes select {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-atendentes input:focus,
+#page-atendentes select:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#page-atendentes .button.button-primary {
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-weight: 600;
+}
+
+#page-atendentes .button.button-secondary {
+    border: 1px solid var(--corp-btn-secondary-border);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-atendentes .analyst-card,
+#page-atendentes .kanban-column,
+#page-atendentes .admin-perfil-row {
+    border-color: var(--corp-border-strong);
+    background: var(--corp-surface-card);
+}
+
+#page-atendentes .analyst-avatar {
+    background: var(--corp-bg-deep);
+}
+
+#page-atendentes .empty-state {
+    color: var(--corp-text-muted-on-light);
+}

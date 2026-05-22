@@ -1,0 +1,264 @@
+﻿/* Sprint 112 — configuracoes */
+
+.sla-meta-input {
+    width: 100%;
+    max-width: 140px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.sla-meta-ativo-label {
+    margin-top: 0;
+}
+
+/* Sprint 148 — gestão de etiquetas */
+.etiqueta-cor-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.etiqueta-cor-input-row input[type='color'] {
+    width: 44px;
+    height: 36px;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--surface);
+}
+
+.etiqueta-cor-input-row input[type='text'] {
+    flex: 1;
+}
+
+.etiqueta-cor-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.etiqueta-cor-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+}
+
+.etiqueta-status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.etiqueta-status-ativa {
+    background: var(--color-success-soft, #dcfce7);
+    color: var(--color-success, #15803d);
+}
+
+.etiqueta-status-inativa {
+    background: var(--surface-hover, #f3f4f6);
+    color: var(--text-muted);
+}
+
+.etiqueta-actions-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.etiqueta-cor-code {
+    font-size: 12px;
+}
+
+.carteira-arte-header-block {
+    margin-top: 8px;
+}
+
+.carteira-arte-preview-wrap {
+    margin: 10px 0 12px;
+}
+
+.carteira-arte-preview {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 5 / 1;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    background: var(--surface-alt, #f1f5f9);
+}
+
+.carteira-arte-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.carteira-arte-empty {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* --- Sprint 245: Configurações — padrão corporativo --- */
+
+#page-configuracoes .page-header {
+    border-bottom-color: var(--corp-border-strong);
+}
+
+#page-configuracoes .page-header h1 {
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+#page-configuracoes .content-section {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    background: var(--corp-surface-card);
+    margin-bottom: var(--corp-space-lg, 24px);
+}
+
+html[data-theme='dark'] #page-configuracoes .content-section {
+    background: var(--corp-surface-elevated);
+}
+
+#page-configuracoes .section-header h2 {
+    color: var(--corp-text-on-light);
+    font-weight: 700;
+}
+
+html[data-theme='dark'] #page-configuracoes .section-header h2 {
+    color: var(--corp-accent-neon);
+}
+
+#page-configuracoes .config-hint {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-configuracoes .config-hint-rule {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-sm);
+    background: rgba(var(--corp-bg-deep-rgb), 0.04);
+    color: var(--corp-text-on-light);
+}
+
+html[data-theme='dark'] #page-configuracoes .config-hint-rule {
+    background: rgba(var(--corp-accent-neon-rgb), 0.06);
+}
+
+#page-configuracoes label,
+#page-configuracoes .field-label {
+    font-size: var(--corp-font-label);
+    font-weight: 600;
+    color: var(--corp-text-on-light);
+}
+
+#page-configuracoes input:not([type='checkbox']):not([type='color']),
+#page-configuracoes select,
+#page-configuracoes textarea {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    transition:
+        border-color var(--corp-transition),
+        box-shadow var(--corp-transition);
+}
+
+#page-configuracoes input:not([type='checkbox']):not([type='color']):focus,
+#page-configuracoes select:focus,
+#page-configuracoes textarea:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#page-configuracoes .sla-meta-input {
+    border-color: var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-configuracoes .checkbox-group label,
+#page-configuracoes .checkbox-inline {
+    font-weight: 500;
+    color: var(--corp-text-on-light);
+}
+
+#page-configuracoes .button.button-primary {
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-weight: 600;
+    box-shadow: var(--corp-shadow-soft);
+}
+
+#page-configuracoes .button.button-primary:hover:not(:disabled) {
+    filter: brightness(1.05);
+    box-shadow: var(--corp-shadow-neon-glow);
+}
+
+#page-configuracoes .button.button-secondary {
+    border-radius: var(--corp-radius-sm);
+    border: 1px solid var(--corp-btn-secondary-border);
+    color: var(--corp-text-on-light);
+}
+
+#page-configuracoes .button.button-secondary:hover:not(:disabled) {
+    border-color: var(--corp-focus-border);
+    background: var(--corp-surface-muted);
+}
+
+#page-configuracoes .data-table {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    overflow: hidden;
+}
+
+#page-configuracoes .data-table thead {
+    background: rgba(var(--corp-bg-deep-rgb), 0.06);
+}
+
+html[data-theme='dark'] #page-configuracoes .data-table thead {
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
+}
+
+#page-configuracoes .data-table th {
+    color: var(--corp-text-on-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--corp-border-strong);
+}
+
+#page-configuracoes .data-table td {
+    border-bottom: 1px solid var(--corp-border-subtle);
+}
+
+#page-configuracoes .data-table tbody tr:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.05);
+}
+
+#page-configuracoes .empty-state {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-configuracoes .etiqueta-cor-input-row input[type='color'] {
+    border-color: var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-configuracoes .carteira-arte-preview {
+    border-color: var(--corp-border-strong);
+    background: var(--corp-surface-muted, var(--surface-alt, #f1f5f9));
+}
+
+#page-configuracoes .config-conexoes-revenda-section,
+#page-configuracoes .config-etiquetas-section {
+    border-color: var(--corp-border-subtle);
+}

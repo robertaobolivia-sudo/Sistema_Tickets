@@ -1,0 +1,292 @@
+/* Sprint 229 — Login corporativo | Sprint 237 — valores via tokens --corp-* (visual inalterado) */
+
+#loginScreen {
+    align-items: center;
+    justify-content: center;
+    background-color: var(--corp-bg-deep);
+    background-image: radial-gradient(
+        ellipse 120% 80% at 50% 0%,
+        rgba(var(--corp-accent-neon-rgb), 0.12) 0%,
+        rgba(var(--corp-bg-deep-rgb), 0.4) 45%,
+        var(--corp-bg-deep) 100%
+    );
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--corp-space-lg) var(--corp-space-md);
+    box-sizing: border-box;
+}
+
+#loginScreen .login-wrapper {
+    width: 100%;
+    max-width: 440px;
+    padding: 0;
+}
+
+#loginScreen .login-box {
+    background: var(--corp-surface-card);
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-lg);
+    padding: 40px 36px 32px;
+    box-shadow: var(--corp-shadow-card);
+    text-align: center;
+}
+
+html[data-theme='dark'] #loginScreen .login-box {
+    background: rgba(30, 41, 59, 0.92);
+    border-color: rgba(var(--corp-accent-neon-rgb), 0.28);
+    color: var(--text);
+}
+
+#loginScreen .login-brand {
+    margin-bottom: 28px;
+}
+
+#loginScreen .login-logo-neon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
+    border: 1px solid rgba(var(--corp-accent-neon-rgb), 0.35);
+    box-shadow:
+        var(--corp-shadow-neon-glow),
+        inset 0 0 12px rgba(var(--corp-accent-neon-rgb), 0.12);
+}
+
+#loginScreen .login-logo-f {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--corp-accent-neon);
+    text-shadow:
+        0 0 8px rgba(var(--corp-accent-neon-rgb), 0.9),
+        0 0 24px rgba(var(--corp-accent-neon-rgb), 0.55);
+    font-family: var(--corp-font-family);
+}
+
+#loginScreen .login-box h1 {
+    font-size: var(--corp-font-page-title);
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+html[data-theme='dark'] #loginScreen .login-box h1 {
+    color: #e2e8f0;
+}
+
+#loginScreen .login-subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--corp-text-muted-on-dark);
+}
+
+html[data-theme='dark'] #loginScreen .login-subtitle {
+    color: var(--text-muted);
+}
+
+#loginScreen .logo-container,
+#loginScreen .logo {
+    display: none;
+}
+
+#loginScreen .login-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    text-align: left;
+}
+
+#loginScreen .login-box .form-group {
+    margin: 0;
+}
+
+#loginScreen .login-box label {
+    display: block;
+    font-size: var(--corp-font-label);
+    font-weight: 600;
+    color: var(--corp-text-on-light);
+    margin-bottom: var(--corp-space-xs);
+}
+
+html[data-theme='dark'] #loginScreen .login-box label {
+    color: var(--text);
+}
+
+#loginScreen .login-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#loginScreen .login-field-icon {
+    position: absolute;
+    left: 14px;
+    width: 20px;
+    height: 20px;
+    color: rgba(var(--corp-accent-neon-rgb), 0.75);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#loginScreen .login-field-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+#loginScreen .login-box input[type='email'],
+#loginScreen .login-box input[type='password'] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px 12px 44px;
+    border: 1px solid rgba(var(--corp-bg-deep-rgb), 0.2);
+    border-radius: var(--corp-radius-sm);
+    font-size: 1rem;
+    background: #f8fafc;
+    color: var(--corp-text-on-light);
+    transition:
+        border-color var(--corp-transition),
+        box-shadow var(--corp-transition);
+}
+
+html[data-theme='dark'] #loginScreen .login-box input[type='email'],
+html[data-theme='dark'] #loginScreen .login-box input[type='password'] {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(var(--corp-accent-neon-rgb), 0.2);
+    color: var(--text);
+}
+
+#loginScreen .login-box input::placeholder {
+    color: #94a3b8;
+}
+
+#loginScreen .login-box input:hover {
+    border-color: rgba(var(--corp-accent-neon-rgb), 0.45);
+}
+
+#loginScreen .login-box input:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#loginScreen .login-forgot {
+    align-self: flex-end;
+    margin-top: -6px;
+    font-size: var(--corp-font-label);
+    color: #0d9488;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+#loginScreen .login-forgot:hover {
+    color: var(--corp-accent-neon);
+    text-decoration: underline;
+}
+
+/* Botão Entrar: gradiente aprovado Sprint 229 (não trocado por neon sólido) */
+#loginScreen .login-box .button-primary.button-large {
+    width: 100%;
+    margin-top: 4px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+    transition:
+        transform var(--corp-transition),
+        box-shadow var(--corp-transition),
+        filter var(--corp-transition);
+    cursor: pointer;
+}
+
+#loginScreen .login-box .button-primary.button-large:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 6px 20px rgba(var(--corp-accent-neon-rgb), 0.28);
+    transform: translateY(-1px);
+}
+
+#loginScreen .login-box .button-primary.button-large:active {
+    transform: translateY(0);
+}
+
+#loginScreen .login-footer {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(var(--corp-bg-deep-rgb), 0.1);
+    font-size: var(--corp-font-label);
+    color: var(--corp-text-muted-on-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+html[data-theme='dark'] #loginScreen .login-footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+}
+
+#loginScreen .login-footer a,
+#loginScreen .login-lang-btn {
+    color: #0d9488;
+    font-weight: 600;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+#loginScreen .login-footer a:hover,
+#loginScreen .login-lang-btn:hover {
+    color: var(--corp-accent-neon);
+    text-decoration: underline;
+}
+
+#loginScreen #loginAlert {
+    text-align: center;
+    margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+    #loginScreen {
+        padding: var(--corp-space-md) 12px;
+    }
+
+    #loginScreen .login-box {
+        padding: 32px 22px 24px;
+        border-radius: var(--corp-radius-md);
+    }
+
+    #loginScreen .login-logo-neon {
+        width: 64px;
+        height: 64px;
+    }
+
+    #loginScreen .login-logo-f {
+        font-size: 34px;
+    }
+
+    #loginScreen .login-box h1 {
+        font-size: 1.35rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    #loginScreen .login-wrapper {
+        max-width: 400px;
+    }
+}

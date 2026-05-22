@@ -1,0 +1,2896 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suporte Tickets</title>
+    <link rel="stylesheet" href="css/theme.css?v=sprint112" />
+    <link rel="stylesheet" href="css/base.css?v=sprint112" />
+    <link rel="stylesheet" href="css/layout.css?v=sprint246" />
+    <link rel="stylesheet" href="css/pages/login.css?v=sprint237" />
+    <link rel="stylesheet" href="css/components.css?v=sprint243" />
+    <link rel="stylesheet" href="css/modals.css?v=sprint241" />
+    <link rel="stylesheet" href="css/pages/dashboard.css?v=sprint242" />
+    <link rel="stylesheet" href="css/pages/tickets.css?v=sprint241" />
+    <link rel="stylesheet" href="css/pages/clientes.css?v=sprint239" />
+    <link rel="stylesheet" href="css/pages/atendentes.css?v=sprint246" />
+    <link rel="stylesheet" href="css/pages/perfil.css?v=sprint246" />
+    <link rel="stylesheet" href="css/pages/relatorios.css?v=sprint244" />
+    <link rel="stylesheet" href="css/pages/indicadores.css?v=sprint242" />
+    <link rel="stylesheet" href="css/pages/auditoria.css?v=sprint246" />
+    <link rel="stylesheet" href="css/pages/configuracoes.css?v=sprint245" />
+    <link rel="stylesheet" href="css/pages/abrir-ticket.css?v=sprint246" />
+    <link rel="stylesheet" href="css/pages/chats.css?v=sprint240" />
+    <link rel="stylesheet" href="css/pages/avaliacao-publica.css?v=sprint237" />
+    <link rel="stylesheet" href="style.css?v=sprint111" />
+</head>
+<body>
+    <!-- ====================================================================== -->
+    <!-- APP SHELL                                                              -->
+    <!-- ====================================================================== -->
+
+    <!-- AVALIAÇÃO PÚBLICA (sem login) -->
+    <div id="avaliacaoPublicaScreen" class="screen" data-testid="avaliacao-publica-screen">
+        <div class="avaliacao-publica-wrapper">
+            <div class="avaliacao-publica-card">
+                <h1>Avaliação do atendimento</h1>
+                <p id="avaliacaoPublicaSubtitulo" class="avaliacao-publica-sub"></p>
+                <p id="avaliacaoPublicaCliente" class="avaliacao-publica-meta hidden"></p>
+                <p id="avaliacaoPublicaProtocolo" class="avaliacao-publica-meta hidden"></p>
+                <div id="avaliacaoPublicaForm" class="avaliacao-publica-form hidden">
+                    <p class="avaliacao-publica-label">Como foi seu atendimento?</p>
+                    <div class="avaliacao-notas" role="group" aria-label="Nota de 1 a 5">
+                        <button type="button" class="avaliacao-nota-btn" data-nota="1" title="1" data-testid="avaliacao-nota-1">😞<span>1</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="2" title="2" data-testid="avaliacao-nota-2">😕<span>2</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="3" title="3" data-testid="avaliacao-nota-3">😐<span>3</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="4" title="4" data-testid="avaliacao-nota-4">🙂<span>4</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="5" title="5" data-testid="avaliacao-nota-5">😄<span>5</span></button>
+                    </div>
+                    <div class="form-group">
+                        <label for="avaliacaoPublicaComentario">Comentário (opcional)</label>
+                        <textarea id="avaliacaoPublicaComentario" rows="3" maxlength="500"></textarea>
+                    </div>
+                    <button type="button" id="avaliacaoPublicaEnviar" class="button button-primary button-large" data-testid="avaliacao-publica-enviar">
+                        Enviar avaliação
+                    </button>
+                </div>
+                <p id="avaliacaoPublicaEstado" class="avaliacao-publica-estado hidden" role="status" data-testid="avaliacao-publica-estado"></p>
+                <div id="avaliacaoPublicaAlert" class="alert hidden" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginScreen" class="screen screen-active">
+        <div class="login-wrapper">
+            <div class="login-box">
+                <div class="login-brand">
+                    <div class="logo-container" aria-hidden="true">
+                        <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="45" fill="#1e40af" stroke="#1e40af" stroke-width="2"/>
+                            <text x="50" y="65" font-size="45" font-weight="bold" text-anchor="middle" fill="white">ST</text>
+                        </svg>
+                    </div>
+                    <div class="login-logo-neon" aria-hidden="true">
+                        <span class="login-logo-f">F</span>
+                    </div>
+                    <h1>Login Corporativo</h1>
+                    <p class="login-subtitle">Suporte Tickets · Sistema de Gestão de Atendimento</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUser">E-mail</label>
+                        <div class="login-input-wrap">
+                            <span class="login-field-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                    <path d="M4 6h16v12H4V6zm8 5.5L6.8 8h10.4L12 11.5zm0-3.2L17.2 14H6.8L12 8.3z"/>
+                                </svg>
+                            </span>
+                            <input type="email" id="loginUser" data-testid="login-email" placeholder="Digite seu e-mail" required autocomplete="username" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPass">Senha</label>
+                        <div class="login-input-wrap">
+                            <span class="login-field-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                    <path d="M17 9h-1V7a4 4 0 00-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-3-2a2 2 0 114 0v2h-4V7zm5 11H7v-8h10v8z"/>
+                                </svg>
+                            </span>
+                            <input type="password" id="loginPass" data-testid="login-password" placeholder="Digite sua senha" required autocomplete="current-password" />
+                        </div>
+                    </div>
+                    <a href="#" class="login-forgot" tabindex="0" onclick="return false;">Esqueceu a senha?</a>
+                    <button type="submit" class="button button-primary button-large" data-testid="login-submit">Entrar</button>
+                    <div id="loginAlert" class="alert hidden" role="alert"></div>
+                </form>
+                <footer class="login-footer">
+                    <p>Não tem conta? <a href="#" onclick="return false;">Cadastre-se</a></p>
+                    <button type="button" class="login-lang-btn">Mudar para Inglês</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP SCREEN (autenticado) -->
+    <div id="appScreen" class="screen">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-panel">
+            <div class="sidebar-header">
+                <svg class="logo-small" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#1e40af" stroke="#1e40af" stroke-width="2"/>
+                    <text x="50" y="65" font-size="45" font-weight="bold" text-anchor="middle" fill="white">ST</text>
+                </svg>
+                <span class="sidebar-title">Suporte Tickets</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="4" y="4" width="7" height="7" rx="1.5"></rect>
+                            <rect x="13" y="4" width="7" height="7" rx="1.5"></rect>
+                            <rect x="4" y="13" width="7" height="7" rx="1.5"></rect>
+                            <rect x="13" y="13" width="7" height="7" rx="1.5"></rect>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="clientes">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="9" cy="8" r="3"></circle>
+                            <path d="M3.5 19c.7-3.1 2.7-5 5.5-5s4.8 1.9 5.5 5"></path>
+                            <circle cx="17" cy="9" r="2.5"></circle>
+                            <path d="M14.5 14.4c2.9.2 5 1.8 5.8 4.6"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Clientes</span>
+                </button>
+                <button class="nav-item" data-page="atendentes">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="8" cy="8" r="3"></circle>
+                            <circle cx="16" cy="8" r="3"></circle>
+                            <path d="M3.5 19c.6-3 2.2-5 4.5-5s3.9 2 4.5 5"></path>
+                            <path d="M11.5 19c.6-3 2.2-5 4.5-5s3.9 2 4.5 5"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Atendentes</span>
+                </button>
+                <button class="nav-item" data-page="perfil">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 20c1-4 3.7-6 8-6s7 2 8 6"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Perfil</span>
+                </button>
+                <button class="nav-item" data-page="abrir-ticket">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 5v14"></path>
+                            <path d="M5 12h14"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Abrir Ticket</span>
+                </button>
+                <button class="nav-item" data-page="tickets">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"></path>
+                            <path d="M7 12h10"></path>
+                            <path d="M7 15h7"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Tickets</span>
+                </button>
+                <button class="nav-item" data-page="chats" data-testid="nav-chats">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path>
+                            <path d="M8 10h8M8 14h5"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Chats</span>
+                </button>
+                <button class="nav-item" data-page="relatorios">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 19V5"></path>
+                            <path d="M5 19h14"></path>
+                            <path d="M8 15l3-3 2 2 5-6"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Relatórios</span>
+                </button>
+                <div class="nav-group nav-group-indicadores" id="navIndicadoresGroup">
+                    <button type="button" class="nav-item nav-item-parent" id="navIndicadoresToggle" aria-expanded="false" aria-controls="navIndicadoresSubmenu">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 19V5"></path>
+                                <path d="M4 19h16"></path>
+                                <path d="M7 16v-5"></path>
+                                <path d="M12 16V8"></path>
+                                <path d="M17 16v-3"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Indicadores</span>
+                        <span class="nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="nav-submenu hidden" id="navIndicadoresSubmenu">
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-visao-geral">
+                            <span class="nav-label">Visão geral</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-chamados">
+                            <span class="nav-label">Chamados</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-satisfacao">
+                            <span class="nav-label">Satisfação</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-encerramento-satisfacao">
+                            <span class="nav-label">Encerramento e satisfação</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-clientes">
+                            <span class="nav-label">Clientes</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-atendentes">
+                            <span class="nav-label">Atendentes</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="indicadores" data-indicadores-sub="indicadores-sla">
+                            <span class="nav-label">SLA</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="nav-item" data-page="auditoria">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"></path>
+                            <path d="M9 3h6v4H9z"></path>
+                            <path d="M14 12H9"></path>
+                            <path d="M16 16H9"></path>
+                            <path d="M19 8h2v8h-2z"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Auditoria</span>
+                </button>
+                <button class="nav-item" data-page="configuracoes">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Configurações</span>
+                </button>
+                <div class="nav-divider"></div>
+                <button class="nav-item" id="logoutBtn">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10 6V5a2 2 0 0 1 2-2h6v18h-6a2 2 0 0 1-2-2v-1"></path>
+                            <path d="M4 12h10"></path>
+                            <path d="M11 9l3 3-3 3"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Logout</span>
+                </button>
+            </nav>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+            <header class="app-topbar" id="appTopbar">
+                <div id="topbarTicketToast" class="topbar-ticket-toast hidden" role="status" aria-live="polite"></div>
+                <div class="app-topbar-actions">
+                    <div class="notificacoes-wrap app-topbar-notificacoes">
+                        <button type="button" id="notificacoesBtn" class="notificacoes-btn" aria-label="Notificações" aria-expanded="false">
+                            <span class="notificacoes-icon" aria-hidden="true">🔔</span>
+                            <span id="notificacoesContador" class="notificacoes-contador hidden">0</span>
+                        </button>
+                        <div id="notificacoesPainel" class="notificacoes-painel hidden" role="region" aria-label="Lista de notificações">
+                            <div class="notificacoes-painel-header">
+                                <strong>Notificações</strong>
+                                <button type="button" id="notificacoesMarcarTodasBtn" class="button button-secondary button-small">Marcar todas lidas</button>
+                            </div>
+                            <div class="notificacoes-filtros" role="tablist" aria-label="Filtrar notificações">
+                                <button type="button" class="notificacoes-filtro ativo" data-notif-filtro="todas" role="tab" aria-selected="true">Todas</button>
+                                <button type="button" class="notificacoes-filtro" data-notif-filtro="nao-lidas" role="tab" aria-selected="false">Não lidas</button>
+                                <button type="button" class="notificacoes-filtro" data-notif-filtro="escalonamento" role="tab" aria-selected="false">Escalonamento</button>
+                                <button type="button" class="notificacoes-filtro" data-notif-filtro="sla" role="tab" aria-selected="false">SLA</button>
+                            </div>
+                            <div id="notificacoesLista" class="notificacoes-lista">
+                                <p class="empty-state">Nenhuma notificação.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topbar-perfil-wrap">
+                        <span id="topbarTicketAlertBadge" class="topbar-ticket-alert-badge hidden" title="Novos tickets">!</span>
+                        <button type="button" id="topbarPerfilBtn" class="topbar-perfil-btn" aria-label="Menu do usuário" aria-haspopup="menu" aria-expanded="false">
+                            <div id="topbarPerfilAvatar" class="analyst-avatar analyst-avatar-topbar">PF</div>
+                        </button>
+                        <div id="topbarUserMenu" class="topbar-user-menu hidden" role="menu">
+                            <button type="button" data-user-menu="perfil" role="menuitem">Meu Perfil</button>
+                            <button type="button" data-user-menu="tema" role="menuitem">Tema Claro/Escuro</button>
+                            <button type="button" data-user-menu="alerta-chat" role="menuitem">Alerta Chat: ON</button>
+                            <button type="button" data-user-menu="alerta-ticket" role="menuitem">Alerta Ticket: ON</button>
+                            <button type="button" data-user-menu="logout" class="danger" role="menuitem">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGES -->
+            <!-- PAGE DASHBOARD -->
+            <section id="page-dashboard" class="page active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <button id="refreshButton" class="button button-secondary">Atualizar</button>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-icon">📋</div>
+                        <div class="card-content">
+                            <div class="card-label">Total de Tickets</div>
+                            <div class="card-value" id="totalTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔴</div>
+                        <div class="card-content">
+                            <div class="card-label">Tickets Abertos</div>
+                            <div class="card-value" id="openTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚙️</div>
+                        <div class="card-content">
+                            <div class="card-label">Em Atendimento</div>
+                            <div class="card-value" id="inProgressTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">✅</div>
+                        <div class="card-content">
+                            <div class="card-label">Resolvidos</div>
+                            <div class="card-value" id="resolvedTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⛔</div>
+                        <div class="card-content">
+                            <div class="card-label">Cancelados</div>
+                            <div class="card-value" id="cancelledTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">👤</div>
+                        <div class="card-content">
+                            <div class="card-label">Sem analista</div>
+                            <div class="card-value" id="unassignedTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🆕</div>
+                        <div class="card-content">
+                            <div class="card-label">Abertos hoje</div>
+                            <div class="card-value" id="openedTodayTickets">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🏁</div>
+                        <div class="card-content">
+                            <div class="card-label">Resolvidos hoje</div>
+                            <div class="card-value" id="resolvedTodayTickets">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section dashboard-encerramento-section">
+                    <div class="section-header dashboard-encerramento-header">
+                        <div>
+                            <h2>Encerramento e satisfação</h2>
+                            <p id="dashboardEncPeriodoHint" class="section-subtitle">Últimos 30 dias</p>
+                        </div>
+                        <div class="dashboard-encerramento-filtros">
+                            <label class="dashboard-enc-filtro-label" for="dashboardEncFiltroDias">Período</label>
+                            <select id="dashboardEncFiltroDias" class="dashboard-enc-filtro-select" aria-label="Período">
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="30" selected>Últimos 30 dias</option>
+                                <option value="90">Últimos 90 dias</option>
+                            </select>
+                            <label class="dashboard-enc-filtro-label" for="dashboardEncFiltroCliente">Cliente</label>
+                            <select id="dashboardEncFiltroCliente" class="dashboard-enc-filtro-select" aria-label="Cliente">
+                                <option value="">Todos os clientes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="cards-grid dashboard-encerramento-cards">
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-label">Motivo mais recorrente</div>
+                                <div class="card-value card-value-compact" id="dashboardEncMotivo">—</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-label">Média de avaliação</div>
+                                <div class="card-value" id="dashboardEncMedia">—</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-label">Pesquisas respondidas</div>
+                                <div class="card-value" id="dashboardEncRespondidas">0</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-label">Pendentes</div>
+                                <div class="card-value" id="dashboardEncPendentes">0</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-label">Expiradas</div>
+                                <div class="card-value" id="dashboardEncExpiradas">0</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-label">Falhas de envio</div>
+                                <div class="card-value" id="dashboardEncFalhasEnvio">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                                <div class="content-section dashboard-gerencial-prioridades">
+                    <div class="section-header">
+                        <h2>Prioridades</h2>
+                    </div>
+                    <div class="dashboard-priority-grid">
+                        <div class="dashboard-priority-item dashboard-priority-critica">
+                            <span>Crítica</span>
+                            <strong id="dashboardPrioridadeCritica">0</strong>
+                        </div>
+                        <div class="dashboard-priority-item dashboard-priority-alta">
+                            <span>Alta</span>
+                            <strong id="dashboardPrioridadeAlta">0</strong>
+                        </div>
+                        <div class="dashboard-priority-item dashboard-priority-media">
+                            <span>Média</span>
+                            <strong id="dashboardPrioridadeMedia">0</strong>
+                        </div>
+                        <div class="dashboard-priority-item dashboard-priority-baixa">
+                            <span>Baixa</span>
+                            <strong id="dashboardPrioridadeBaixa">0</strong>
+                        </div>
+                        <div class="dashboard-priority-item dashboard-priority-sem">
+                            <span>Sem prioridade</span>
+                            <strong id="dashboardPrioridadeSem">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-summary-grid dashboard-gerencial-categorias">
+                    <div class="content-section">
+                        <div class="section-header"><h2>Categorias mais recorrentes</h2></div>
+                        <h3 class="dashboard-subsection-title">Top grupos</h3>
+                        <ul id="dashboardTopGrupos" class="dashboard-summary-list">
+                            <li class="empty-state">-</li>
+                        </ul>
+                        <h3 class="dashboard-subsection-title">Top subgrupos</h3>
+                        <ul id="dashboardTopSubgrupos" class="dashboard-summary-list">
+                            <li class="empty-state">-</li>
+                        </ul>
+                    </div>
+                    <div class="content-section dashboard-criticos-section">
+                        <div class="section-header"><h2>Tickets críticos e altos</h2></div>
+                        <div class="table-responsive">
+                            <table class="data-table dashboard-criticos-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nº</th>
+                                        <th>Cliente</th>
+                                        <th>Prioridade</th>
+                                        <th>Status</th>
+                                        <th>Abertura</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardCriticosBody"></tbody>
+                            </table>
+                            <p id="dashboardCriticosEmpty" class="empty-state hidden">Nenhum ticket crítico ou alto no momento.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="content-section dashboard-sla-section">
+                    <div class="section-header dashboard-sla-section-header">
+                        <h2>SLA</h2>
+                        <button type="button" id="dashboardSlaVerificarBtn" class="button button-secondary button-small">Verificar SLA crítico</button>
+                    </div>
+                    <div class="dashboard-sla-grid">
+                        <div class="dashboard-sla-bloco">
+                            <h3>SLA 1º Atendimento</h3>
+                            <ul class="dashboard-sla-list">
+                                <li><span>Dentro do prazo</span><strong id="dashboardSlaPrimeiroDentro">0</strong></li>
+                                <li><span>Próximo do vencimento</span><strong id="dashboardSlaPrimeiroProximo">0</strong></li>
+                                <li><span>Vencido</span><strong id="dashboardSlaPrimeiroVencido">0</strong></li>
+                                <li><span>Cumprido</span><strong id="dashboardSlaPrimeiroCumprido">0</strong></li>
+                                <li><span>Violado</span><strong id="dashboardSlaPrimeiroViolado">0</strong></li>
+                                <li><span>Não calculado</span><strong id="dashboardSlaPrimeiroNaoCalc">0</strong></li>
+                            </ul>
+                        </div>
+                        <div class="dashboard-sla-bloco">
+                            <h3>SLA Resolução</h3>
+                            <ul class="dashboard-sla-list">
+                                <li><span>Dentro do prazo</span><strong id="dashboardSlaResolucaoDentro">0</strong></li>
+                                <li><span>Próximo do vencimento</span><strong id="dashboardSlaResolucaoProximo">0</strong></li>
+                                <li><span>Vencido</span><strong id="dashboardSlaResolucaoVencido">0</strong></li>
+                                <li><span>Pausado</span><strong id="dashboardSlaResolucaoPausado">0</strong></li>
+                                <li><span>Cumprido</span><strong id="dashboardSlaResolucaoCumprido">0</strong></li>
+                                <li><span>Violado</span><strong id="dashboardSlaResolucaoViolado">0</strong></li>
+                                <li><span>Não calculado</span><strong id="dashboardSlaResolucaoNaoCalc">0</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="dashboard-sla-escalonados-resumo">Tickets escalonados: <strong id="dashboardSlaTicketsEscalonados">0</strong></p>
+                    <h3 class="dashboard-subsection-title">SLA por prioridade</h3>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Prioridade</th>
+                                    <th>Total</th>
+                                    <th>1º Atend. violado</th>
+                                    <th>Resol. violado</th>
+                                    <th>Resol. vencido</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardSlaPorPrioridadeBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header"><h2>Tickets críticos de SLA</h2></div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nº</th>
+                                    <th>Cliente</th>
+                                    <th>Prioridade</th>
+                                    <th>Status</th>
+                                    <th>SLA 1º Atend.</th>
+                                    <th>SLA Resolução</th>
+                                    <th>Venc. crítico</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardSlaCriticosBody"></tbody>
+                        </table>
+                        <p id="dashboardSlaCriticosEmpty" class="empty-state hidden">Nenhum ticket crítico de SLA no momento.</p>
+                    </div>
+                </div>
+
+                <div class="content-section dashboard-metrics-section">
+                    <div class="section-header">
+                        <h2>Indicadores operacionais</h2>
+                    </div>
+                    <div class="dashboard-metrics-grid">
+                        <div class="dashboard-metric-item"><span>Clientes ativos</span><strong id="activeClients">-</strong></div>
+                        <div class="dashboard-metric-item"><span>Analistas online</span><strong id="analystsOnline">-</strong></div>
+                        <div class="dashboard-metric-item"><span>Analistas ausentes</span><strong id="analystsAway">-</strong></div>
+                        <div class="dashboard-metric-item"><span>Analistas offline</span><strong id="analystsOffline">-</strong></div>
+                        <div class="dashboard-metric-item"><span>Tempo médio 1º atendimento</span><strong id="avgFirstResponse">-</strong></div>
+                        <div class="dashboard-metric-item"><span>Tempo médio resolução</span><strong id="avgResolution">-</strong></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-summary-grid">
+                    <div class="content-section">
+                        <div class="section-header"><h2>Tickets por status</h2></div>
+                        <ul id="dashboardByStatus" class="dashboard-summary-list">
+                            <li class="empty-state">-</li>
+                        </ul>
+                    </div>
+                    <div class="content-section">
+                        <div class="section-header"><h2>Tickets por conexão</h2></div>
+                        <ul id="dashboardByConnection" class="dashboard-summary-list">
+                            <li class="empty-state">-</li>
+                        </ul>
+                    </div>
+                    <div class="content-section">
+                        <div class="section-header"><h2>Tickets por analista</h2></div>
+                        <ul id="dashboardByAnalyst" class="dashboard-summary-list">
+                            <li class="empty-state">-</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Painel por Conexão</h2>
+
+                    </div>
+                    <div id="conexoesPendencias" class="connection-grid">
+                        <p class="empty-state">Nenhuma pendência por conexão.</p>
+                    </div>
+                </div>
+
+                <div id="alertBox" class="alert hidden" role="alert"></div>
+            </section>
+
+            <!-- PAGE ATENDENTES -->
+            <section id="page-atendentes" class="page">
+                <div class="page-header">
+                    <h1>Atendentes</h1>
+                    <button id="refreshAtendentesButton" class="button button-secondary">Atualizar</button>
+                </div>
+
+                <div class="content-section operator-status-panel">
+                    <div>
+                        <span class="card-label">Operador logado</span>
+                        <strong id="operadorLogadoNome">-</strong>
+                    </div>
+                    <div class="filter-group">
+                        <label for="operadorStatusSelect">Meu status:</label>
+                        <select id="operadorStatusSelect">
+                            <option value="ONLINE">Online</option>
+                            <option value="AUSENTE">Ausente</option>
+                            <option value="OFFLINE">Offline</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="adminPerfisSection" class="content-section admin-perfis-section hidden">
+                    <div class="section-header">
+                        <h2>Administração de analistas</h2>
+                        <p class="section-subtitle">Cadastre, edite perfis e ative ou inative analistas.</p>
+                    </div>
+                    <div id="alertBoxAdminAnalistas" class="alert hidden" role="alert"></div>
+                    <div class="admin-cadastro-panel">
+                        <h3 class="admin-panel-title">Cadastrar analista</h3>
+                        <form id="adminCadastroAnalistaForm" class="admin-analista-form" autocomplete="off">
+                            <div class="admin-form-grid">
+                                <label>Nome<input type="text" name="nome" required maxlength="150" /></label>
+                                <label>E-mail<input type="email" name="email" required maxlength="150" /></label>
+                                <label>Senha inicial<input type="password" name="senha" required minlength="8" autocomplete="new-password" aria-describedby="adminSenhaPoliticaHint" /></label>
+                                <label>Nível<input type="text" name="nivel" placeholder="Nível 1" maxlength="50" /></label>
+                                <label>Perfil de acesso
+                                    <select name="perfilAcesso" required>
+                                        <option value="ANALISTA">Analista</option>
+                                        <option value="SUPERVISOR">Supervisor</option>
+                                        <option value="ADMIN">Administrador</option>
+                                    </select>
+                                </label>
+                                <label class="admin-checkbox-label">
+                                    <input type="checkbox" name="ativo" checked />
+                                    Ativo
+                                </label>
+                            </div>
+                            <p id="adminSenhaPoliticaHint" class="section-subtitle admin-senha-hint">Mínimo 8 caracteres, com pelo menos 1 letra e 1 número.</p>
+                            <button type="submit" class="button button-primary">Cadastrar</button>
+                        </form>
+                    </div>
+                    <h3 class="admin-panel-title">Analistas cadastrados</h3>
+                    <div id="adminPerfisList" class="admin-perfis-list" role="list">
+                        <p class="empty-state">Carregando analistas...</p>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Painel de Atendimento - Analistas Online</h2>
+                    </div>
+                    <div class="analistas-kanban-panel">
+                        <div id="analistasKanban" class="kanban-grid">
+                            <p class="empty-state">Nenhum analista online.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE PERFIL -->
+            <section id="page-perfil" class="page">
+                <div class="page-header">
+                    <h1>Perfil</h1>
+                </div>
+
+                <div class="content-section profile-section">
+                    <div class="profile-header">
+                        <div class="profile-photo-column">
+                            <div id="perfilFotoWrapper" class="profile-photo-wrapper" role="button" tabindex="0" aria-haspopup="menu" aria-label="Editar foto de perfil">
+                                <div id="perfilFoto" class="analyst-avatar analyst-avatar-profile">PF</div>
+                                <span class="profile-photo-overlay">Editar</span>
+                            </div>
+                            <div id="perfilFotoMenu" class="profile-photo-menu hidden" role="menu">
+                                <button type="button" id="perfilMostrarFotoBtn" role="menuitem">Mostrar foto</button>
+                                <button type="button" id="perfilCarregarFotoBtn" role="menuitem">Carregar foto</button>
+                                <button type="button" id="perfilRemoverFotoBtn" class="danger" role="menuitem">Excluir foto</button>
+                            </div>
+                            <input type="file" id="perfilFotoInput" class="hidden" accept=".png,.jpg,.jpeg,image/png,image/jpeg" />
+                        </div>
+                        <div>
+                            <h2 id="perfilNome">-</h2>
+                            <p id="perfilStatus">-</p>
+                        </div>
+                    </div>
+
+                    <dl class="profile-grid">
+                        <dt>Nome completo</dt><dd id="perfilNomeCompleto">-</dd>
+                        <dt>CPF</dt><dd id="perfilCpf">-</dd>
+                        <dt>Data de nascimento</dt><dd id="perfilDataNascimento">-</dd>
+                        <dt>CEP</dt><dd id="perfilCep">-</dd>
+                        <dt>Rua</dt><dd id="perfilRua">-</dd>
+                        <dt>Número</dt><dd id="perfilNumero">-</dd>
+                        <dt>Bairro</dt><dd id="perfilBairro">-</dd>
+                        <dt>Cidade</dt><dd id="perfilCidade">-</dd>
+                        <dt>Estado</dt><dd id="perfilEstado">-</dd>
+                        <dt>UF</dt><dd id="perfilUf">-</dd>
+                        <dt>País</dt><dd id="perfilPais">-</dd>
+                        <dt>Celular</dt><dd id="perfilCelular">-</dd>
+                        <dt>Email</dt><dd id="perfilEmail">-</dd>
+                        <dt>Nível</dt><dd id="perfilNivel">-</dd>
+                        <dt>Perfil de acesso</dt><dd id="perfilAcesso">-</dd>
+                    </dl>
+
+                    <div id="alertBoxPerfil" class="alert hidden" role="alert"></div>
+                </div>
+            </section>
+
+            <!-- PAGE CLIENTES -->
+            <section id="page-clientes" class="page">
+                <div class="page-header">
+                    <h1>Clientes</h1>
+                    <p class="page-header-hint">Contratantes atendidos pela F5. Busque e selecione um cadastro para editar.</p>
+                </div>
+
+                <div class="clientes-layout">
+                    <aside class="clientes-panel-list content-section" aria-label="Lista de clientes">
+                        <h2 class="clientes-panel-title">Clientes cadastrados</h2>
+                        <label class="clientes-busca-label" for="clienteListaBusca">Buscar cliente</label>
+                        <input
+                            type="search"
+                            id="clienteListaBusca"
+                            class="clientes-busca-input"
+                            placeholder="Nome, razão social, CNPJ, telefone, e-mail, cidade ou UF"
+                            autocomplete="off"
+                        />
+                        <div id="clientesLista" class="clientes-list" role="listbox" aria-label="Resultados da busca"></div>
+                        <nav
+                            id="clientesListaPagination"
+                            class="list-pagination-bar hidden"
+                            data-testid="clientes-list-pagination"
+                            aria-label="Paginação da lista de clientes"
+                        ></nav>
+                        <p id="clientesListaEmpty" class="clientes-list-empty empty-state hidden" role="status"></p>
+                        <p id="clientesListaErro" class="clientes-list-empty empty-state hidden" role="alert">
+                            Não foi possível carregar clientes.
+                        </p>
+                    </aside>
+
+                    <div class="clientes-panel-form">
+                <div class="content-section clientes-form-panel">
+                    <p
+                        id="clienteFormEmpty"
+                        class="clientes-form-empty empty-state"
+                        role="status"
+                    ></p>
+
+                    <div id="clienteFormWrap" class="clientes-form-wrap hidden">
+                        <header class="clientes-form-header">
+                            <h2 id="clienteFormTitle" class="clientes-panel-title">Cadastro de cliente</h2>
+                            <p id="clienteFormSubtitle" class="clientes-form-subtitle hidden"></p>
+                        </header>
+
+                    <form id="clienteForm" class="form-multicolumn clientes-form">
+                        <input type="hidden" id="clienteEditId" value="" />
+                        <input type="hidden" id="classificacaoCliente" value="SEM_CLASSIFICACAO" />
+
+                        <section class="clientes-form-block" aria-labelledby="clienteSecDadosLegend">
+                            <h3 id="clienteSecDadosLegend" class="clientes-form-block-title">Dados do cliente</h3>
+                            <div class="form-row">
+                                <div class="form-col col-full">
+                                    <label for="nomeCliente">Nome do cliente *</label>
+                                    <input type="text" id="nomeCliente" placeholder="Nome comercial do contratante" required />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="empresa">Razão social / Empresa</label>
+                                    <input type="text" id="empresa" placeholder="Razão social ou nome fantasia" />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label for="cnpj">CNPJ</label>
+                                    <input type="text" id="cnpj" placeholder="00.000.000/0000-00" />
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="clientes-form-block" aria-labelledby="clienteSecComunicacaoLegend">
+                            <h3 id="clienteSecComunicacaoLegend" class="clientes-form-block-title">Comunicação</h3>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="emailCliente">E-mail *</label>
+                                    <input type="email" id="emailCliente" placeholder="email@exemplo.com" required />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label for="telefonePrincipal">Telefone principal *</label>
+                                    <input type="text" id="telefonePrincipal" placeholder="(11) 99999-9999" required />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="telefoneContato">Telefone adicional *</label>
+                                    <input type="text" id="telefoneContato" placeholder="(11) 99999-9999" required />
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="clientes-form-block" aria-labelledby="clienteSecEnderecoLegend">
+                            <h3 id="clienteSecEnderecoLegend" class="clientes-form-block-title">Endereço e localização</h3>
+                            <div class="form-row">
+                                <div class="form-col col-full">
+                                    <label for="endereco">Endereço</label>
+                                    <input type="text" id="endereco" placeholder="Rua, número, complemento" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="cidade">Cidade</label>
+                                    <input type="text" id="cidade" placeholder="São Paulo" />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label for="uf">UF</label>
+                                    <input type="text" id="uf" placeholder="SP" maxlength="2" />
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="clientes-form-block" aria-labelledby="clienteSecStatusLegend">
+                            <h3 id="clienteSecStatusLegend" class="clientes-form-block-title">Status do cadastro</h3>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="statusCliente">Status</label>
+                                    <select id="statusCliente">
+                                        <option value="ATIVO">Ativo</option>
+                                        <option value="INATIVO">Inativo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-full">
+                                    <label for="observacoes">Observações</label>
+                                    <textarea id="observacoes" placeholder="Informações adicionais sobre o cliente" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="clientes-form-block" aria-labelledby="clienteSecArteLegend">
+                            <h3 id="clienteSecArteLegend" class="clientes-form-block-title">Arte do header do Chats</h3>
+                            <p class="clientes-form-arte-hint">Recomendado: imagem horizontal 1200 x 240 px, proporção 5:1.</p>
+                            <div class="clientes-arte-preview-wrap">
+                                <div id="clienteArtePreview" class="carteira-arte-preview hidden" aria-live="polite">
+                                    <img id="clienteArtePreviewImg" alt="Prévia da arte do header do Chats" />
+                                </div>
+                                <p id="clienteArteEmpty" class="carteira-arte-empty">Nenhuma arte cadastrada.</p>
+                            </div>
+                            <input type="file" id="clienteArteFile" class="hidden" accept="image/png,image/jpeg,image/webp" />
+                            <button type="button" id="clienteIncluirArteBtn" class="button button-secondary">Incluir arte</button>
+                            <p id="clienteArteUploadHint" class="clientes-form-arte-upload-hint hidden" role="status"></p>
+                        </section>
+
+                        <section
+                            id="clienteWhatsappMatrizSection"
+                            class="clientes-form-block clientes-whatsapp-matriz-section hidden"
+                            aria-labelledby="clienteSecWhatsappMatrizLegend"
+                        >
+                            <h3 id="clienteSecWhatsappMatrizLegend" class="clientes-form-block-title">
+                                WhatsApps Matriz
+                            </h3>
+                            <p id="clienteWhatsappMatrizHint" class="clientes-whatsapp-matriz-hint"></p>
+                            <p
+                                id="clienteWhatsappMatrizSaveFirst"
+                                class="clientes-whatsapp-matriz-save-first empty-state hidden"
+                                role="status"
+                            ></p>
+                            <p
+                                id="clienteWhatsappMatrizEmpty"
+                                class="clientes-whatsapp-matriz-empty empty-state hidden"
+                                role="status"
+                            ></p>
+                            <div id="clienteWhatsappMatrizList" class="clientes-whatsapp-matriz-list" role="list"></div>
+                            <form id="clienteWhatsappMatrizForm" class="clientes-whatsapp-matriz-form form-multicolumn">
+                                <input type="hidden" id="clienteWhatsappMatrizEditId" value="" />
+                                <div class="form-row">
+                                    <div class="form-col col-half">
+                                        <label for="clienteWhatsappMatrizNome">Nome / identificação</label>
+                                        <input
+                                            type="text"
+                                            id="clienteWhatsappMatrizNome"
+                                            placeholder="Ex.: Suporte 1"
+                                            autocomplete="off"
+                                        />
+                                    </div>
+                                    <div class="form-col col-half">
+                                        <label for="clienteWhatsappMatrizNumero">Número *</label>
+                                        <input
+                                            type="text"
+                                            id="clienteWhatsappMatrizNumero"
+                                            placeholder="(11) 99999-0000"
+                                            autocomplete="off"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col col-half">
+                                        <label for="clienteWhatsappMatrizProvedor">Provedor</label>
+                                        <input type="text" id="clienteWhatsappMatrizProvedor" placeholder="Opcional" />
+                                    </div>
+                                    <div class="form-col col-half">
+                                        <label for="clienteWhatsappMatrizIdExterno">Identificador externo</label>
+                                        <input type="text" id="clienteWhatsappMatrizIdExterno" placeholder="Opcional" />
+                                    </div>
+                                </div>
+                                <div class="form-actions clientes-whatsapp-matriz-form-actions">
+                                    <button type="submit" class="button button-primary" id="clienteWhatsappMatrizSalvarBtn">
+                                        Salvar WhatsApp
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="button button-secondary hidden"
+                                        id="clienteWhatsappMatrizCancelarBtn"
+                                    >
+                                        Cancelar edição
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="alertBoxWhatsappMatriz" class="alert hidden" role="alert"></div>
+                        </section>
+
+                        <div class="form-actions clientes-form-actions">
+                            <button type="button" class="button button-secondary" id="novoClienteBtn">Novo cliente</button>
+                            <button type="submit" class="button button-primary">Salvar cliente</button>
+                            <button type="reset" class="button button-secondary">Limpar formulário</button>
+                        </div>
+                    </form>
+                    </div>
+                    <div id="alertBoxClientes" class="alert hidden" role="alert"></div>
+                </div>
+
+                <div id="clienteContatosSection" class="content-section clientes-contatos-legacy hidden">
+                    <h2 class="section-subtitle">Contatos internos (administrativo)</h2>
+                    <p class="clientes-contatos-legacy-hint">Cadastro legado. O atendimento WhatsApp usa Contato no Chats.</p>
+                    <form id="contatoClienteForm" class="form-multicolumn">
+                        <input type="hidden" id="contatoEditId" value="" />
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="contatoNome">Nome *</label>
+                                <input type="text" id="contatoNome" required />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="contatoCargo">Cargo</label>
+                                <input type="text" id="contatoCargo" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="contatoTelefone">Telefone</label>
+                                <input type="text" id="contatoTelefone" />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="contatoCelular">Celular</label>
+                                <input type="text" id="contatoCelular" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="contatoEmail">E-mail</label>
+                                <input type="email" id="contatoEmail" />
+                            </div>
+                            <div class="form-col col-half">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="contatoPrincipal" />
+                                    Contato principal
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-full">
+                                <label for="contatoObservacoes">Observações</label>
+                                <textarea id="contatoObservacoes" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button button-primary">Salvar contato</button>
+                            <button type="button" class="button button-secondary" id="contatoCancelarBtn">Cancelar</button>
+                        </div>
+                    </form>
+                    <div id="alertBoxContatos" class="alert hidden" role="alert"></div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Telefone/Celular</th>
+                                    <th>E-mail</th>
+                                    <th>Principal</th>
+                                    <th>Ativo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contatosClienteTableBody"></tbody>
+                        </table>
+                        <p id="contatosClienteEmpty" class="empty-state hidden">Nenhum contato cadastrado.</p>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE ABRIR TICKET -->
+            <section id="page-abrir-ticket" class="page">
+                <div class="page-header">
+                    <h1>Abrir Novo Ticket</h1>
+                </div>
+
+                <div class="content-section">
+                    <form id="ticketForm" class="form-standard">
+                        <input type="hidden" id="cliente" name="cliente" />
+                        <input type="hidden" id="telefone" name="telefone" />
+
+                        <div class="form-group">
+                            <label for="clienteBusca">Buscar Cliente *</label>
+                            <input type="text" id="clienteBusca" placeholder="Pesquise por nome, telefone, empresa ou CNPJ" autocomplete="off" />
+                            <div id="clienteResultados" class="cliente-search-results hidden"></div>
+                        </div>
+
+                        <div id="clienteSelecionadoBox" class="selected-client hidden">
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label>Nome</label>
+                                    <input type="text" id="clienteSelecionadoNome" readonly />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label>Telefone</label>
+                                    <input type="text" id="clienteSelecionadoTelefone" readonly />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label>Telefone de contato</label>
+                                    <input type="text" id="clienteSelecionadoTelefoneContato" readonly />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label>E-mail</label>
+                                    <input type="text" id="clienteSelecionadoEmail" readonly />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label>Empresa</label>
+                                    <input type="text" id="clienteSelecionadoEmpresa" readonly />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label>Status</label>
+                                    <input type="text" id="clienteSelecionadoStatus" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="ticketContatoGroup" class="form-group hidden">
+                            <label for="ticketContatoSolicitante">Contato solicitante (opcional)</label>
+                            <select id="ticketContatoSolicitante">
+                                <option value="">Nenhum</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="conexao">Carteira</label>
+                                <input type="text" id="conexao" name="conexao" placeholder="Selecione um cliente" readonly />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="canal">Canal *</label>
+                                <input type="text" id="canal" name="canal" placeholder="Whatsapp, Email, etc" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ticketPrioridade">Prioridade</label>
+                            <select id="ticketPrioridade" name="prioridade">
+                                <option value="BAIXA">Baixa</option>
+                                <option value="MEDIA" selected>Média</option>
+                                <option value="ALTA">Alta</option>
+                                <option value="CRITICA">Crítica</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mensagem">Descrição do Problema *</label>
+                            <textarea id="mensagem" name="mensagem" placeholder="Descreva detalhadamente o problema..." rows="6" required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="button button-primary">Criar Ticket</button>
+                            <button type="reset" class="button button-secondary">Limpar</button>
+                        </div>
+                    </form>
+                    <div id="alertBoxTicket" class="alert hidden" role="alert"></div>
+                </div>
+            </section>
+
+            <!-- PAGE TICKETS -->
+            <section id="page-tickets" class="page">
+                <div class="page-header">
+                    <h1>Meus Tickets</h1>
+                    <button id="refreshButton2" class="button button-secondary">Atualizar</button>
+                </div>
+
+                <div class="content-section ticket-advanced-filters">
+                    <div class="section-header">
+                        <h2>Busca avançada</h2>
+                    </div>
+                    <form id="ticketBuscaForm" class="ticket-filter-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="ticketFiltroTexto">Texto livre</label>
+                                <input type="text" id="ticketFiltroTexto" placeholder="Número, cliente, mensagem, conexão..." />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="ticketFiltroStatus">Status</label>
+                                <select id="ticketFiltroStatus">
+                                    <option value="">Todos</option>
+                                    <option value="ABERTO">ABERTO</option>
+                                    <option value="EM_ATENDIMENTO">EM_ATENDIMENTO</option>
+                                    <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
+                                    <option value="RESOLVIDO">RESOLVIDO</option>
+                                    <option value="CANCELADO">CANCELADO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="ticketFiltroConexao">Conexão</label>
+                                <input type="text" id="ticketFiltroConexao" />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="ticketFiltroCliente">Cliente</label>
+                                <input type="text" id="ticketFiltroCliente" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="ticketFiltroAnalistaId">Analista (ID)</label>
+                                <input type="number" id="ticketFiltroAnalistaId" min="1" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="ticketFiltroDataInicio">Data início</label>
+                                <input type="date" id="ticketFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="ticketFiltroDataFim">Data fim</label>
+                                <input type="date" id="ticketFiltroDataFim" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="ticketFiltroPrioridade">Prioridade</label>
+                                <select id="ticketFiltroPrioridade">
+                                    <option value="">Todas</option>
+                                    <option value="BAIXA">BAIXA</option>
+                                    <option value="MEDIA">MEDIA</option>
+                                    <option value="ALTA">ALTA</option>
+                                    <option value="CRITICA">CRITICA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="ticketBuscaBtn" class="button button-primary">Buscar</button>
+                            <button type="button" id="ticketLimparFiltrosBtn" class="button button-secondary">Limpar filtros</button>
+                        </div>
+                    </form>
+                    <select id="statusFilter2" class="hidden" aria-hidden="true">
+                        <option value="ALL">Todos</option>
+                    </select>
+                </div>
+
+                <div class="content-section">
+                    <div class="table-responsive">
+
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nº</th>
+                                    <th>Cliente</th>
+                                    <th>Telefone</th>
+                                    <th>Canal</th>
+                                    <th>Status</th>
+                                    <th>Prioridade</th>
+                                    <th>SLA 1º Atend.</th>
+                                    <th>SLA Resol.</th>
+                                    <th>Abertura</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketsBody2"></tbody>
+                        </table>
+                        <p id="emptyMessage2" class="empty-state hidden">Nenhum ticket encontrado.</p>
+                        <nav
+                            id="ticketsListaPagination"
+                            class="list-pagination-bar hidden"
+                            data-testid="tickets-list-pagination"
+                            aria-label="Paginação da lista de tickets"
+                        ></nav>
+                    </div>
+                </div>
+                <div id="alertBoxTickets" class="alert hidden" role="alert"></div>
+            </section>
+
+            <!-- PAGE CHATS -->
+            <section id="page-chats" class="page chats-page--idle">
+                <div id="alertBoxChats" class="alert hidden chats-page-alert" role="alert"></div>
+                <div class="chats-layout">
+                    <aside class="chats-sidebar" aria-label="Lista de conversas">
+                        <div class="chats-tabs" role="tablist">
+                            <button type="button" class="chats-tab active" data-chats-tab="chats" role="tab" aria-selected="true">
+                                <span class="chats-tab-label">Atendendo</span>
+                                <span class="chats-tab-count" id="chatsCountChats">0</span>
+                            </button>
+                            <button type="button" class="chats-tab" data-chats-tab="fila" data-testid="chats-tab-fila" role="tab" aria-selected="false">
+                                <span class="chats-tab-label">Fila</span>
+                                <span class="chats-tab-count" id="chatsCountFila">0</span>
+                            </button>
+                            <button type="button" class="chats-tab" data-chats-tab="historico" role="tab" aria-selected="false">
+                                <span class="chats-tab-label">Encerrados</span>
+                                <span class="chats-tab-count" id="chatsCountHistorico">0</span>
+                            </button>
+                        </div>
+                        <div class="chats-search">
+                            <label class="sr-only" for="chatsBusca">Buscar conversas</label>
+                            <input type="search" id="chatsBusca" placeholder="Nome, telefone ou nº do ticket" autocomplete="off" />
+                        </div>
+                        <div class="chats-list-wrap">
+                            <div id="chatsLista" class="chats-list" role="list" data-testid="chats-list"></div>
+                            <p id="chatsListaEmpty" class="chats-list-empty hidden">Nenhum atendimento encontrado.</p>
+                        </div>
+                    </aside>
+                    <main class="chats-main chats-main--empty" aria-label="Conversa">
+                        <header
+                            class="chats-main-header chats-conexao-header chats-conexao-header--wl-ready chats-conexao-header--brand-only"
+                            id="chatsConexaoHeader"
+                        >
+                            <div
+                                class="chats-conexao-header-bg chats-conexao-header--bg-fallback"
+                                aria-hidden="true"
+                            ></div>
+                            <div class="chats-conexao-header-overlay" aria-hidden="true"></div>
+                            <div class="chats-conexao-header-content">
+                                <div class="chats-conexao-brand">
+                                    <span
+                                        class="chats-conexao-logo-slot chats-conexao-logo-slot--empty"
+                                        id="chatsConexaoLogoSlot"
+                                        title="Logo da conexão (em breve)"
+                                        aria-hidden="true"
+                                    ></span>
+                                    <span class="chats-conexao-canal" id="chatsConexaoCanalWrap" aria-hidden="true"></span>
+                                    <div class="chats-conexao-text">
+                                        <h2 class="chats-conexao-title" id="chatsConversaTitulo">Selecione uma conversa</h2>
+                                        <div class="chats-conexao-meta chats-main-header-meta">
+                                            <span
+                                                class="chats-conexao-meta-line chats-header-protocol"
+                                                id="chatsConversaProtocolo"
+                                                >Protocolo —</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="button button-secondary button-small chats-contexto-toggle"
+                                    id="chatsContextoBtn"
+                                    aria-expanded="false"
+                                    aria-controls="chatsPanelAside"
+                                >
+                                    Contexto
+                                </button>
+                            </div>
+                        </header>
+                        <div class="chats-timeline-wrap">
+                            <div
+                                id="chatsPendenciaDecisao"
+                                class="chats-pendencia-decisao hidden"
+                                role="region"
+                                aria-label="Decisão pós-encerramento"
+                            >
+                                <p id="chatsPendenciaText" class="chats-pendencia-text"></p>
+                                <div class="chats-pendencia-actions">
+                                    <button
+                                        type="button"
+                                        class="button button-secondary button-small"
+                                        id="chatsPendenciaVincularBtn"
+                                    >
+                                        Manter no ticket anterior
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="button button-primary button-small"
+                                        id="chatsPendenciaNovoTicketBtn"
+                                    >
+                                        Gerar novo ticket
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="chatsTimeline" class="chats-timeline" data-testid="chats-timeline"></div>
+                            <p id="chatsTimelineEmpty" class="chats-timeline-empty">Selecione uma conversa para visualizar o atendimento.</p>
+                        </div>
+                        <div class="chats-composer" id="chatsComposer">
+                            <p id="chatsComposerHistoricoMsg" class="chats-composer-historico hidden" role="status">
+                                Conversa encerrada. Histórico somente leitura.
+                            </p>
+                            <div class="chats-composer-row" id="chatsComposerRow">
+                                <button
+                                    type="button"
+                                    class="button button-secondary chats-composer-tool chats-composer-icon"
+                                    id="chatsAnexoBtn"
+                                    title="Anexar arquivo (em breve)"
+                                    aria-label="Anexar"
+                                >
+                                    📎
+                                </button>
+                                <div class="chats-composer-main">
+                                    <div class="chats-composer-field">
+                                        <textarea
+                                            id="chatsComposerInput"
+                                            rows="2"
+                                            maxlength="4000"
+                                            placeholder="Digite uma mensagem"
+                                            disabled
+                                            aria-describedby="chatsComposerCount"
+                                        ></textarea>
+                                        <span
+                                            class="chats-composer-count"
+                                            id="chatsComposerCount"
+                                            aria-live="polite"
+                                            >0 / 4000</span
+                                        >
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="button button-primary chats-composer-send"
+                                        id="chatsEnviarBtn"
+                                        disabled
+                                        title="Envio em breve"
+                                    >
+                                        Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                    <div id="chatsPanelBackdrop" class="chats-panel-backdrop" aria-hidden="true"></div>
+                    <aside
+                        id="chatsPanelAside"
+                        class="chats-panel chats-panel--empty"
+                        aria-label="Contexto do cliente e atendimento"
+                    >
+                        <div class="chats-panel-drawer-head">
+                            <span class="chats-panel-drawer-title">Contexto</span>
+                            <button
+                                type="button"
+                                class="chats-panel-drawer-close"
+                                id="chatsPanelCloseBtn"
+                                aria-label="Fechar painel de contexto"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div class="chats-panel-block" id="chatsPanelBlockCliente" data-testid="chats-panel-cliente">
+                            <h3>Cliente</h3>
+                            <dl class="chats-dl" id="chatsPanelClienteDl"></dl>
+                        </div>
+                        <div class="chats-panel-block" id="chatsPanelBlockContato" data-testid="chats-panel-contato">
+                            <h3>Contato</h3>
+                            <dl class="chats-dl" id="chatsPanelContatoDl"></dl>
+                        </div>
+                        <div class="chats-panel-block" id="chatsPanelBlockEntrada" data-testid="chats-panel-entrada">
+                            <h3>Entrada do atendimento</h3>
+                            <dl class="chats-dl" id="chatsPanelEntradaDl"></dl>
+                        </div>
+                        <div class="chats-panel-block" id="chatsPanelBlockChamado" data-testid="chats-panel-chamado">
+                            <h3>Chamado atual</h3>
+                            <dl class="chats-dl" id="chatsPanelChamadoDl"></dl>
+                            <button type="button" class="button button-primary button-small chats-panel-ver-ticket" id="chatsVerTicketBtn" disabled data-testid="chats-primary-action">Detalhes</button>
+                        </div>
+                        <div class="chats-panel-block" id="chatsPanelBlockHistorico">
+                            <h3>Histórico resumido</h3>
+                            <div id="chatsPanelHistorico" class="chats-panel-historico" aria-live="polite"></div>
+                        </div>
+                        <div class="chats-panel-block chats-panel-block--atendimento">
+                            <h3>Atendimento</h3>
+                            <div class="chats-panel-subsection">
+                                <h4 class="chats-panel-subtitle" id="chatsTagsSubtitle">Etiquetas</h4>
+                                <p id="chatsTagsLegacyHint" class="chats-panel-legacy-hint hidden" role="note" data-testid="chats-etiquetas-legacy-hint"></p>
+                                <p id="chatsTagsEmpty" class="chats-panel-placeholder hidden">Nenhuma etiqueta ativa cadastrada.</p>
+                                <div id="chatsTagsLista" class="chats-tags-list" role="listbox" aria-label="Etiquetas ativas" aria-multiselectable="true" data-testid="chats-etiquetas-list"></div>
+                                <button type="button" class="button button-primary button-small chats-panel-salvar-tags" id="chatsSalvarEtiquetasBtn" disabled data-testid="chats-etiquetas-save">Salvar etiquetas</button>
+                                <p id="chatsEtiquetasFeedback" class="chats-panel-feedback hidden" role="status"></p>
+                            </div>
+                            <div class="chats-panel-subsection">
+                                <h4 class="chats-panel-subtitle">Observações internas</h4>
+                                <textarea id="chatsPanelObservacoesText" class="chats-panel-textarea" rows="4" maxlength="2000" placeholder="Observações internas deste atendimento"></textarea>
+                                <button type="button" class="button button-primary button-small chats-panel-salvar-obs" id="chatsSalvarObservacaoBtn" disabled>Salvar observação</button>
+                                <p id="chatsObservacaoFeedback" class="chats-panel-feedback hidden" role="status"></p>
+                            </div>
+                            <div class="chats-panel-subsection">
+                                <h4 class="chats-panel-subtitle">Mídias e documentos</h4>
+                                <p id="chatsAnexosEmpty" class="chats-panel-placeholder">Nenhum arquivo anexado.</p>
+                                <ul id="chatsAnexosLista" class="chats-anexos-list" role="list"></ul>
+                                <input type="file" id="chatsAnexoInput" class="sr-only" accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip" />
+                                <button type="button" class="button button-secondary button-small chats-adicionar-anexo" id="chatsAdicionarAnexoBtn" disabled>Adicionar arquivo</button>
+                                <p id="chatsAnexoHint" class="chats-panel-hint hidden" role="status"></p>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- PAGE RELATÓRIOS -->
+            <section id="page-relatorios" class="page">
+                <div class="page-header">
+                    <h1>Relatórios</h1>
+                </div>
+
+                <div class="content-section ticket-advanced-filters">
+                    <div class="section-header">
+                        <h2>Filtros do relatório</h2>
+                    </div>
+                    <form id="relatorioFiltrosForm" class="ticket-filter-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroDataInicio">Data inicial</label>
+                                <input type="date" id="relatorioFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroDataFim">Data final</label>
+                                <input type="date" id="relatorioFiltroDataFim" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroStatus">Status</label>
+                                <select id="relatorioFiltroStatus">
+                                    <option value="">Todos</option>
+                                    <option value="ABERTO">ABERTO</option>
+                                    <option value="EM_ATENDIMENTO">EM_ATENDIMENTO</option>
+                                    <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
+                                    <option value="RESOLVIDO">RESOLVIDO</option>
+                                    <option value="CANCELADO">CANCELADO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroCliente">Cliente</label>
+                                <select id="relatorioFiltroCliente" aria-label="Cliente">
+                                    <option value="">Todos os clientes</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroAnalistaId">Analista ID</label>
+                                <input type="number" id="relatorioFiltroAnalistaId" min="1" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroGrupo">Grupo</label>
+                                <select id="relatorioFiltroGrupo">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="relatorioFiltroSubgrupo">Subgrupo</label>
+                                <select id="relatorioFiltroSubgrupo" disabled>
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="relatorioFiltroPrioridade">Prioridade</label>
+                                <select id="relatorioFiltroPrioridade">
+                                    <option value="">Todas</option>
+                                    <option value="BAIXA">BAIXA</option>
+                                    <option value="MEDIA">MEDIA</option>
+                                    <option value="ALTA">ALTA</option>
+                                    <option value="CRITICA">CRITICA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="relatorioFiltroSlaPrimeiro">SLA 1º Atendimento</label>
+                                <select id="relatorioFiltroSlaPrimeiro">
+                                    <option value="">Todos</option>
+                                    <option value="NAO_CALCULADO">Não calculado</option>
+                                    <option value="DENTRO_DO_PRAZO">Dentro do prazo</option>
+                                    <option value="PROXIMO_DO_VENCIMENTO">Próximo do vencimento</option>
+                                    <option value="VENCIDO">Vencido</option>
+                                    <option value="CUMPRIDO">Cumprido</option>
+                                    <option value="VIOLADO">Violado</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="relatorioFiltroSlaResolucao">SLA Resolução</label>
+                                <select id="relatorioFiltroSlaResolucao">
+                                    <option value="">Todos</option>
+                                    <option value="NAO_CALCULADO">Não calculado</option>
+                                    <option value="DENTRO_DO_PRAZO">Dentro do prazo</option>
+                                    <option value="PROXIMO_DO_VENCIMENTO">Próximo do vencimento</option>
+                                    <option value="PAUSADO">Pausado</option>
+                                    <option value="VENCIDO">Vencido</option>
+                                    <option value="CUMPRIDO">Cumprido</option>
+                                    <option value="VIOLADO">Violado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="relatorioFiltroEscalonado">Escalonado</label>
+                                <select id="relatorioFiltroEscalonado">
+                                    <option value="">Todos</option>
+                                    <option value="true">Sim</option>
+                                    <option value="false">Não</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="relatorioFiltroMotivo">Motivo (encerramento)</label>
+                                <select id="relatorioFiltroMotivo">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <p class="form-col col-full config-hint" style="margin:0 0 0.5rem;">Pesquisa de satisfação</p>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroStatusPesquisa">Status da pesquisa</label>
+                                <select id="relatorioFiltroStatusPesquisa">
+                                    <option value="">Todos</option>
+                                    <option value="NAO_ENVIADA">Não enviada</option>
+                                    <option value="PENDENTE">Pendente</option>
+                                    <option value="RESPONDIDA">Respondida</option>
+                                    <option value="EXPIRADA">Expirada</option>
+                                    <option value="REGISTRADA_MANUALMENTE">Registrada manualmente</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroNotaAvaliacao">Nota da avaliação</label>
+                                <select id="relatorioFiltroNotaAvaliacao">
+                                    <option value="">Todas</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="relatorioFiltroEnvioStatus">Status do envio</label>
+                                <select id="relatorioFiltroEnvioStatus">
+                                    <option value="">Todos</option>
+                                    <option value="SIMULADO">Simulado</option>
+                                    <option value="FALHA">Falha</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="relatorioGerarBtn" class="button button-primary">Gerar relatório</button>
+                            <button type="button" id="relatorioExportarCsvBtn" class="button button-secondary">Exportar CSV</button>
+                            <button type="button" id="relatorioLimparBtn" class="button button-secondary">Limpar filtros</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="content-section" id="relatorioSatisfacaoSection">
+                    <div class="section-header">
+                        <h2>Satisfação</h2>
+                        <p class="section-subtitle">Indicadores das avaliações registradas nos tickets (período dos filtros acima).</p>
+                    </div>
+                    <div class="form-row satisfacao-filtros-row">
+                        <div class="form-col col-third">
+                            <label for="satisfacaoFiltroNota">Nota</label>
+                            <select id="satisfacaoFiltroNota">
+                                <option value="">Todas</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-col col-third">
+                            <label for="satisfacaoFiltroStatus">Status do ticket</label>
+                            <select id="satisfacaoFiltroStatus">
+                                <option value="">Todos</option>
+                                <option value="ABERTO">ABERTO</option>
+                                <option value="EM_ATENDIMENTO">EM_ATENDIMENTO</option>
+                                <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
+                                <option value="RESOLVIDO">RESOLVIDO</option>
+                                <option value="CANCELADO">CANCELADO</option>
+                            </select>
+                        </div>
+                        <div class="form-col col-third">
+                            <p class="form-hint">Cliente: use o filtro <strong>Cliente</strong> acima (busca e CSV de satisfação).</p>
+                        </div>
+                    </div>
+                    <div class="form-actions satisfacao-export-actions">
+                        <button type="button" id="satisfacaoAtualizarBtn" class="button button-secondary">Atualizar indicadores</button>
+                        <button type="button" id="satisfacaoExportarCsvBtn" class="button button-secondary">Exportar CSV</button>
+                    </div>
+                    <p id="satisfacaoResumoVazio" class="empty-state hidden">Nenhuma avaliação encontrada com os filtros selecionados.</p>
+                    <div id="satisfacaoResumoConteudo" class="hidden">
+                        <div class="cards-grid relatorio-satisfacao-grid">
+                            <div class="card">
+                                <div class="card-icon">⭐</div>
+                                <div class="card-content">
+                                    <div class="card-label">Média geral</div>
+                                    <div class="card-value" id="satisfacaoResumoMedia">—</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon">📝</div>
+                                <div class="card-content">
+                                    <div class="card-label">Total de avaliações</div>
+                                    <div class="card-value" id="satisfacaoResumoTotal">0</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon">👍</div>
+                                <div class="card-content">
+                                    <div class="card-label">Positivas (4–5)</div>
+                                    <div class="card-value" id="satisfacaoResumoPositivas">0%</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon">👎</div>
+                                <div class="card-content">
+                                    <div class="card-label">Negativas (1–2)</div>
+                                    <div class="card-value" id="satisfacaoResumoNegativas">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive satisfacao-distribuicao-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nota</th>
+                                        <th>Quantidade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="satisfacaoResumoDistribuicaoBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="satisfacao-evolucao-block">
+                        <h3 class="dashboard-subsection-title">Evolução da satisfação</h3>
+                        <p class="section-subtitle satisfacao-evolucao-hint">Média de notas por dia, conforme filtros aplicados.</p>
+                        <p id="satisfacaoEvolucaoVazio" class="empty-state hidden">Nenhum dado de evolução para os filtros selecionados.</p>
+                        <div id="satisfacaoEvolucaoConteudo" class="table-responsive hidden satisfacao-evolucao-wrap">
+                            <table class="data-table satisfacao-evolucao-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Avaliações</th>
+                                        <th>Média</th>
+                                        <th>Positivas (4–5)</th>
+                                        <th>Negativas (1–2)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="satisfacaoEvolucaoBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="alertBoxSatisfacaoResumo" class="alert hidden" role="alert"></div>
+                </div>
+
+                <div class="cards-grid relatorio-resumo-grid">
+                    <div class="card">
+                        <div class="card-icon">📊</div>
+                        <div class="card-content">
+                            <div class="card-label">Total encontrado</div>
+                            <div class="card-value" id="relatorioTotal">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔴</div>
+                        <div class="card-content">
+                            <div class="card-label">Abertos</div>
+                            <div class="card-value" id="relatorioAbertos">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚙️</div>
+                        <div class="card-content">
+                            <div class="card-label">Em atendimento</div>
+                            <div class="card-value" id="relatorioEmAtendimento">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⏳</div>
+                        <div class="card-content">
+                            <div class="card-label">Aguardando cliente</div>
+                            <div class="card-value" id="relatorioAguardandoCliente">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">✅</div>
+                        <div class="card-content">
+                            <div class="card-label">Resolvidos</div>
+                            <div class="card-value" id="relatorioResolvidos">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⛔</div>
+                        <div class="card-content">
+                            <div class="card-label">Cancelados</div>
+                            <div class="card-value" id="relatorioCancelados">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🚨</div>
+                        <div class="card-content">
+                            <div class="card-label">Total Crítica</div>
+                            <div class="card-value" id="relatorioCritica">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚠️</div>
+                        <div class="card-content">
+                            <div class="card-label">Total Alta</div>
+                            <div class="card-value" id="relatorioAlta">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📋</div>
+                        <div class="card-content">
+                            <div class="card-label">Total Média</div>
+                            <div class="card-value" id="relatorioMedia">0</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📎</div>
+                        <div class="card-content">
+                            <div class="card-label">Total Baixa</div>
+                            <div class="card-value" id="relatorioBaixa">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Tickets do relatório</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table relatorio-tickets-table">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Cliente</th>
+                                    <th>Status</th>
+                                    <th>Prioridade</th>
+                                    <th>Canal</th>
+                                    <th>Conexão/Carteira</th>
+                                    <th>Analista</th>
+                                    <th>Grupo</th>
+                                    <th>Subgrupo</th>
+                                    <th>Abertura</th>
+                                    <th>Encerramento</th>
+                                    <th>SLA 1º Atend.</th>
+                                    <th>SLA Resolução</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatorioTicketsBody"></tbody>
+                        </table>
+                        <p id="relatorioEmptyMessage" class="empty-state hidden">Nenhum ticket encontrado para os filtros informados.</p>
+                        <p id="relatorioInitialMessage" class="empty-state">Informe os filtros desejados e clique em Gerar relatório.</p>
+                    </div>
+                </div>
+                <div id="alertBoxRelatorios" class="alert hidden" role="alert"></div>
+            </section>
+
+            <!-- PAGE INDICADORES -->
+            <section id="page-indicadores" class="page">
+                <div class="page-header">
+                    <h1 id="indicadoresPageTitle">Chamados</h1>
+                    <p class="section-subtitle" id="indicadoresPageSubtitle">Painéis gerenciais de chamados por período de abertura.</p>
+                </div>
+
+                <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-visao-geral">
+                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                </div>
+
+                <div class="indicadores-subpanel active" data-indicadores-subpanel="indicadores-chamados">
+                <div class="indicadores-filtros-panel">
+                    <div class="form-row">
+                        <div class="form-col col-third">
+                            <label for="indicadoresFiltroDataInicio">Data inicial</label>
+                            <input type="date" id="indicadoresFiltroDataInicio" />
+                        </div>
+                        <div class="form-col col-third">
+                            <label for="indicadoresFiltroDataFim">Data final</label>
+                            <input type="date" id="indicadoresFiltroDataFim" />
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="indicadoresAtualizarBtn" class="button button-primary">Atualizar indicadores</button>
+                    </div>
+                </div>
+
+                <p id="indicadoresVazio" class="empty-state hidden">Nenhum chamado encontrado no período selecionado.</p>
+
+                <div id="indicadoresConteudo" class="hidden">
+                    <div class="indicadores-cards-grid">
+                        <div class="indicadores-card-metric">
+                            <div class="card-label">Total de chamados</div>
+                            <div class="card-value" id="indicadoresTotalChamados">0</div>
+                        </div>
+                        <div class="indicadores-card-metric">
+                            <div class="card-label">Total de clientes</div>
+                            <div class="card-value" id="indicadoresTotalClientes">0</div>
+                        </div>
+                    </div>
+
+                    <div class="indicadores-bloco indicadores-etiquetas-placeholder">
+                        <h3>Etiquetas</h3>
+                        <p class="indicadores-placeholder-text">
+                            Indicadores por etiquetas serão habilitados após implantação das etiquetas de atendimento.
+                        </p>
+                    </div>
+
+                    <div class="indicadores-bloco">
+                        <h3>Chamados por atendente</h3>
+                        <div class="table-responsive">
+                            <table class="data-table indicadores-ranking-table">
+                                <thead>
+                                    <tr>
+                                        <th>Atendente</th>
+                                        <th>Chamados</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="indicadoresRankingAtendenteBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="indicadores-grid-dupla">
+                        <div class="indicadores-bloco">
+                            <h3>Top grupos</h3>
+                            <div class="table-responsive">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Grupo</th>
+                                            <th>Chamados</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicadoresTopGruposBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="indicadores-bloco">
+                            <h3>Top subgrupos</h3>
+                            <div class="table-responsive">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Subgrupo</th>
+                                            <th>Chamados</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicadoresTopSubgruposBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="indicadores-grid-dupla">
+                        <div class="indicadores-bloco">
+                            <h3>Por prioridade</h3>
+                            <div class="table-responsive">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Prioridade</th>
+                                            <th>Chamados</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicadoresPrioridadeBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="indicadores-bloco">
+                            <h3>Por status</h3>
+                            <div class="table-responsive">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Chamados</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicadoresStatusBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-satisfacao">
+                    <div class="indicadores-filtros-panel">
+                        <div class="form-row indicadores-sat-filtros-row">
+                            <div class="form-col col-third">
+                                <label for="indicSatFiltroDataInicio">Data inicial</label>
+                                <input type="date" id="indicSatFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicSatFiltroDataFim">Data final</label>
+                                <input type="date" id="indicSatFiltroDataFim" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicSatFiltroNota">Nota</label>
+                                <select id="indicSatFiltroNota">
+                                    <option value="">Todas</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="indicSatFiltroStatus">Status do ticket</label>
+                                <select id="indicSatFiltroStatus">
+                                    <option value="">Todos</option>
+                                    <option value="ABERTO">ABERTO</option>
+                                    <option value="EM_ATENDIMENTO">EM_ATENDIMENTO</option>
+                                    <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
+                                    <option value="RESOLVIDO">RESOLVIDO</option>
+                                    <option value="CANCELADO">CANCELADO</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="indicSatFiltroCliente">Cliente</label>
+                                <input type="text" id="indicSatFiltroCliente" placeholder="Nome do cliente" />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="indicSatAtualizarBtn" class="button button-primary">Atualizar indicadores</button>
+                        </div>
+                    </div>
+
+                    <p id="indicSatResumoVazio" class="empty-state hidden">Nenhuma avaliação encontrada com os filtros selecionados.</p>
+
+                    <div id="indicSatResumoConteudo" class="hidden">
+                        <div class="indicadores-cards-grid indicadores-sat-cards">
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Média geral</div>
+                                <div class="card-value" id="indicSatResumoMedia">—</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Total de avaliações</div>
+                                <div class="card-value" id="indicSatResumoTotal">0</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Positivas (4–5)</div>
+                                <div class="card-value" id="indicSatResumoPositivas">0%</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Negativas (1–2)</div>
+                                <div class="card-value" id="indicSatResumoNegativas">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="indicadores-bloco">
+                            <h3>Distribuição por nota</h3>
+                            <div class="table-responsive">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nota</th>
+                                            <th>Quantidade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicSatDistribuicaoBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="indicadores-bloco indicadores-sat-evolucao">
+                            <h3>Evolução da satisfação</h3>
+                            <p class="section-subtitle indicadores-sat-evolucao-hint">Média de notas por dia, conforme filtros aplicados.</p>
+                            <p id="indicSatEvolucaoVazio" class="empty-state hidden">Nenhum dado de evolução para os filtros selecionados.</p>
+                            <div id="indicSatEvolucaoConteudo" class="table-responsive hidden">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Avaliações</th>
+                                            <th>Média</th>
+                                            <th>Positivas (4–5)</th>
+                                            <th>Negativas (1–2)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicSatEvolucaoBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-encerramento-satisfacao">
+                    <div class="indicadores-filtros-panel">
+                        <div class="form-row indicadores-sat-filtros-row">
+                            <div class="form-col col-third">
+                                <label for="indicEncDataInicio">Data início</label>
+                                <input type="date" id="indicEncDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicEncDataFim">Data fim</label>
+                                <input type="date" id="indicEncDataFim" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicEncFiltroCliente">Cliente</label>
+                                <select id="indicEncFiltroCliente">
+                                    <option value="">Todos os clientes</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicEncFiltroMotivo">Motivo</label>
+                                <select id="indicEncFiltroMotivo">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicEncFiltroStatusPesquisa">Status da pesquisa</label>
+                                <select id="indicEncFiltroStatusPesquisa">
+                                    <option value="">Todos</option>
+                                    <option value="NAO_ENVIADA">Não enviada</option>
+                                    <option value="PENDENTE">Pendente</option>
+                                    <option value="RESPONDIDA">Respondida</option>
+                                    <option value="EXPIRADA">Expirada</option>
+                                    <option value="REGISTRADA_MANUALMENTE">Registrada manualmente</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicEncFiltroNota">Nota</label>
+                                <select id="indicEncFiltroNota">
+                                    <option value="">Todas</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third indicadores-filtro-acao">
+                                <label class="label-invisible">Atualizar</label>
+                                <button type="button" class="btn btn-primary" id="indicEncAtualizarBtn">Atualizar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="indicEncVazio" class="empty-state hidden">Nenhum dado no período com os filtros aplicados.</p>
+                    <div id="indicEncConteudo" class="hidden">
+                        <h2 class="section-title">Encerramento e satisfação</h2>
+                        <div class="indicadores-bloco">
+                            <h3 class="indicadores-bloco-titulo">Top motivos de encerramento</h3>
+                            <div class="table-wrap">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Motivo</th>
+                                            <th>Categoria</th>
+                                            <th>Tickets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicEncTopMotivosBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="indicadores-cards-grid indicadores-sat-cards">
+                            <div class="indicadores-card-metric">
+                                <span class="indicadores-card-label">Total pesquisas</span>
+                                <span class="indicadores-card-value" id="indicEncTotalPesquisas">0</span>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <span class="indicadores-card-label">Média (notas válidas)</span>
+                                <span class="indicadores-card-value" id="indicEncMediaNota">—</span>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <span class="indicadores-card-label">Pendentes</span>
+                                <span class="indicadores-card-value" id="indicEncPendentes">0</span>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <span class="indicadores-card-label">Respondidas</span>
+                                <span class="indicadores-card-value" id="indicEncRespondidas">0</span>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <span class="indicadores-card-label">Expiradas</span>
+                                <span class="indicadores-card-value" id="indicEncExpiradas">0</span>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <span class="indicadores-card-label">Não enviadas</span>
+                                <span class="indicadores-card-value" id="indicEncNaoEnviadas">0</span>
+                            </div>
+                        </div>
+                        <div class="indicadores-bloco">
+                            <h3 class="indicadores-bloco-titulo">Distribuição de notas (respondidas / manual)</h3>
+                            <div class="table-wrap">
+                                <table class="data-table indicadores-ranking-table">
+                                    <thead><tr><th>Nota</th><th>Quantidade</th></tr></thead>
+                                    <tbody id="indicEncNotasBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="indicadores-bloco">
+                            <h3 class="indicadores-bloco-titulo">Envio do link (pendentes / não enviadas)</h3>
+                            <div class="indicadores-cards-grid indicadores-sat-cards">
+                                <div class="indicadores-card-metric">
+                                    <span class="indicadores-card-label">Simuladas</span>
+                                    <span class="indicadores-card-value" id="indicEncEnvioSimuladas">0</span>
+                                </div>
+                                <div class="indicadores-card-metric">
+                                    <span class="indicadores-card-label">Falhas</span>
+                                    <span class="indicadores-card-value" id="indicEncEnvioFalhas">0</span>
+                                </div>
+                                <div class="indicadores-card-metric">
+                                    <span class="indicadores-card-label">Sem tentativa</span>
+                                    <span class="indicadores-card-value" id="indicEncEnvioSemTentativa">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-clientes">
+                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                </div>
+                <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-atendentes">
+                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                </div>
+                <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-sla">
+                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                </div>
+
+                <div id="alertBoxIndicadores" class="alert hidden" role="alert"></div>
+            </section>
+
+            <!-- PAGE AUDITORIA -->
+            <section id="page-auditoria" class="page">
+                <div class="page-header">
+                    <h1>Auditoria</h1>
+                    <p class="section-subtitle">Consulta de eventos críticos registrados no sistema (somente leitura).</p>
+                </div>
+
+                <div class="content-section ticket-advanced-filters">
+                    <div class="section-header">
+                        <h2>Filtros</h2>
+                    </div>
+                    <form id="auditoriaFiltrosForm" class="ticket-filter-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroDataInicio">Data inicial</label>
+                                <input type="date" id="auditoriaFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroDataFim">Data final</label>
+                                <input type="date" id="auditoriaFiltroDataFim" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroAnalistaId">Analista ID</label>
+                                <input type="number" id="auditoriaFiltroAnalistaId" min="1" placeholder="Opcional" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroAcao">Ação</label>
+                                <select id="auditoriaFiltroAcao">
+                                    <option value="">Todas</option>
+                                    <option value="LOGIN_SUCESSO">LOGIN_SUCESSO</option>
+                                    <option value="LOGOUT">LOGOUT</option>
+                                    <option value="TICKET_CRIAR_UI">TICKET_CRIAR_UI</option>
+                                    <option value="TICKET_STATUS">TICKET_STATUS</option>
+                                    <option value="TICKET_ENCERRAR">TICKET_ENCERRAR</option>
+                                    <option value="TICKET_REABRIR">TICKET_REABRIR</option>
+                                    <option value="TICKET_ESCALONAR">TICKET_ESCALONAR</option>
+                                    <option value="TICKET_REMOVER_ESCALONAMENTO">TICKET_REMOVER_ESCALONAMENTO</option>
+                                    <option value="ANALISTA_PERFIL_ACESSO">ANALISTA_PERFIL_ACESSO</option>
+                                    <option value="ANALISTA_CRIAR">ANALISTA_CRIAR</option>
+                                    <option value="ANALISTA_EDITAR">ANALISTA_EDITAR</option>
+                                    <option value="CONFIG_HORARIO_UTIL">CONFIG_HORARIO_UTIL</option>
+                                    <option value="CONFIG_FERIADO">CONFIG_FERIADO</option>
+                                    <option value="CONFIG_SLA_META">CONFIG_SLA_META</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroEntidade">Entidade</label>
+                                <input type="text" id="auditoriaFiltroEntidade" placeholder="TICKET, ANALISTA..." />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroEntidadeId">Entidade ID</label>
+                                <input type="text" id="auditoriaFiltroEntidadeId" placeholder="Ex.: TK-000001" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="auditoriaFiltroLimite">Registros por página</label>
+                                <select id="auditoriaFiltroLimite">
+                                    <option value="25">25</option>
+                                    <option value="50" selected>50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button button-primary">Buscar</button>
+                            <button type="button" id="auditoriaExportarCsvBtn" class="button button-secondary">Exportar CSV</button>
+                            <button type="button" id="auditoriaLimparFiltrosBtn" class="button button-secondary">Limpar filtros</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="content-section ticket-advanced-filters">
+                    <div class="section-header">
+                        <h2>Retenção de auditoria</h2>
+                        <p class="section-subtitle">Limpeza manual de eventos antigos (exclusão exige confirmação; proteção dos últimos 30 dias).</p>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col col-third">
+                            <label for="auditoriaRetencaoAntesDe">Data limite (antes de)</label>
+                            <input type="date" id="auditoriaRetencaoAntesDe" />
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="auditoriaRetencaoContarBtn" class="button button-secondary">Contar eventos antigos</button>
+                        <button type="button" id="auditoriaRetencaoExcluirBtn" class="button button-secondary">Excluir eventos antigos</button>
+                    </div>
+                    <p id="auditoriaRetencaoResultado" class="section-subtitle">—</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header auditoria-list-header">
+                        <h2>Eventos</h2>
+                        <p id="auditoriaPaginacaoInfo" class="section-subtitle">—</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table auditoria-table">
+                            <thead>
+                                <tr>
+                                    <th>Data/hora</th>
+                                    <th>Analista</th>
+                                    <th>Perfil</th>
+                                    <th>Ação</th>
+                                    <th>Entidade</th>
+                                    <th>ID</th>
+                                    <th>Descrição</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditoriaTableBody"></tbody>
+                        </table>
+                        <p id="auditoriaEmptyMessage" class="empty-state hidden">Nenhum evento de auditoria encontrado para os filtros informados.</p>
+                    </div>
+                    <div class="auditoria-paginacao">
+                        <button type="button" id="auditoriaPaginaAnteriorBtn" class="button button-secondary button-small">Anterior</button>
+                        <button type="button" id="auditoriaPaginaProximaBtn" class="button button-secondary button-small">Próxima</button>
+                    </div>
+                </div>
+                <div id="alertBoxAuditoria" class="alert hidden" role="alert"></div>
+            </section>
+
+            <!-- PAGE CONFIGURAÇÕES -->
+            <section id="page-configuracoes" class="page">
+                <div class="page-header">
+                    <h1>Configurações</h1>
+                </div>
+                <div class="content-section config-admin-only">
+                    <div class="section-header">
+                        <h2>Horário útil do suporte</h2>
+                    </div>
+                    <form id="horarioUtilForm" class="form-multicolumn">
+                        <div class="form-row">
+                            <div class="form-col col-full">
+                                <label for="horarioUtilNome">Nome da configuração</label>
+                                <input type="text" id="horarioUtilNome" placeholder="Horário Comercial" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="horarioUtilHoraInicio">Hora inicial</label>
+                                <input type="time" id="horarioUtilHoraInicio" required />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="horarioUtilHoraFim">Hora final</label>
+                                <input type="time" id="horarioUtilHoraFim" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-full">
+                                <span class="field-label">Dias da semana</span>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" id="horarioUtilSegunda" /> Segunda</label>
+                                    <label><input type="checkbox" id="horarioUtilTerca" /> Terça</label>
+                                    <label><input type="checkbox" id="horarioUtilQuarta" /> Quarta</label>
+                                    <label><input type="checkbox" id="horarioUtilQuinta" /> Quinta</label>
+                                    <label><input type="checkbox" id="horarioUtilSexta" /> Sexta</label>
+                                    <label><input type="checkbox" id="horarioUtilSabado" /> Sábado</label>
+                                    <label><input type="checkbox" id="horarioUtilDomingo" /> Domingo</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="horarioUtilSalvarBtn" class="button button-primary">Salvar</button>
+                            <button type="button" id="horarioUtilRecarregarBtn" class="button button-secondary">Recarregar configuração</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="content-section config-admin-only">
+                    <div class="section-header">
+                        <h2>Feriados</h2>
+                    </div>
+                    <p class="config-hint">Usado futuramente no cálculo de SLA. Feriados ativos não contarão como horário útil.</p>
+                    <p class="config-hint config-hint-rule">Fuso: America/Sao_Paulo. Horário útil: segunda a sexta, 08:00 às 18:00. Sábados, domingos e feriados ativos não contam.</p>
+
+                    <form id="feriadoForm" class="form-multicolumn">
+                        <input type="hidden" id="feriadoEditId" value="" />
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="feriadoData">Data</label>
+                                <input type="date" id="feriadoData" required />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="feriadoDescricao">Descrição</label>
+                                <input type="text" id="feriadoDescricao" placeholder="Feriado" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="feriadoTipo">Tipo</label>
+                                <select id="feriadoTipo">
+                                    <option value="FIXO">FIXO</option>
+                                    <option value="MOVEL">MOVEL</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="feriadoEscopo">Escopo</label>
+                                <select id="feriadoEscopo">
+                                    <option value="NACIONAL">NACIONAL</option>
+                                    <option value="ESTADUAL_SP">ESTADUAL_SP</option>
+                                    <option value="MUNICIPAL_SAO_PAULO">MUNICIPAL_SAO_PAULO</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
+                                <label class="checkbox-inline"><input type="checkbox" id="feriadoAtivo" checked /> Ativo</label>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="feriadoSalvarBtn" class="button button-primary">Salvar</button>
+                            <button type="button" id="feriadoLimparBtn" class="button button-secondary">Novo / Limpar</button>
+                            <button type="button" id="feriadoSeedBtn" class="button button-secondary">Carregar feriados 2026 São Paulo</button>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive" style="margin-top: 20px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Tipo</th>
+                                    <th>Escopo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feriadosTableBody"></tbody>
+                        </table>
+                        <p id="feriadosEmptyMessage" class="empty-state hidden">Nenhum feriado cadastrado.</p>
+                    </div>
+                </div>
+
+
+                <div class="content-section config-admin-only">
+                    <div class="section-header">
+                        <h2>Metas de SLA por prioridade</h2>
+                    </div>
+                    <p class="config-hint">Os prazos são definidos em minutos úteis e serão usados futuramente no cálculo de SLA.</p>
+                    <p class="config-hint config-hint-rule">Calendário base: America/Sao_Paulo, segunda a sexta, 08:00 às 18:00, ignorando sábados, domingos e feriados ativos.</p>
+                    <p class="config-hint">Ticket sem prioridade definida será tratado como MEDIA no cálculo futuro de SLA.</p>
+
+                    <div class="form-actions" style="margin-bottom: 12px;">
+                        <button type="button" id="slaMetasSeedBtn" class="button button-secondary">Carregar metas padrão</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Prioridade</th>
+                                    <th>Primeiro atendimento (min úteis)</th>
+                                    <th>Resolução (min úteis)</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slaMetasTableBody"></tbody>
+                        </table>
+                        <p id="slaMetasEmptyMessage" class="empty-state hidden">Nenhuma meta de SLA cadastrada.</p>
+                    </div>
+                </div>
+
+                <div id="configConexoesRevendaSection" class="content-section config-admin-only config-conexoes-revenda-section">
+                    <div class="section-header">
+                        <h2>Conexões / Revendas</h2>
+                    </div>
+                    <p class="config-hint">Cadastro técnico em <strong>Carteira</strong> (nome exibido como conexão nos tickets). A arte do header do Chats é cadastrada na tela <strong>Clientes</strong>.</p>
+
+                    <form id="carteiraForm" class="form-multicolumn">
+                        <input type="hidden" id="carteiraEditId" value="" />
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="carteiraNome">Nome da conexão / revenda <span class="required">*</span></label>
+                                <input type="text" id="carteiraNome" maxlength="100" placeholder="Ex.: Fênix, Revenda Norte" required />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="carteiraSalvarBtn" class="button button-primary">Salvar</button>
+                            <button type="button" id="carteiraLimparBtn" class="button button-secondary">Novo / Limpar</button>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive" style="margin-top: 20px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="carteirasTableBody"></tbody>
+                        </table>
+                        <p id="carteirasEmptyMessage" class="empty-state hidden">Nenhuma conexão/revenda cadastrada.</p>
+                    </div>
+                </div>
+
+                <div id="configMotivosSection" class="content-section config-admin-only">
+                    <div class="section-header">
+                        <h2>Motivos de encerramento</h2>
+                    </div>
+                    <p class="config-hint">
+                        Terceiro nível da classificação: Categoria → Subcategoria → Motivo. Motivos inativos não
+                        aparecem no encerramento.
+                    </p>
+                    <form id="motivoForm" class="form-multicolumn">
+                        <input type="hidden" id="motivoEditId" value="" />
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="motivoSubgrupoSelect">Subcategoria <span class="required">*</span></label>
+                                <select id="motivoSubgrupoSelect" required>
+                                    <option value="">Selecione</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="motivoNome">Nome <span class="required">*</span></label>
+                                <input type="text" id="motivoNome" maxlength="100" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="motivoDescricao">Descrição</label>
+                                <input type="text" id="motivoDescricao" maxlength="255" />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="motivoSalvarBtn" class="button button-primary">Salvar</button>
+                            <button type="button" id="motivoLimparBtn" class="button button-secondary">Novo / Limpar</button>
+                        </div>
+                    </form>
+                    <div class="form-row" style="margin-top: 16px">
+                        <div class="form-col col-half">
+                            <label for="motivoFiltroSubgrupo">Filtrar lista por subcategoria</label>
+                            <select id="motivoFiltroSubgrupo">
+                                <option value="">Todas (ativas)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top: 12px">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Subcategoria</th>
+                                    <th>Nome</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="motivosTableBody"></tbody>
+                        </table>
+                        <p id="motivosEmptyMessage" class="empty-state hidden">Nenhum motivo cadastrado.</p>
+                    </div>
+                </div>
+
+                <div id="configEtiquetasSection" class="content-section config-etiquetas-section">
+                    <div class="section-header">
+                        <h2>Etiquetas</h2>
+                    </div>
+                    <p class="config-hint">Etiquetas flexíveis usadas no Chats para classificar atendimentos. Indicadores por etiqueta serão habilitados em sprint futura.</p>
+
+                    <form id="etiquetaForm" class="form-multicolumn">
+                        <input type="hidden" id="etiquetaEditId" value="" />
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="etiquetaNome">Nome <span class="required">*</span></label>
+                                <input type="text" id="etiquetaNome" maxlength="80" placeholder="Ex.: VIP, Urgente comercial" required />
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="etiquetaCor">Cor (opcional)</label>
+                                <div class="etiqueta-cor-input-row">
+                                    <input type="color" id="etiquetaCorPicker" value="#2563eb" title="Seletor de cor" />
+                                    <input type="text" id="etiquetaCor" maxlength="20" placeholder="#2563eb" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-col col-full">
+                                <label for="etiquetaDescricao">Descrição (opcional)</label>
+                                <input type="text" id="etiquetaDescricao" maxlength="255" placeholder="Descrição interna da etiqueta" />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="etiquetaSalvarBtn" class="button button-primary">Salvar</button>
+                            <button type="button" id="etiquetaLimparBtn" class="button button-secondary">Novo / Limpar</button>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive" style="margin-top: 20px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Cor</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="etiquetasTableBody"></tbody>
+                        </table>
+                        <p id="etiquetasEmptyMessage" class="empty-state hidden">Nenhuma etiqueta cadastrada.</p>
+                    </div>
+                </div>
+
+                <div id="alertBoxConfiguracoes" class="alert hidden" role="alert"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- MODAIS (globais; fora do appScreen)                                    -->
+    <!-- ====================================================================== -->
+
+    <!-- MODAL DETALHES DO TICKET -->
+    <div id="modalDetalhes" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="detailTitle">Detalhes do Ticket</h2>
+                <button id="fecharModal" aria-label="Fechar">✕</button>
+            </header>
+            <div class="modal-body">
+                <section>
+                    <h3>Dados do Ticket</h3>
+                    <dl>
+                        <dt>Número</dt><dd id="detailNumero"></dd>
+                        <dt>Status</dt><dd id="detailStatus"></dd>
+                        <dt>Prioridade</dt><dd id="detailPrioridade"></dd>
+                        <dt>Canal</dt><dd id="detailCanal"></dd>
+                        <dt>Conexão</dt><dd id="detailConexao"></dd>
+                        <dt>Carteira</dt><dd id="detailCarteira"></dd>
+                        <dt>Analista Responsável</dt><dd id="detailAnalista"></dd>
+                        <dt>Mensagem Inicial</dt><dd id="detailMensagem"></dd>
+                        <dt>Data de Abertura</dt><dd id="detailAbertura"></dd>
+                        <dt>Data Primeiro Atendimento</dt><dd id="detailPrimeiro"></dd>
+                        <dt>Vencimento 1º atendimento</dt><dd id="detailSlaVencimento"></dd>
+                        <dt>SLA 1º atendimento</dt><dd id="detailSlaStatus"></dd>
+                        <dt>Vencimento resolução</dt><dd id="detailSlaResolucaoVencimento"></dd>
+                        <dt>SLA resolução</dt><dd id="detailSlaResolucaoStatus"></dd>
+                        <dt>SLA pausado</dt><dd id="detailSlaPausado"></dd>
+                        <dt>Pausa atual desde</dt><dd id="detailSlaPausaInicio"></dd>
+                        <dt>Tempo útil pausado (resolução)</dt><dd id="detailSlaMinutosPausados"></dd>
+                        <dt>Escalonado</dt><dd id="detailEscalonado"></dd>
+                        <dt>Escalonado em</dt><dd id="detailEscalonadoEm"></dd>
+                        <dt>Observação do escalonamento</dt><dd id="detailEscalonamentoObservacao"></dd>
+                        <dt>Data de Encerramento</dt><dd id="detailEncerramento"></dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h3>Dados do Cliente</h3>
+                    <dl>
+                        <dt>Nome do Cliente</dt><dd id="detailCliente"></dd>
+                        <dt>Telefone</dt><dd id="detailTelefone"></dd>
+                        <dt>Telefone de Contato</dt><dd id="detailTelefoneContato"></dd>
+                        <dt>E-mail</dt><dd id="detailEmail"></dd>
+                        <dt>Empresa</dt><dd id="detailEmpresa"></dd>
+                        <dt>CNPJ</dt><dd id="detailCnpj"></dd>
+                        <dt>Cidade</dt><dd id="detailCidade"></dd>
+                        <dt>UF</dt><dd id="detailUf"></dd>
+                        <dt>Contato solicitante</dt><dd id="detailContatoSolicitante"></dd>
+                        <dt>Telefone/celular do contato</dt><dd id="detailContatoSolicitanteTelefone"></dd>
+                        <dt>E-mail do contato</dt><dd id="detailContatoSolicitanteEmail"></dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h3>Dados de Encerramento</h3>
+                    <dl>
+                        <dt>Categoria</dt><dd id="detailGrupoCategoria"></dd>
+                        <dt>Subcategoria</dt><dd id="detailSubgrupoCategoria"></dd>
+                        <dt>Motivo</dt><dd id="detailMotivoEncerramento"></dd>
+                        <dt>Comentário de Encerramento</dt><dd id="detailComentarioEncerramento"></dd>
+                        <dt>Data de Encerramento</dt><dd id="detailEncerramentoResumo"></dd>
+                    </dl>
+                </section>
+
+                <section id="detailSatisfacaoSection">
+                    <h3>Satisfação</h3>
+                    <div id="detailSatisfacaoExibicao" class="ticket-satisfacao-exibicao hidden">
+                        <p><strong>Status:</strong> <span id="detailSatisfacaoStatus" data-testid="detail-satisfacao-status"></span></p>
+                        <p id="detailSatisfacaoEnvioRow" class="hidden"><strong>Envio:</strong> <span id="detailSatisfacaoEnvio" data-testid="detail-satisfacao-envio"></span></p>
+                        <p id="detailSatisfacaoLinkRow" class="hidden"><strong>Link público:</strong> <a id="detailSatisfacaoLink" href="#" target="_blank" rel="noopener" data-testid="detail-satisfacao-link"></a></p>
+                        <p><strong>Nota:</strong> <span id="detailSatisfacaoNota"></span></p>
+                        <p><strong>Comentário:</strong> <span id="detailSatisfacaoComentario"></span></p>
+                        <p class="section-subtitle">Registrada em <span id="detailSatisfacaoCriadoEm"></span></p>
+                    </div>
+                    <p id="detailSatisfacaoVazio" class="empty-state">Sem avaliação registrada.</p>
+                    <form id="ticketSatisfacaoForm" class="form-standard hidden" novalidate>
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="satisfacaoNota">Nota (1 a 5) *</label>
+                                <select id="satisfacaoNota" required>
+                                    <option value="">Selecione</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="satisfacaoComentario">Comentário (opcional)</label>
+                            <textarea id="satisfacaoComentario" rows="2" maxlength="500" placeholder="Comentário sobre o atendimento"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button button-primary button-small">Registrar satisfação</button>
+                        </div>
+                    </form>
+                    <div id="alertBoxSatisfacao" class="alert hidden" role="alert"></div>
+                </section>
+
+                <section>
+                    <h3>Ações do Ticket</h3>
+                    <div class="form-actions">
+                        <button type="button" class="button button-secondary" id="detailGerarPdfBtn">Gerar PDF</button>
+                        <button type="button" class="button button-secondary" id="detailEncerrarTicketBtn" data-testid="detail-encerrar-ticket">Encerrar Ticket</button>
+                        <button type="button" class="button button-secondary" id="detailEscalonarTicketBtn">Escalonar</button>
+                        <button type="button" class="button button-secondary hidden" id="detailRemoverEscalonamentoBtn">Remover escalonamento</button>
+                        <button type="button" class="button button-primary hidden" id="detailReabrirTicketBtn">Reabrir Ticket</button>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="section-header">
+                        <h3>Histórico de Interações</h3>
+                        <button type="button" id="atualizarHistoricoBtn" class="button button-secondary">Atualizar Histórico</button>
+                    </div>
+                    <div id="ticketInteracoesTimeline" class="empty-state">Nenhuma interação registrada.</div>
+
+                    <p id="ticketFinalizadoMensagem" class="empty-state hidden">Ticket finalizado. Novas interações não podem ser adicionadas.</p>
+                    <form id="ticketInteracaoForm" class="form-standard" novalidate>
+                        <div class="form-row">
+                            <div class="form-col col-half">
+                                <label for="interacaoTipo">Tipo *</label>
+                                <select id="interacaoTipo">
+                                    <option value="COMENTARIO">COMENTARIO</option>
+                                    <option value="NOTA_INTERNA">NOTA_INTERNA</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="interacaoVisibilidade">Visibilidade *</label>
+                                <select id="interacaoVisibilidade">
+                                    <option value="PUBLICA">PUBLICA</option>
+                                    <option value="INTERNA">INTERNA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="interacaoMensagem">Mensagem *</label>
+                            <textarea id="interacaoMensagem" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="button button-primary" id="salvarInteracaoBtn">Salvar Interação</button>
+                        </div>
+                    </form>
+                    <div id="alertBoxInteracoes" class="alert hidden" role="alert"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ESCALONAMENTO -->
+    <div id="modalEscalonamento" class="modal modal-escalonamento" role="dialog" aria-modal="true" aria-labelledby="escalonamentoTitle">
+        <div class="modal-content modal-content-compact">
+            <header class="modal-header">
+                <h2 id="escalonamentoTitle">Escalonar ticket</h2>
+                <button type="button" id="fecharModalEscalonamento" aria-label="Fechar">✕</button>
+            </header>
+            <div class="modal-body">
+                <p id="escalonamentoTicketNumero" class="escalonamento-ticket-ref"></p>
+                <div class="form-group">
+                    <label for="escalonamentoObservacao">Observação (opcional)</label>
+                    <textarea id="escalonamentoObservacao" rows="4" placeholder="Descreva o motivo do escalonamento"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="button button-secondary" id="cancelarEscalonamentoBtn">Cancelar</button>
+                    <button type="button" class="button button-primary" id="confirmarEscalonamentoBtn">Confirmar escalonamento</button>
+                </div>
+                <div id="alertBoxEscalonamento" class="alert hidden" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS AUXILIARES — encerramento de ticket -->
+    <div id="modalEncerramento" class="modal modal-encerramento" role="dialog" aria-modal="true" aria-labelledby="closeTitle" data-testid="modal-encerramento">
+        <div class="modal-content modal-content-encerramento">
+            <header class="modal-header modal-header-compact">
+                <h2 id="closeTitle">Encerrar ticket</h2>
+                <button id="fecharModalEncerramento" type="button" aria-label="Fechar">✕</button>
+            </header>
+            <div class="modal-body modal-body-encerramento">
+                <form id="encerrarTicketForm" class="form-standard encerramento-form">
+                    <input type="hidden" id="encerrarTicketNumero" />
+                    <div class="encerramento-stack">
+                        <div class="form-group">
+                            <label for="grupoCategoriaSelect">Categoria *</label>
+                            <select id="grupoCategoriaSelect" required data-testid="encerrar-grupo">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subgrupoCategoriaSelect">Subcategoria *</label>
+                            <select id="subgrupoCategoriaSelect" required data-testid="encerrar-subgrupo">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="motivoEncerramentoSelect">Motivo *</label>
+                            <select id="motivoEncerramentoSelect" required data-testid="encerrar-motivo">
+                                <option value="">Selecione a subcategoria</option>
+                            </select>
+                            <p id="motivoEncerramentoEmptyHint" class="config-hint hidden" role="status">
+                                Nenhum motivo ativo para esta subcategoria. Cadastre em Configurações → Motivos.
+                            </p>
+                        </div>
+                        <div class="form-group encerramento-comentario">
+                            <label for="comentarioEncerramento">Comentário de encerramento *</label>
+                            <textarea id="comentarioEncerramento" rows="3" required data-testid="encerrar-comentario" placeholder="Descreva brevemente o desfecho do atendimento"></textarea>
+                        </div>
+                        <fieldset class="encerramento-pesquisa-inline" id="encerramentoPesquisaFieldset">
+                            <legend class="sr-only">Pesquisa de satisfação</legend>
+                            <div class="encerramento-pesquisa-row" role="radiogroup" aria-label="Deseja enviar a pesquisa de satisfação?">
+                                <p id="encerramentoPesquisaLegend" class="encerramento-pesquisa-pergunta">
+                                    <span class="encerramento-pesquisa-star" aria-hidden="true">⭐</span>
+                                    Deseja enviar a pesquisa de satisfação?
+                                </p>
+                                <div class="encerramento-pesquisa-opcoes">
+                                    <label class="encerramento-choice encerramento-choice--nao">
+                                        <input type="radio" name="enviarPesquisaSatisfacao" id="encerrarPesquisaNao" value="false" checked data-testid="encerrar-pesquisa-nao" />
+                                        <span class="encerramento-choice-title">Não enviar</span>
+                                        <span class="encerramento-choice-hint">Encerra sem pesquisa</span>
+                                    </label>
+                                    <label class="encerramento-choice encerramento-choice--sim">
+                                        <input type="radio" name="enviarPesquisaSatisfacao" id="encerrarPesquisaSim" value="true" data-testid="encerrar-pesquisa-sim" />
+                                        <span class="encerramento-choice-title">Sim, enviar</span>
+                                        <span class="encerramento-choice-hint">Link ao contato (simulado)</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <p id="encerramentoSemContatoAviso" class="encerramento-aviso-contato hidden" role="status" data-testid="encerrar-aviso-sem-contato">
+                                Este chamado ainda não possui contato vinculado para envio da pesquisa.
+                            </p>
+                        </fieldset>
+                    </div>
+                    <div class="form-actions encerramento-actions encerramento-actions--center">
+                        <button type="button" class="button button-secondary" id="cancelarEncerramento">Cancelar</button>
+                        <button type="submit" class="button button-primary" data-testid="encerrar-confirmar">Confirmar encerramento</button>
+                    </div>
+                </form>
+                <div id="alertBoxEncerramento" class="alert hidden" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS AUXILIARES — fila do analista -->
+    <div id="modalAnalistaFila" class="modal" role="dialog" aria-modal="true" aria-labelledby="analistaFilaTitle">
+        <div class="modal-content modal-content-large">
+            <header class="modal-header">
+                <h2 id="analistaFilaTitle">Fila do Analista</h2>
+                <button id="fecharModalAnalistaFila" aria-label="Fechar">✕</button>
+            </header>
+            <div class="modal-body">
+                <div class="analyst-expanded-header">
+                    <div id="analistaFilaAvatar" class="analyst-avatar analyst-avatar-large">AT</div>
+                    <div>
+                        <h3 id="analistaFilaNome">Analista</h3>
+                        <p id="analistaFilaNivel">Nível 1</p>
+                        <p id="analistaFilaQuantidade">0 ticket(s)</p>
+                    </div>
+                </div>
+                <div id="analistaFilaTickets" class="analyst-ticket-scroll"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS AUXILIARES — foto do perfil (visualização) -->
+    <div id="modalFotoVisualizar" class="modal" role="dialog" aria-modal="true" aria-labelledby="fotoVisualizarTitle">
+        <div class="modal-content profile-photo-view-modal">
+            <header class="modal-header">
+                <h2 id="fotoVisualizarTitle">Foto do perfil</h2>
+                <button id="fecharModalFotoVisualizar" aria-label="Fechar">✕</button>
+            </header>
+            <div class="modal-body">
+                <img id="perfilFotoVisualizacao" class="profile-photo-view" src="" alt="Foto do perfil" />
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS AUXILIARES — foto do perfil (ajuste) -->
+    <div id="modalFotoAjuste" class="modal profile-adjust-modal" role="dialog" aria-modal="true" aria-labelledby="fotoAjusteTitle">
+        <div class="profile-adjust-content">
+            <header class="profile-adjust-header">
+                <button type="button" id="fecharModalFotoAjuste" aria-label="Fechar">✕</button>
+                <h2 id="fotoAjusteTitle">Arraste o círculo para ajustar</h2>
+                <button type="button" id="perfilFotoConfirmarTopo" class="profile-adjust-confirm">Confirmar</button>
+            </header>
+            <div class="profile-adjust-body">
+                <div id="profileAdjustStage" class="profile-adjust-stage">
+                    <div id="profileAdjustImageFrame" class="profile-adjust-image-frame">
+                        <img id="perfilFotoAjusteImagem" src="" alt="Prévia da foto" draggable="false" />
+                        <div id="profileAdjustShade" class="profile-adjust-shade" aria-hidden="true"></div>
+                    </div>
+                    <div id="profileAdjustCropRing" class="profile-adjust-crop-ring" role="presentation"></div>
+                </div>
+                <div class="profile-zoom-controls" aria-label="Controles de zoom">
+                    <button type="button" id="perfilZoomMais">+</button>
+                    <button type="button" id="perfilZoomMenos">-</button>
+                </div>
+                <button type="button" id="perfilFotoConfirmarCheck" class="profile-check-button" aria-label="Confirmar foto">✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script type="module" src="app.js?v=sprint117"></script>
+</body>
+</html>

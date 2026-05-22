@@ -1,0 +1,118 @@
+﻿/* Sprint 112 — abrir-ticket */
+
+.cliente-search-results {
+    margin-top: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.cliente-search-item {
+    width: 100%;
+    border: none;
+    background: var(--surface);
+    padding: 12px 14px;
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+}
+
+.cliente-search-item:hover {
+    background: var(--surface-hover);
+}
+
+.cliente-search-item strong,
+.cliente-search-item span {
+    display: block;
+}
+
+.cliente-search-item span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.selected-client {
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-hover);
+    margin-bottom: 18px;
+}
+
+/* --- Sprint 246: Abrir Ticket — padrão corporativo --- */
+
+#page-abrir-ticket .page-header {
+    border-bottom-color: var(--corp-border-strong);
+}
+
+#page-abrir-ticket .page-header h1 {
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+#page-abrir-ticket .content-section {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    background: var(--corp-surface-card);
+}
+
+html[data-theme='dark'] #page-abrir-ticket .content-section {
+    background: var(--corp-surface-elevated);
+}
+
+#page-abrir-ticket .form-group label,
+#page-abrir-ticket .form-standard label {
+    font-size: var(--corp-font-label);
+    font-weight: 600;
+    color: var(--corp-text-on-light);
+}
+
+#page-abrir-ticket input,
+#page-abrir-ticket select,
+#page-abrir-ticket textarea {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-abrir-ticket input:focus,
+#page-abrir-ticket select:focus,
+#page-abrir-ticket textarea:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#page-abrir-ticket .cliente-search-results {
+    border-color: var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    box-shadow: var(--corp-shadow-soft);
+}
+
+#page-abrir-ticket .cliente-search-item:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.06);
+}
+
+#page-abrir-ticket .selected-client {
+    border-color: var(--corp-border-subtle);
+    background: rgba(var(--corp-bg-deep-rgb), 0.04);
+}
+
+html[data-theme='dark'] #page-abrir-ticket .selected-client {
+    background: rgba(var(--corp-accent-neon-rgb), 0.06);
+}
+
+#page-abrir-ticket .button.button-primary {
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-weight: 600;
+}
+
+#page-abrir-ticket .button.button-secondary {
+    border: 1px solid var(--corp-btn-secondary-border);
+    border-radius: var(--corp-radius-sm);
+}

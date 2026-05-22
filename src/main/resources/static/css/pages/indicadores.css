@@ -1,0 +1,252 @@
+/* Sprint 123–124 — indicadores gerenciais */
+
+#page-indicadores .indicadores-subpanel.hidden {
+    display: none !important;
+}
+
+#page-indicadores .indicadores-placeholder {
+    margin: 32px 0;
+    padding: 28px 24px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--text-muted);
+}
+
+#page-indicadores .indicadores-filtros-panel {
+    margin-bottom: 24px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+}
+
+#page-indicadores .indicadores-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+#page-indicadores .indicadores-card-metric {
+    padding: 22px 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+#page-indicadores .indicadores-card-metric .card-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+#page-indicadores .indicadores-card-metric .card-value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text);
+}
+
+#page-indicadores .indicadores-bloco {
+    margin-bottom: 24px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+}
+
+#page-indicadores .indicadores-bloco h3 {
+    margin: 0 0 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+#page-indicadores .indicadores-grid-dupla {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+#page-indicadores .indicadores-etiquetas-placeholder .indicadores-placeholder-text {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+#page-indicadores .indicadores-ranking-table td:last-child,
+#page-indicadores .indicadores-ranking-table th:last-child {
+    text-align: right;
+    width: 100px;
+}
+
+#page-indicadores .indicadores-sat-filtros-row {
+    margin-bottom: 0;
+}
+
+#page-indicadores .indicadores-sat-cards {
+    margin-bottom: 24px;
+}
+
+#page-indicadores .indicadores-sat-evolucao-hint {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+#page-indicadores .indicadores-sat-evolucao .empty-state {
+    margin: 12px 0;
+}
+
+/* --- Sprint 242: Indicadores — padrão corporativo --- */
+
+#page-indicadores .page-header {
+    border-bottom-color: var(--corp-border-strong);
+}
+
+#page-indicadores .page-header h1 {
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+#page-indicadores .page-header .section-subtitle,
+#page-indicadores #indicadoresPageSubtitle {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-indicadores .indicadores-filtros-panel {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    background: var(--corp-surface-card);
+}
+
+html[data-theme='dark'] #page-indicadores .indicadores-filtros-panel {
+    background: var(--corp-surface-elevated);
+}
+
+#page-indicadores .indicadores-filtros-panel label {
+    font-size: var(--corp-font-label);
+    font-weight: 600;
+    color: var(--corp-text-on-light);
+}
+
+#page-indicadores .indicadores-filtros-panel input,
+#page-indicadores .indicadores-filtros-panel select {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    transition:
+        border-color var(--corp-transition),
+        box-shadow var(--corp-transition);
+}
+
+#page-indicadores .indicadores-filtros-panel input:focus,
+#page-indicadores .indicadores-filtros-panel select:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#page-indicadores .button.button-primary,
+#page-indicadores .btn.btn-primary {
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-weight: 600;
+    box-shadow: var(--corp-shadow-soft);
+}
+
+#page-indicadores .button.button-primary:hover:not(:disabled),
+#page-indicadores .btn.btn-primary:hover:not(:disabled) {
+    filter: brightness(1.05);
+    box-shadow: var(--corp-shadow-neon-glow);
+}
+
+#page-indicadores .indicadores-card-metric {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    background: var(--corp-surface-card);
+    box-shadow: var(--corp-shadow-soft);
+}
+
+html[data-theme='dark'] #page-indicadores .indicadores-card-metric {
+    background: var(--corp-surface-elevated);
+}
+
+#page-indicadores .indicadores-card-metric .card-value,
+#page-indicadores .indicadores-card-value {
+    color: var(--corp-bg-deep);
+}
+
+html[data-theme='dark'] #page-indicadores .indicadores-card-metric .card-value,
+html[data-theme='dark'] #page-indicadores .indicadores-card-value {
+    color: var(--corp-accent-neon);
+}
+
+#page-indicadores .indicadores-card-metric .card-label,
+#page-indicadores .indicadores-card-label {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-indicadores .indicadores-bloco {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    background: var(--corp-surface-card);
+    box-shadow: var(--corp-shadow-soft);
+}
+
+html[data-theme='dark'] #page-indicadores .indicadores-bloco {
+    background: var(--corp-surface-elevated);
+}
+
+#page-indicadores .indicadores-bloco h3,
+#page-indicadores .indicadores-bloco-titulo,
+#page-indicadores .section-title {
+    color: var(--corp-text-on-light);
+    font-weight: 700;
+}
+
+html[data-theme='dark'] #page-indicadores .indicadores-bloco h3,
+html[data-theme='dark'] #page-indicadores .section-title {
+    color: var(--corp-accent-neon);
+}
+
+#page-indicadores .indicadores-placeholder,
+#page-indicadores .empty-state {
+    border-color: var(--corp-border-strong);
+    color: var(--corp-text-muted-on-light);
+    border-radius: var(--corp-radius-md);
+}
+
+#page-indicadores .data-table {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    overflow: hidden;
+}
+
+#page-indicadores .data-table thead {
+    background: rgba(var(--corp-bg-deep-rgb), 0.06);
+}
+
+html[data-theme='dark'] #page-indicadores .data-table thead {
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
+}
+
+#page-indicadores .data-table th {
+    color: var(--corp-text-on-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--corp-border-strong);
+}
+
+#page-indicadores .data-table td {
+    border-bottom: 1px solid var(--corp-border-subtle);
+}
+
+#page-indicadores .data-table tbody tr:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.05);
+}

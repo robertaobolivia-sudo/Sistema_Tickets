@@ -1,0 +1,154 @@
+﻿/* Sprint 110 — layout filtros | Sprint 241 — visual corporativo (#page-tickets) */
+
+.ticket-filter-form {
+    margin-bottom: 8px;
+}
+
+.ticket-advanced-filters .form-row {
+    margin-bottom: 12px;
+}
+
+.form-col.col-third {
+    grid-column: span 1;
+}
+
+@media (min-width: 900px) {
+    .ticket-filter-form .form-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .ticket-filter-form .form-row .col-half {
+        grid-column: span 1;
+    }
+
+    .ticket-filter-form .form-row:first-child,
+    .ticket-filter-form .form-row:nth-child(2) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* --- Sprint 241: página Tickets / Meus Tickets --- */
+
+#page-tickets .page-header {
+    border-bottom-color: var(--corp-border-strong);
+}
+
+#page-tickets .page-header h1 {
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+#page-tickets .content-section {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    background: var(--corp-surface-card);
+}
+
+html[data-theme='dark'] #page-tickets .content-section {
+    background: var(--corp-surface-elevated);
+}
+
+#page-tickets .ticket-advanced-filters .section-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--corp-bg-deep);
+}
+
+html[data-theme='dark'] #page-tickets .ticket-advanced-filters .section-header h2 {
+    color: var(--corp-accent-neon);
+}
+
+#page-tickets .ticket-filter-form label {
+    font-size: var(--corp-font-label);
+    font-weight: 600;
+    color: var(--corp-text-on-light);
+}
+
+#page-tickets .ticket-filter-form input,
+#page-tickets .ticket-filter-form select {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    transition:
+        border-color var(--corp-transition),
+        box-shadow var(--corp-transition);
+}
+
+#page-tickets .ticket-filter-form input:focus,
+#page-tickets .ticket-filter-form select:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#page-tickets .button.button-primary {
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-weight: 600;
+    box-shadow: var(--corp-shadow-soft);
+}
+
+#page-tickets .button.button-primary:hover:not(:disabled) {
+    filter: brightness(1.05);
+    box-shadow: var(--corp-shadow-neon-glow);
+}
+
+#page-tickets .button.button-secondary {
+    border-radius: var(--corp-radius-sm);
+    border: 1px solid var(--corp-btn-secondary-border);
+    color: var(--corp-text-on-light);
+}
+
+#page-tickets .button.button-secondary:hover:not(:disabled) {
+    border-color: var(--corp-focus-border);
+    background: var(--corp-surface-muted);
+}
+
+#page-tickets .data-table {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    overflow: hidden;
+}
+
+#page-tickets .data-table thead {
+    background: rgba(var(--corp-bg-deep-rgb), 0.06);
+}
+
+html[data-theme='dark'] #page-tickets .data-table thead {
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
+}
+
+#page-tickets .data-table th {
+    color: var(--corp-text-on-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--corp-border-strong);
+}
+
+#page-tickets .data-table td {
+    border-bottom: 1px solid var(--corp-border-strong);
+}
+
+#page-tickets .data-table tbody tr:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.05);
+}
+
+#page-tickets .data-table tbody tr.ticket-row-priority-critica {
+    background: var(--pri-row-critica-bg);
+}
+
+#page-tickets .data-table tbody tr.ticket-row-priority-alta {
+    background: var(--pri-row-alta-bg);
+}
+
+#page-tickets .empty-state {
+    color: var(--corp-text-muted-on-light);
+    padding: var(--corp-space-md);
+}
+
+#page-tickets .action-group .button.button-secondary {
+    font-size: 13px;
+}

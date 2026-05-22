@@ -1,0 +1,54 @@
+# Maven
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Build
+build/
+dist/
+out/
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+
+# Environment
+.env
+.env.local
+
+# Frontend JS tests (Vitest)
+src/main/resources/static/js/node_modules/
+
+# E2E Playwright
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/
+e2e/blob-report/
+e2e/.massa.json
+.massa.json
+
+# Uploads / dados locais
+uploads/
+*.local.properties
+application-local.properties
+
+# Backups e temporários
+*.bak
+*.tmp
+*.swp
+Thumbs.db

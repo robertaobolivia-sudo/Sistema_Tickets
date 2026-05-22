@@ -1,0 +1,218 @@
+﻿/*
+ * Sprint 235 — Tokens visuais corporativos (--corp-*)
+ * Referência: Login Sprint 229 (#loginScreen), Blueprint 234.
+ * Uso: sprints 236+ (shell, páginas). Não substituem --primary/--surface até migração explícita.
+ * Login permanece com valores locais em css/pages/login.css (sem dependência obrigatória destes tokens).
+ */
+:root {
+    --primary: #1e40af;
+    --primary-dark: #1e3a8a;
+    --primary-light: #3b82f6;
+    --secondary: #64748b;
+    --success: #16a34a;
+    --warning: #ea580c;
+    --danger: #dc2626;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-hover: #f1f5f9;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+    /* Prioridades — tema claro */
+    --pri-critica-surface-bg: rgba(254, 226, 226, 0.55);
+    --pri-critica-surface-border: #fecaca;
+    --pri-critica-surface-text: #991b1b;
+    --pri-critica-surface-label: #b91c1c;
+    --pri-alta-surface-bg: rgba(254, 243, 199, 0.55);
+    --pri-alta-surface-border: #fde68a;
+    --pri-alta-surface-text: #92400e;
+    --pri-alta-surface-label: #b45309;
+    --pri-media-surface-bg: rgba(219, 234, 254, 0.65);
+    --pri-media-surface-border: #bfdbfe;
+    --pri-media-surface-text: #1d4ed8;
+    --pri-media-surface-label: #2563eb;
+    --pri-baixa-surface-bg: rgba(220, 252, 231, 0.65);
+    --pri-baixa-surface-border: #bbf7d0;
+    --pri-baixa-surface-text: #166534;
+    --pri-baixa-surface-label: #15803d;
+    --pri-na-surface-bg: #f3f4f6;
+    --pri-na-surface-border: #e5e7eb;
+    --pri-na-surface-text: #374151;
+    --pri-na-surface-label: #6b7280;
+
+    --pri-critica-badge-bg: #fee2e2;
+    --pri-critica-badge-border: #dc2626;
+    --pri-critica-badge-text: #991b1b;
+    --pri-alta-badge-bg: #fef3c7;
+    --pri-alta-badge-border: #d97706;
+    --pri-alta-badge-text: #92400e;
+    --pri-media-badge-bg: #eff6ff;
+    --pri-media-badge-border: #3b82f6;
+    --pri-media-badge-text: #1d4ed8;
+    --pri-baixa-badge-bg: #ecfdf5;
+    --pri-baixa-badge-border: #22c55e;
+    --pri-baixa-badge-text: #166534;
+    --pri-na-badge-bg: #f3f4f6;
+    --pri-na-badge-border: #9ca3af;
+    --pri-na-badge-text: #4b5563;
+
+    --pri-row-critica-bg: rgba(254, 226, 226, 0.35);
+    --pri-row-alta-bg: rgba(254, 243, 199, 0.28);
+    --pri-kanban-critica-accent: #dc2626;
+    --pri-kanban-alta-accent: #d97706;
+
+    /* --- Corporativo (teal / neon) — tema claro --- */
+    --corp-bg-deep: #0f2f3a;
+    --corp-bg-deep-rgb: 15, 47, 58;
+    --corp-accent-neon: #00ffaa;
+    --corp-accent-neon-rgb: 0, 255, 170;
+    --corp-text-on-dark: #ffffff;
+    --corp-text-muted-on-dark: #5a7a86;
+    --corp-text-on-light: #0f2f3a;
+    --corp-text-muted-on-light: #64748b;
+    --corp-surface-card: rgba(255, 255, 255, 0.97);
+    --corp-surface-elevated: #ffffff;
+    --corp-surface-muted: rgba(15, 47, 58, 0.06);
+    --corp-border-subtle: rgba(0, 255, 170, 0.22);
+    --corp-border-strong: rgba(15, 47, 58, 0.12);
+    --corp-shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25), 0 0 48px rgba(0, 255, 170, 0.08);
+    --corp-shadow-soft: 0 2px 12px rgba(15, 47, 58, 0.08);
+    --corp-shadow-neon-glow: 0 0 20px rgba(0, 255, 170, 0.35);
+    --corp-radius-sm: 12px;
+    --corp-radius-md: 16px;
+    --corp-radius-lg: 20px;
+    --corp-radius-pill: 999px;
+    --corp-space-xs: 8px;
+    --corp-space-sm: 12px;
+    --corp-space-md: 16px;
+    --corp-space-lg: 24px;
+    --corp-space-xl: 32px;
+    --corp-font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --corp-font-page-title: 1.5rem;
+    --corp-font-label: 0.8125rem;
+    --corp-font-body: 1rem;
+    --corp-transition: 0.2s ease;
+    --corp-focus-ring: 0 0 0 3px rgba(0, 255, 170, 0.22);
+    --corp-focus-border: var(--corp-accent-neon);
+    --corp-btn-primary-bg: var(--corp-accent-neon);
+    --corp-btn-primary-text: var(--corp-text-on-light);
+    --corp-btn-primary-hover-bg: #33ffc0;
+    --corp-btn-secondary-bg: transparent;
+    --corp-btn-secondary-text: var(--corp-text-on-light);
+    --corp-btn-secondary-border: rgba(15, 47, 58, 0.35);
+    --corp-sidebar-bg: var(--corp-bg-deep);
+    --corp-nav-active-color: var(--corp-accent-neon);
+    --corp-nav-active-indicator: 3px solid var(--corp-accent-neon);
+    --corp-gradient-hero: radial-gradient(
+        ellipse 120% 80% at 50% 0%,
+        rgba(0, 255, 170, 0.12) 0%,
+        rgba(15, 47, 58, 0.4) 45%,
+        var(--corp-bg-deep) 100%
+    );
+    --corp-disabled-opacity: 0.5;
+}
+
+html[data-theme="dark"] {
+    --primary: #60a5fa;
+    --primary-dark: #3b82f6;
+    --primary-light: #93c5fd;
+    --secondary: #94a3b8;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-hover: #334155;
+    --border: #334155;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+
+    /* Prioridades — tema escuro (contraste alto, sem fundos lavados) */
+    --pri-critica-surface-bg: rgba(127, 29, 29, 0.42);
+    --pri-critica-surface-border: #f87171;
+    --pri-critica-surface-text: #fecaca;
+    --pri-critica-surface-label: #fca5a5;
+    --pri-alta-surface-bg: rgba(120, 53, 15, 0.45);
+    --pri-alta-surface-border: #fbbf24;
+    --pri-alta-surface-text: #fde68a;
+    --pri-alta-surface-label: #fcd34d;
+    --pri-media-surface-bg: rgba(30, 58, 138, 0.4);
+    --pri-media-surface-border: #60a5fa;
+    --pri-media-surface-text: #bfdbfe;
+    --pri-media-surface-label: #93c5fd;
+    --pri-baixa-surface-bg: rgba(20, 83, 45, 0.38);
+    --pri-baixa-surface-border: #4ade80;
+    --pri-baixa-surface-text: #bbf7d0;
+    --pri-baixa-surface-label: #86efac;
+    --pri-na-surface-bg: rgba(51, 65, 85, 0.55);
+    --pri-na-surface-border: #64748b;
+    --pri-na-surface-text: #e2e8f0;
+    --pri-na-surface-label: #cbd5e1;
+
+    --pri-critica-badge-bg: rgba(127, 29, 29, 0.55);
+    --pri-critica-badge-border: #f87171;
+    --pri-critica-badge-text: #fecaca;
+    --pri-alta-badge-bg: rgba(120, 53, 15, 0.55);
+    --pri-alta-badge-border: #fbbf24;
+    --pri-alta-badge-text: #fde68a;
+    --pri-media-badge-bg: rgba(30, 58, 138, 0.45);
+    --pri-media-badge-border: #60a5fa;
+    --pri-media-badge-text: #bfdbfe;
+    --pri-baixa-badge-bg: rgba(20, 83, 45, 0.45);
+    --pri-baixa-badge-border: #4ade80;
+    --pri-baixa-badge-text: #bbf7d0;
+    --pri-na-badge-bg: rgba(51, 65, 85, 0.65);
+    --pri-na-badge-border: #94a3b8;
+    --pri-na-badge-text: #e2e8f0;
+
+    --pri-row-critica-bg: rgba(127, 29, 29, 0.28);
+    --pri-row-alta-bg: rgba(120, 53, 15, 0.24);
+    --pri-kanban-critica-accent: #f87171;
+    --pri-kanban-alta-accent: #fbbf24;
+
+    /* --- Corporativo — tema escuro (app shell; login isolado em login.css) --- */
+    --corp-text-muted-on-dark: #94a3b8;
+    --corp-text-on-light: #e2e8f0;
+    --corp-text-muted-on-light: #94a3b8;
+    --corp-surface-card: rgba(30, 41, 59, 0.92);
+    --corp-surface-elevated: #1e293b;
+    --corp-surface-muted: rgba(0, 255, 170, 0.06);
+    --corp-border-subtle: rgba(0, 255, 170, 0.28);
+    --corp-border-strong: rgba(148, 163, 184, 0.2);
+    --corp-shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45), 0 0 40px rgba(0, 255, 170, 0.06);
+    --corp-shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.35);
+    --corp-btn-primary-text: #0f172a;
+    --corp-btn-secondary-text: var(--corp-text-on-light);
+    --corp-btn-secondary-border: rgba(148, 163, 184, 0.35);
+}
+
+/* Overrides de superfície — tema escuro (shell: tokens corporativos) */
+html[data-theme="dark"] .sidebar-panel {
+    background: var(--corp-sidebar-bg);
+    border-right-color: var(--corp-border-subtle);
+}
+
+html[data-theme="dark"] .app-topbar {
+    background: var(--corp-surface-elevated);
+    border-bottom-color: var(--corp-border-strong);
+}
+
+html[data-theme="dark"] .topbar-ticket-toast {
+    background: var(--surface);
+    color: var(--text);
+    border-color: #22c55e;
+}
+
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .data-table,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .notificacoes-painel {
+    background: var(--surface);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .sidebar {
+    background: transparent;
+}

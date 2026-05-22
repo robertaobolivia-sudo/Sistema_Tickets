@@ -1,0 +1,536 @@
+﻿/* App shell, login, sidebar, main, topbar, estrutura de páginas */
+/* Sprint 236 — shell corporativo: sidebar/topbar/nav usam tokens --corp-* (theme.css) */
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.screen-active {
+    display: flex;
+}
+
+/* Login visual: css/pages/login.css (Sprint 229) */
+
+#appScreen {
+    flex: 1;
+    min-height: 100vh;
+}
+
+#appScreen.screen-active {
+    display: flex;
+}
+
+.sidebar {
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+    flex: 0 0 70px;
+    position: relative;
+    z-index: 1300;
+    overflow: visible;
+    background: transparent;
+    color: white;
+}
+
+.sidebar-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--corp-sidebar-bg);
+    border-right: 1px solid var(--corp-border-subtle);
+    overflow: hidden;
+    transition: width 0.3s ease, box-shadow var(--corp-transition);
+    z-index: 1;
+    will-change: width;
+}
+
+.sidebar:hover .sidebar-panel {
+    width: 250px;
+    box-shadow: var(--corp-shadow-card);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.logo-small {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+}
+
+.sidebar-title {
+    font-weight: 700;
+    font-size: 14px;
+    font-family: var(--corp-font-family);
+    color: var(--corp-text-on-dark);
+    white-space: nowrap;
+    opacity: 0;
+    overflow: hidden;
+    max-width: 0;
+    transition: opacity 0.28s ease, max-width 0.3s ease;
+    transition-delay: 0s;
+}
+
+.sidebar:hover .sidebar-title {
+    opacity: 1;
+    max-width: 160px;
+    transition-delay: 0.06s;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.88);
+    cursor: pointer;
+    border-radius: var(--corp-radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    transition: background var(--corp-transition), color var(--corp-transition), box-shadow var(--corp-transition);
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.nav-item:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.12);
+    color: var(--corp-text-on-dark);
+}
+
+.nav-item:focus-visible {
+    outline: none;
+    box-shadow: var(--corp-focus-ring);
+}
+
+.nav-item.active {
+    background: rgba(var(--corp-accent-neon-rgb), 0.16);
+    color: var(--corp-accent-neon);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--corp-accent-neon);
+}
+
+.nav-item[data-page="chats"].active {
+    background: rgba(var(--corp-accent-neon-rgb), 0.2);
+}
+
+.nav-item.active:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.14);
+    color: var(--corp-accent-neon);
+}
+
+.nav-item.hidden {
+    display: none !important;
+}
+
+.nav-group-indicadores {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-group-indicadores.hidden {
+    display: none !important;
+}
+
+.nav-item-parent {
+    width: 100%;
+}
+
+.nav-item-parent .nav-chevron {
+    margin-left: auto;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: transform 0.2s ease, opacity 0.28s ease, max-width 0.3s ease;
+}
+
+.sidebar:hover .nav-item-parent .nav-chevron {
+    opacity: 0.85;
+    max-width: 12px;
+}
+
+.nav-group-indicadores.is-open .nav-item-parent .nav-chevron {
+    transform: rotate(45deg);
+}
+
+.nav-submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 12px;
+    margin-left: 8px;
+    border-left: 2px solid rgba(var(--corp-accent-neon-rgb), 0.35);
+}
+
+.nav-submenu.hidden {
+    display: none !important;
+}
+
+.nav-item-sub {
+    padding: 8px 12px 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    justify-content: flex-start;
+}
+
+.nav-item-sub .nav-label {
+    opacity: 0;
+    max-width: 0;
+}
+
+.sidebar:hover .nav-item-sub .nav-label {
+    opacity: 1;
+    max-width: 160px;
+}
+
+.nav-item-sub.active {
+    background: rgba(var(--corp-accent-neon-rgb), 0.14);
+    color: var(--corp-accent-neon);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--corp-accent-neon);
+}
+
+.nav-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.95;
+}
+
+.nav-item.active .nav-icon svg {
+    opacity: 1;
+}
+
+.nav-label {
+    opacity: 0;
+    overflow: hidden;
+    max-width: 0;
+    white-space: nowrap;
+    transition: opacity 0.28s ease, max-width 0.3s ease;
+    transition-delay: 0s;
+}
+
+.sidebar:hover .nav-label {
+    opacity: 1;
+    max-width: 150px;
+    transition-delay: 0.06s;
+}
+
+.nav-divider {
+    height: 1px;
+    background: rgba(var(--corp-accent-neon-rgb), 0.2);
+    margin: 8px 0;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+}
+
+.app-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--corp-border-strong);
+    box-shadow: var(--corp-shadow-soft);
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.app-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-topbar-notificacoes {
+    margin-left: 0;
+}
+
+.app-topbar-notificacoes .notificacoes-painel {
+    z-index: 1400;
+}
+
+.app-topbar-notificacoes .notificacoes-btn {
+    background: var(--corp-surface-muted);
+    border: 1px solid var(--corp-border-strong);
+    color: var(--text);
+    border-radius: var(--corp-radius-sm);
+    transition: border-color var(--corp-transition), box-shadow var(--corp-transition), background var(--corp-transition);
+}
+
+.app-topbar-notificacoes .notificacoes-btn:hover,
+.app-topbar-notificacoes .notificacoes-btn:focus-visible {
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+    outline: none;
+}
+
+.topbar-perfil-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.topbar-perfil-btn {
+    border: 2px solid var(--border);
+    border-radius: 999px;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.topbar-perfil-btn:hover,
+.topbar-perfil-btn:focus-visible {
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+    outline: none;
+}
+
+.analyst-avatar-topbar {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+}
+
+.analyst-avatar-topbar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 999px;
+}
+
+.topbar-user-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    background: var(--surface);
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-card);
+    z-index: 1300;
+    padding: 6px;
+}
+
+.topbar-user-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.topbar-user-menu button:hover {
+    background: var(--corp-surface-muted);
+}
+
+.topbar-user-menu button:focus-visible {
+    outline: none;
+    box-shadow: var(--corp-focus-ring);
+}
+
+.topbar-user-menu button.danger {
+    color: var(--danger);
+}
+
+.topbar-user-menu button.pref-toggle-on {
+    box-shadow: 0 0 0 2px #16a34a;
+    border: 1px solid #16a34a;
+}
+
+.topbar-user-menu button.pref-toggle-sync {
+    box-shadow: 0 0 0 2px #d97706;
+    border: 1px solid #d97706;
+    opacity: 0.92;
+    cursor: wait;
+}
+
+.topbar-user-menu button:disabled {
+    cursor: wait;
+    opacity: 0.85;
+}
+
+.topbar-ticket-toast {
+    position: absolute;
+    top: 100%;
+    right: 24px;
+    margin-top: 8px;
+    max-width: min(360px, 90vw);
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid #16a34a;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 1450;
+}
+
+.topbar-ticket-toast-clickable {
+    cursor: pointer;
+}
+
+.topbar-ticket-toast-clickable:hover,
+.topbar-ticket-toast-clickable:focus-visible {
+    background: var(--surface-hover);
+    outline: 2px solid #16a34a;
+    outline-offset: 2px;
+}
+
+.topbar-ticket-alert-badge {
+    position: absolute;
+    left: -8px;
+    top: -4px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--warning);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    animation: ticket-alert-pulse 1.2s ease-in-out infinite;
+}
+
+body.ticket-alert-active .app-topbar-notificacoes .notificacoes-btn,
+body.ticket-alert-active .nav-item[data-page="tickets"] {
+    box-shadow: 0 0 0 2px var(--warning), 0 0 12px rgba(var(--corp-accent-neon-rgb), 0.25);
+}
+
+@keyframes ticket-alert-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.main-content > .page {
+    flex: 1;
+}
+
+.page {
+    display: none;
+    padding: 32px;
+    animation: fadeIn 0.3s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+}
+
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 70px;
+        min-width: 70px;
+        max-width: 70px;
+        flex: 0 0 70px;
+    }
+
+    .sidebar:hover .sidebar-panel {
+        width: 250px;
+    }
+
+    .page {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 720px) {
+    .sidebar {
+        display: none;
+    }
+
+    #appScreen {
+        flex-direction: column;
+    }
+}
+
+/* Sprint 246 — Perfil: menu lateral oculto; acesso via topbar → Meu Perfil */
+.sidebar .nav-item[data-page='perfil'] {
+    display: none !important;
+}

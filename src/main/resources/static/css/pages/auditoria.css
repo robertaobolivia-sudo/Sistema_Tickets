@@ -1,0 +1,131 @@
+﻿/* Sprint 112 — auditoria */
+
+.auditoria-list-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.auditoria-table td {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.auditoria-table td.auditoria-desc-cell {
+    max-width: 280px;
+}
+
+.auditoria-paginacao {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+/* --- Sprint 246: Auditoria — padrão corporativo --- */
+
+#page-auditoria .page-header {
+    border-bottom-color: var(--corp-border-strong);
+}
+
+#page-auditoria .page-header h1 {
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+}
+
+#page-auditoria .page-header .section-subtitle {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-auditoria .content-section {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    background: var(--corp-surface-card);
+}
+
+html[data-theme='dark'] #page-auditoria .content-section {
+    background: var(--corp-surface-elevated);
+}
+
+#page-auditoria .section-header h2 {
+    color: var(--corp-text-on-light);
+    font-weight: 700;
+}
+
+html[data-theme='dark'] #page-auditoria .section-header h2 {
+    color: var(--corp-accent-neon);
+}
+
+#page-auditoria .ticket-filter-form label {
+    font-size: var(--corp-font-label);
+    font-weight: 600;
+    color: var(--corp-text-on-light);
+}
+
+#page-auditoria .ticket-filter-form input,
+#page-auditoria .ticket-filter-form select {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-auditoria .ticket-filter-form input:focus,
+#page-auditoria .ticket-filter-form select:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+#page-auditoria .button.button-primary {
+    background: var(--corp-btn-primary-bg);
+    color: var(--corp-btn-primary-text);
+    border: none;
+    border-radius: var(--corp-radius-sm);
+    font-weight: 600;
+}
+
+#page-auditoria .button.button-secondary {
+    border: 1px solid var(--corp-btn-secondary-border);
+    border-radius: var(--corp-radius-sm);
+}
+
+#page-auditoria .data-table {
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    overflow: hidden;
+}
+
+#page-auditoria .data-table thead {
+    background: rgba(var(--corp-bg-deep-rgb), 0.06);
+}
+
+html[data-theme='dark'] #page-auditoria .data-table thead {
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
+}
+
+#page-auditoria .data-table th {
+    color: var(--corp-text-on-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--corp-border-strong);
+}
+
+#page-auditoria .data-table td {
+    border-bottom: 1px solid var(--corp-border-subtle);
+}
+
+#page-auditoria .data-table tbody tr:hover {
+    background: rgba(var(--corp-accent-neon-rgb), 0.05);
+}
+
+#page-auditoria .empty-state {
+    color: var(--corp-text-muted-on-light);
+}
+
+#page-auditoria .auditoria-paginacao .button {
+    border-radius: var(--corp-radius-sm);
+}
+
