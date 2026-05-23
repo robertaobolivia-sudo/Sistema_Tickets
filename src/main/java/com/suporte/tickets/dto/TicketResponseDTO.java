@@ -47,6 +47,9 @@ public class TicketResponseDTO {
     private String contatoCidade;
     private String contatoUf;
     private String contatoObservacoes;
+    /** Telefone de origem do atendimento (entrada WhatsApp), Sprint 292. */
+    private String atendimentoTelefone;
+    private String atendimentoTelefoneTipo;
     /** WhatsApp matriz da entrada, Sprint 191. */
     private Integer whatsappMatrizId;
     private String whatsappMatrizNumero;
@@ -79,6 +82,11 @@ public class TicketResponseDTO {
     private Long motivoId;
     private String motivoNome;
     private String comentarioEncerramento;
+    /** Sprint 274 — classificação operacional (indevido). */
+    private String classificacaoOperacional;
+    private LocalDateTime classificadoOperacionalEm;
+    private Long classificadoOperacionalPorAnalistaId;
+    private String comentarioClassificacaoOperacional;
     private String observacaoAtendimento;
     private Boolean escalonado;
     private LocalDateTime escalonadoEm;
@@ -95,4 +103,9 @@ public class TicketResponseDTO {
     private LocalDateTime satisfacaoExpiraEm;
     /** Link público da pesquisa (retornado no encerramento com pesquisa, Sprint 212). */
     private String avaliacaoLinkPublico;
+
+    /** Sprint F5: metadados apenas em GET /api/tickets/ativo. */
+    private String consultaAtivoModo;
+    private Boolean consultaAtivoLegadoDeprecated;
+    private String consultaAtivoLegadoMotivo;
 }

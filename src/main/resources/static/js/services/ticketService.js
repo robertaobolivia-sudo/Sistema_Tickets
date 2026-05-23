@@ -20,6 +20,7 @@ export function searchTicketsRelatorio(queryString) {
 }
 
 export async function getTicketAtivo(params = {}) {
+    /** Preferir clienteId + contatoWhatsappId (F5). So clienteId = legado/deprecado no backend. */
     const qs = new URLSearchParams();
     if (params.telefone) {
         qs.set('telefone', params.telefone);
@@ -29,6 +30,9 @@ export async function getTicketAtivo(params = {}) {
     }
     if (params.contatoSolicitanteId != null) {
         qs.set('contatoSolicitanteId', String(params.contatoSolicitanteId));
+    }
+    if (params.contatoWhatsappId != null) {
+        qs.set('contatoWhatsappId', String(params.contatoWhatsappId));
     }
     const query = qs.toString();
     const url = query ? `${API_BASE}/tickets/ativo?${query}` : `${API_BASE}/tickets/ativo`;
@@ -79,6 +83,28 @@ export function encerrarTicket(ticketNumber, payload) {
         `${API_BASE}/tickets/${ticketNumber}/encerrar`,
         { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
         'Falha ao encerrar ticket'
+    );
+}
+
+/** Sprint 274/276 — classificação indevido com confirmação do analista. */
+export function classificarTicketIndevido(ticketNumber, payload) {
+    return fetchJsonWithSession(
+        `${API_BASE}/tickets/${encodeURIComponent(ticketNumber)}/classificar-indevido`,
+        {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        },
+        'Não foi possível classificar o ticket como indevido.'
+    );
+}
+
+/** Sprint 305 — reverter classificação indevido (analista, mesmo dia). */
+export function reverterTicketIndevido(ticketNumber) {
+    return fetchJsonWithSession(
+        `${API_BASE}/tickets/${encodeURIComponent(ticketNumber)}/reverter-indevido`,
+        { method: 'PUT' },
+        'Não foi possível reverter a classificação indevida.'
     );
 }
 

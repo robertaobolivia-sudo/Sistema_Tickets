@@ -19,9 +19,11 @@ import com.suporte.tickets.service.TicketPdfService;
 import com.suporte.tickets.service.TicketRelatorioCsvService;
 import com.suporte.tickets.service.TicketAtivoService;
 import com.suporte.tickets.service.TicketEtiquetaService;
+import com.suporte.tickets.service.TicketIndevidoService;
 import com.suporte.tickets.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +43,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
+@Slf4j
 public class TicketController {
 
     private final TicketService ticketService;
@@ -51,6 +54,7 @@ public class TicketController {
     private final TicketRelatorioCsvService ticketRelatorioCsvService;
     private final PerfilAcessoAutorizacaoService perfilAcessoAutorizacaoService;
     private final AuditoriaService auditoriaService;
+    private final TicketIndevidoService ticketIndevidoService;
 
     /**
      * GET /api/tickets
@@ -132,24 +136,48 @@ public class TicketController {
     }
 
     /**
-     * GET /api/tickets/ativo — ticket ativo mais recente para o contexto (WhatsApp/API futuro).
+     * GET /api/tickets/ativo — ticket ativo para o contexto informado.
+     * Consulta recomendada (F1/F5): {@code clienteId} + {@code contatoWhatsappId}.
+     * Apenas {@code clienteId} permanece legado/deprecado (pode retornar ticket de outro Contato).
      */
     @GetMapping("/ativo")
     public ResponseEntity<TicketResponseDTO> buscarTicketAtivo(
             @RequestParam(required = false) String telefone,
             @RequestParam(required = false) Integer clienteId,
+            @RequestParam(required = false) Integer contatoWhatsappId,
             @RequestParam(required = false) Integer contatoSolicitanteId,
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
         perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
-        if (clienteId == null && contatoSolicitanteId == null
+        if (clienteId == null && contatoSolicitanteId == null && contatoWhatsappId == null
                 && (telefone == null || telefone.isBlank())) {
             return ResponseEntity.badRequest().build();
         }
+        if (TicketAtivoService.isConsultaAtivoLegadoPorClienteSemContato(clienteId, contatoWhatsappId)) {
+            log.warn(
+                    "GET /api/tickets/ativo legado: clienteId={} sem contatoWhatsappId — preferir par Cliente+Contato",
+                    clienteId);
+        }
         return ticketAtivoService
-                .buscarTicketAtivo(clienteId, contatoSolicitanteId, telefone)
-                .map(ResponseEntity::ok)
+                .buscarTicketAtivo(clienteId, contatoWhatsappId, contatoSolicitanteId, telefone)
+                .map(dto -> ResponseEntity.ok().headers(headersConsultaTicketAtivo(dto)).body(dto))
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    private static HttpHeaders headersConsultaTicketAtivo(TicketResponseDTO dto) {
+        HttpHeaders headers = new HttpHeaders();
+        if (Boolean.TRUE.equals(dto.getConsultaAtivoLegadoDeprecated())) {
+            headers.add("Deprecation", "true");
+            headers.add("X-Consulta-Ticket-Ativo-Modo", TicketAtivoService.CONSULTA_ATIVO_MODO_LEGADO);
+            if (dto.getConsultaAtivoLegadoMotivo() != null) {
+                headers.add("X-Consulta-Ticket-Ativo-Legado-Motivo", dto.getConsultaAtivoLegadoMotivo());
+            }
+            headers.add(HttpHeaders.WARNING,
+                    "299 - \"Use clienteId + contatoWhatsappId para consulta segura de ticket ativo\"");
+        } else if (TicketAtivoService.CONSULTA_ATIVO_MODO_CLIENTE_CONTATO.equals(dto.getConsultaAtivoModo())) {
+            headers.add("X-Consulta-Ticket-Ativo-Modo", TicketAtivoService.CONSULTA_ATIVO_MODO_CLIENTE_CONTATO);
+        }
+        return headers;
     }
 
     /**
@@ -248,6 +276,37 @@ public class TicketController {
                 numeroTicket,
                 "Ticket encerrado",
                 executor);
+        return ResponseEntity.ok(ticketAtualizado);
+    }
+
+    /**
+     * PUT /api/tickets/{numeroTicket}/classificar-indevido
+     * Classifica ticket ativo como indevido (confirmação obrigatória; não altera etiquetas do Contato).
+     */
+    @PutMapping("/{numeroTicket}/classificar-indevido")
+    public ResponseEntity<TicketResponseDTO> classificarIndevido(
+            @PathVariable String numeroTicket,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
+            @Valid @RequestBody com.suporte.tickets.dto.ClassificarTicketIndevidoRequestDTO requestDTO) {
+        Analista executor = perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        TicketResponseDTO ticketAtualizado = ticketIndevidoService.classificarComoIndevido(
+                numeroTicket, requestDTO, executor.getId());
+        return ResponseEntity.ok(ticketAtualizado);
+    }
+
+    /**
+     * PUT /api/tickets/{numeroTicket}/reverter-indevido
+     * Analista reverte classificação INDEVIDO no mesmo dia calendário (America/Sao_Paulo).
+     */
+    @PutMapping("/{numeroTicket}/reverter-indevido")
+    public ResponseEntity<TicketResponseDTO> reverterIndevido(
+            @PathVariable String numeroTicket,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
+        Analista executor = perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        TicketResponseDTO ticketAtualizado = ticketIndevidoService.reverterIndevido(
+                numeroTicket, executor.getId());
         return ResponseEntity.ok(ticketAtualizado);
     }
 
