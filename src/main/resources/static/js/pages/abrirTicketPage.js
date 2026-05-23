@@ -1,5 +1,18 @@
 import * as ticketService from '../services/ticketService.js';
 import * as clienteService from '../services/clienteService.js';
+import * as contatoService from '../services/contatoService.js';
+import {
+    ABIR_TICKET_LEGADO_PANEL_SUMMARY,
+    buildAbrirTicketPayloadFromForm,
+    CONTATO_SOURCE_SOLICITANTE_LEGADO,
+    CONTATO_SOURCE_WHATSAPP,
+    filtrarContatosWhatsappAtivos,
+    formatContatoClienteLegadoLabel,
+    formatContatoWhatsappLabel,
+    getAbrirTicketContatoLabel,
+    resolveAbrirTicketContatoUiMode,
+    shouldInlineLegadoContatoClienteOptions
+} from '../core/abrirTicketPayloadView.js';
 
 let showAlertFn = () => {};
 let clearAlertFn = () => {};
@@ -8,6 +21,7 @@ let onTicketCreatedSuccessFn = async () => {};
 const ticketForm = document.getElementById('ticketForm');
 const ticketContatoGroup = document.getElementById('ticketContatoGroup');
 const ticketContatoSolicitante = document.getElementById('ticketContatoSolicitante');
+const ticketContatoLabel = document.querySelector('label[for="ticketContatoSolicitante"]');
 const ticketPrioridade = document.getElementById('ticketPrioridade');
 const clienteBusca = document.getElementById('clienteBusca');
 const clienteResultados = document.getElementById('clienteResultados');
@@ -16,41 +30,197 @@ const alertBoxTicket = document.getElementById('alertBoxTicket');
 
 let clienteSelecionado = null;
 let listenersBound = false;
+let legadoPanelToggleBound = false;
+let legadoOptionsLoadedForClienteId = null;
+
+function getTicketContatoLegadoPanel() {
+    return document.getElementById('ticketContatoLegadoPanel');
+}
+
+function getTicketContatoLegadoSelect() {
+    return document.getElementById('ticketContatoLegadoSelect');
+}
+
+function ensureTicketContatoLegadoPanel() {
+    let panel = getTicketContatoLegadoPanel();
+    if (panel || !ticketContatoGroup) {
+        return panel;
+    }
+    panel = document.createElement('details');
+    panel.id = 'ticketContatoLegadoPanel';
+    panel.className = 'hidden';
+    const summary = document.createElement('summary');
+    summary.textContent = ABIR_TICKET_LEGADO_PANEL_SUMMARY;
+    const select = document.createElement('select');
+    select.id = 'ticketContatoLegadoSelect';
+    select.innerHTML = '<option value="">Nenhum</option>';
+    panel.appendChild(summary);
+    panel.appendChild(select);
+    ticketContatoGroup.appendChild(panel);
+    select.addEventListener('change', () => {
+        if (select.value && ticketContatoSolicitante) {
+            ticketContatoSolicitante.value = '';
+        }
+    });
+    if (!legadoPanelToggleBound) {
+        legadoPanelToggleBound = true;
+        panel.addEventListener('toggle', () => {
+            if (panel.open && clienteSelecionado?.id) {
+                void loadLegadoSelectOptions(clienteSelecionado.id);
+            }
+        });
+    }
+    return panel;
+}
+
+function hideTicketContatoLegadoPanel() {
+    const panel = getTicketContatoLegadoPanel();
+    if (!panel) {
+        return;
+    }
+    panel.open = false;
+    panel.classList.add('hidden');
+    const select = getTicketContatoLegadoSelect();
+    if (select) {
+        select.innerHTML = '<option value="">Nenhum</option>';
+    }
+    legadoOptionsLoadedForClienteId = null;
+}
+
+function showTicketContatoLegadoPanel() {
+    const panel = ensureTicketContatoLegadoPanel();
+    if (panel) {
+        panel.classList.remove('hidden');
+        panel.open = false;
+    }
+}
+
+async function loadLegadoSelectOptions(clienteId) {
+    if (legadoOptionsLoadedForClienteId === clienteId) {
+        return;
+    }
+    const select = getTicketContatoLegadoSelect();
+    if (!select) {
+        return;
+    }
+    select.innerHTML = '<option value="">Nenhum</option>';
+    const contatos = await clienteService.listContatosAtivos(clienteId);
+    if (!contatos?.length) {
+        return;
+    }
+    contatos.forEach(contato => {
+        const option = document.createElement('option');
+        option.value = String(contato.id);
+        option.textContent = formatContatoClienteLegadoLabel(contato);
+        select.appendChild(option);
+    });
+    legadoOptionsLoadedForClienteId = clienteId;
+}
+
+function bindMainContatoSelectClearLegado() {
+    if (!ticketContatoSolicitante || ticketContatoSolicitante.dataset.f4LegadoClearBound) {
+        return;
+    }
+    ticketContatoSolicitante.dataset.f4LegadoClearBound = '1';
+    ticketContatoSolicitante.addEventListener('change', () => {
+        const selected = ticketContatoSolicitante.selectedOptions?.[0];
+        if (selected?.value && selected.dataset.source === CONTATO_SOURCE_WHATSAPP) {
+            const legado = getTicketContatoLegadoSelect();
+            if (legado) {
+                legado.value = '';
+            }
+        }
+    });
+}
 
 function showAlert(message, box, type) {
     showAlertFn(message, box, type);
 }
 
-function formatContatoTelefoneCelular(contato) {
-    const telefone = contato?.telefone && contato.telefone !== '-' ? contato.telefone : '';
-    const celular = contato?.celular && contato.celular !== '-' ? contato.celular : '';
-    if (telefone && celular) {
-        return `${telefone} / ${celular}`;
+function resetContatoSelect() {
+    if (!ticketContatoSolicitante) {
+        return;
     }
-    return telefone || celular || '-';
+    ticketContatoSolicitante.innerHTML = '<option value="">Nenhum</option>';
+}
+
+function appendWhatsappContatoOptions(contatos) {
+    const og = document.createElement('optgroup');
+    og.label = 'Contato atendido (WhatsApp)';
+    contatos.forEach(contato => {
+        const option = document.createElement('option');
+        option.value = String(contato.id);
+        option.dataset.source = CONTATO_SOURCE_WHATSAPP;
+        if (contato.whatsapp) {
+            option.dataset.whatsapp = contato.whatsapp;
+        }
+        const nome = contato.nome && String(contato.nome).trim() ? contato.nome.trim() : 'Contato';
+        option.dataset.nome = nome;
+        option.textContent = formatContatoWhatsappLabel(contato);
+        og.appendChild(option);
+    });
+    ticketContatoSolicitante.appendChild(og);
+}
+
+async function appendContatoClienteLegadoOptions(clienteId) {
+    const contatos = await clienteService.listContatosAtivos(clienteId);
+    if (!contatos?.length) {
+        return false;
+    }
+    const og = document.createElement('optgroup');
+    og.label = 'Solicitante cadastro (legado)';
+    contatos.forEach(contato => {
+        const option = document.createElement('option');
+        option.value = String(contato.id);
+        option.dataset.source = CONTATO_SOURCE_SOLICITANTE_LEGADO;
+        option.textContent = formatContatoClienteLegadoLabel(contato);
+        og.appendChild(option);
+    });
+    ticketContatoSolicitante.appendChild(og);
+    return true;
 }
 
 async function loadContatosTicket(clienteId) {
     if (!ticketContatoSolicitante || !ticketContatoGroup) {
         return;
     }
-    ticketContatoSolicitante.innerHTML = '<option value="">Nenhum</option>';
+    resetContatoSelect();
+    hideTicketContatoLegadoPanel();
+    bindMainContatoSelectClearLegado();
     if (!clienteId) {
         ticketContatoGroup.classList.add('hidden');
+        if (ticketContatoLabel) {
+            ticketContatoLabel.textContent = 'Contato (opcional)';
+        }
         return;
     }
     try {
-        const contatos = await clienteService.listContatosAtivos(clienteId);
-        if (!contatos?.length) {
+        let contatosReais = [];
+        try {
+            const lista = await contatoService.listarPorCliente(clienteId);
+            contatosReais = filtrarContatosWhatsappAtivos(lista);
+        } catch {
+            contatosReais = [];
+        }
+
+        const uiMode = resolveAbrirTicketContatoUiMode(contatosReais.length);
+        if (ticketContatoLabel) {
+            ticketContatoLabel.textContent = getAbrirTicketContatoLabel(uiMode);
+        }
+
+        let temOpcao = false;
+        if (contatosReais.length > 0) {
+            appendWhatsappContatoOptions(contatosReais);
+            temOpcao = true;
+            showTicketContatoLegadoPanel();
+        } else if (shouldInlineLegadoContatoClienteOptions(uiMode)) {
+            temOpcao = await appendContatoClienteLegadoOptions(clienteId);
+        }
+
+        if (!temOpcao) {
             ticketContatoGroup.classList.add('hidden');
             return;
         }
-        contatos.forEach(contato => {
-            const option = document.createElement('option');
-            option.value = contato.id;
-            option.textContent = `${contato.nome} - ${formatContatoTelefoneCelular(contato)}`;
-            ticketContatoSolicitante.appendChild(option);
-        });
         ticketContatoGroup.classList.remove('hidden');
     } catch {
         ticketContatoGroup.classList.add('hidden');
@@ -139,24 +309,48 @@ export function limparClienteSelecionado() {
     if (conexaoField) conexaoField.value = '';
 }
 
+function readContatoSelectionFromSelect() {
+    const selected = ticketContatoSolicitante?.selectedOptions?.[0];
+    if (selected?.value && selected.dataset.source === CONTATO_SOURCE_WHATSAPP) {
+        return {
+            source: CONTATO_SOURCE_WHATSAPP,
+            id: selected.value,
+            whatsapp: selected.dataset.whatsapp || '',
+            nome: selected.dataset.nome || ''
+        };
+    }
+    if (selected?.value && selected.dataset.source === CONTATO_SOURCE_SOLICITANTE_LEGADO) {
+        return {
+            source: CONTATO_SOURCE_SOLICITANTE_LEGADO,
+            id: selected.value
+        };
+    }
+    const legadoSelect = getTicketContatoLegadoSelect();
+    if (legadoSelect?.value) {
+        return {
+            source: CONTATO_SOURCE_SOLICITANTE_LEGADO,
+            id: legadoSelect.value
+        };
+    }
+    return null;
+}
+
 async function submitTicket(event) {
     event.preventDefault();
     if (!clienteSelecionado) {
         showAlert('Selecione um cliente cadastrado antes de abrir o ticket.', alertBoxTicket);
         return;
     }
-    const payload = {
-        cliente: clienteSelecionado.nome,
-        telefone: clienteSelecionado.telefone,
-        canal: document.getElementById('canal')?.value.trim() || '',
-        conexao: clienteSelecionado.carteira || document.getElementById('conexao')?.value.trim() || '',
-        mensagem: document.getElementById('mensagem')?.value.trim() || '',
-        prioridade: ticketPrioridade?.value || 'MEDIA'
-    };
-    const contatoId = ticketContatoSolicitante?.value;
-    if (contatoId) {
-        payload.contatoSolicitanteId = Number(contatoId);
-    }
+    const payload = buildAbrirTicketPayloadFromForm(
+        clienteSelecionado,
+        {
+            canal: document.getElementById('canal')?.value.trim() || '',
+            conexao: document.getElementById('conexao')?.value.trim() || '',
+            mensagem: document.getElementById('mensagem')?.value.trim() || '',
+            prioridade: ticketPrioridade?.value || 'MEDIA'
+        },
+        readContatoSelectionFromSelect()
+    );
 
     try {
         const createdTicket = await ticketService.createTicket(payload);
