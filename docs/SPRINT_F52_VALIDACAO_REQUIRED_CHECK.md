@@ -15,8 +15,8 @@ Executar o workflow **Gate pos-reestruturacao** no GitHub, obter execução verd
 
 | Item | Estado |
 |------|--------|
-| Commit local | Ver hash registrado abaixo após `git log -1` |
-| Push | **Pendente** se `git push` falhar (auth / repo privado / `Repository not found`) |
+| Commit local | `c7e343d` — `docs(ci): centraliza README_MESTRE e gate pos-reestruturacao` |
+| Push | Ver §5 — agente: `Repository not found` sem credencial |
 | PR | Abrir manualmente: `chore/f52-gate-pos-reestruturacao` → `main` |
 
 Mensagem sugerida do commit:
