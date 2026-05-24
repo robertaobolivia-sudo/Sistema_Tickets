@@ -6,7 +6,6 @@ import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.repository.ClienteRepository;
-import com.suporte.tickets.repository.ContatoClienteRepository;
 import com.suporte.tickets.repository.TicketRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +33,6 @@ class TicketAtivoServiceConsultaF5Test {
     @Mock
     private ClienteRepository clienteRepository;
     @Mock
-    private ContatoClienteRepository contatoClienteRepository;
-    @Mock
     private TicketService ticketService;
 
     @InjectMocks
@@ -53,7 +50,7 @@ class TicketAtivoServiceConsultaF5Test {
                 .thenReturn(Optional.of(ticket));
         when(ticketService.converterParaResponseSeguro(ticket)).thenReturn(new TicketResponseDTO());
 
-        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(10, 200, null, null);
+        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(10, 200, null);
 
         assertTrue(found.isPresent());
         assertEquals(TicketAtivoService.CONSULTA_ATIVO_MODO_CLIENTE_CONTATO, found.get().getConsultaAtivoModo());
@@ -66,31 +63,34 @@ class TicketAtivoServiceConsultaF5Test {
                 eq(10), eq(200), any(List.class)))
                 .thenReturn(Optional.empty());
 
-        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(10, 200, null, null);
+        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(10, 200, null);
 
         assertTrue(found.isEmpty());
         verify(ticketRepository, never()).findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(any(), any());
     }
 
     @Test
-    void soClienteId_mantemLegadoEMarcaDeprecacao() {
-        Cliente cliente = new Cliente();
-        cliente.setId(10);
-        Contato c1 = new Contato();
-        c1.setId(100);
-        Ticket ticket = ticket("TK-1", cliente, c1);
-        when(ticketRepository.findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(eq(10), any(List.class)))
-                .thenReturn(Optional.of(ticket));
-        when(ticketService.converterParaResponseSeguro(ticket)).thenReturn(new TicketResponseDTO());
+    void soClienteId_naoRetornaTicket_F6() {
+        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(10, null, null);
 
-        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(10, null, null, null);
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(any(), any());
+    }
 
-        assertTrue(found.isPresent());
-        assertEquals(TicketAtivoService.CONSULTA_ATIVO_MODO_LEGADO, found.get().getConsultaAtivoModo());
-        assertTrue(found.get().getConsultaAtivoLegadoDeprecated());
-        assertEquals(
-                TicketAtivoService.LEGADO_MOTIVO_CLIENTE_SEM_CONTATO_WHATSAPP,
-                found.get().getConsultaAtivoLegadoMotivo());
+    @Test
+    void F7_soTelefone_buscarTicketAtivo_vazio() {
+        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(null, null, "5511999000001");
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(any(), any(), any());
+    }
+
+    @Test
+    void F36_semParClienteContato_buscarTicketAtivo_vazio() {
+        Optional<TicketResponseDTO> found = ticketAtivoService.buscarTicketAtivo(null, 7, null);
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(any(), any(), any());
     }
 
     @Test

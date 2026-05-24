@@ -1,0 +1,9 @@
+import { apiFetch } from '@shared/api/api-client.js';
+
+const BASE = '/api/{{name}}';
+
+export async function list{{pascalCase name}}() {
+    const res = await apiFetch(BASE);
+    if (!res.ok) throw new Error('Erro ao carregar {{name}}.');
+    return res.json();
+}

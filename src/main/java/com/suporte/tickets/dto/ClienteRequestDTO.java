@@ -24,15 +24,18 @@ public class ClienteRequestDTO {
     @Email(message = "E-mail invalido")
     private String email;
 
+    private String razaoSocial;
+    private String responsavel;
+    private String whatsapp;
     private String empresa;
     private String cnpj;
+    private String inscricaoEstadual;
     private String cidade;
     private String uf;
     private String endereco;
-    /** Legado: preferir não enviar na tela Clientes (Sprint 188). */
-    private Integer carteiraId;
-    /** Legado: ignorado no {@code ClienteService} (não cria Carteira por nome). */
-    private String carteira;
+    private String cep;
+    private String site;
+    private String horarioFuncionamento;
     private String status;
     /** Legado (banco): preferir SEM_CLASSIFICACAO; N1/N2 não são padrão de produto. */
     private String classificacaoCliente;

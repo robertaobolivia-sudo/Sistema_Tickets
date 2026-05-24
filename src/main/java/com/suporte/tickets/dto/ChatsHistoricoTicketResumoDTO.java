@@ -16,4 +16,6 @@ public class ChatsHistoricoTicketResumoDTO {
     private LocalDateTime dataAbertura;
     private LocalDateTime dataEncerramento;
     private String grupoCategoriaNome;
+    private String atendimentoTelefone;
+    private String atendimentoTelefoneTipo;
 }

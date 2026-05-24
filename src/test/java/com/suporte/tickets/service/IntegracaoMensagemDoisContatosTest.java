@@ -46,6 +46,8 @@ class IntegracaoMensagemDoisContatosTest {
     private ContatoService contatoService;
     @Mock
     private InteracaoPendenteDecisaoService interacaoPendenteDecisaoService;
+    @Mock
+    private ContatoEtiquetaService contatoEtiquetaService;
 
     @InjectMocks
     private IntegracaoMensagemEntradaService service;
@@ -67,8 +69,9 @@ class IntegracaoMensagemDoisContatosTest {
         contatoB.setId(200);
         when(contatoService.buscarEntidade(200)).thenReturn(contatoB);
 
-        when(ticketAtivoService.buscarEntidadeAtiva(eq(10), eq(200), eq(null), eq("5511999000002")))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(eq(10), eq(200), eq("5511999000002")))
                 .thenReturn(Optional.empty());
+        when(contatoEtiquetaService.resolverClassificacaoOperacional(contatoB)).thenReturn(null);
         when(ticketAtivoService.buscarUltimoEncerradoPorClienteEContato(10, 200)).thenReturn(Optional.empty());
 
         TicketResponseDTO criado = new TicketResponseDTO();
@@ -87,7 +90,7 @@ class IntegracaoMensagemDoisContatosTest {
         assertTrue(res.isTicketCriado());
         assertEquals("TK-B", res.getNumeroTicket());
         verify(ticketService, times(1)).criarTicketPorWebhook(any());
-        verify(ticketInteracaoService, never()).registrarMensagemEntradaExterna(any(), any(), any());
+        verify(ticketInteracaoService, never()).registrarMensagemEntradaExterna(any(), any(), any(), any());
     }
 
     @Test
@@ -110,7 +113,7 @@ class IntegracaoMensagemDoisContatosTest {
         ativo.setNumeroTicket("TK-A");
         ativo.setStatus(TicketStatus.ABERTO);
         ativo.setCliente(cliente);
-        when(ticketAtivoService.buscarEntidadeAtiva(eq(10), eq(100), eq(null), eq("5511999000001")))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(eq(10), eq(100), eq("5511999000001")))
                 .thenReturn(Optional.of(ativo));
 
         IntegracaoWhatsappMensagemRequestDTO req = new IntegracaoWhatsappMensagemRequestDTO();
@@ -122,6 +125,6 @@ class IntegracaoMensagemDoisContatosTest {
 
         assertEquals(false, res.isTicketCriado());
         assertEquals("TK-A", res.getNumeroTicket());
-        verify(ticketInteracaoService).registrarMensagemEntradaExterna(eq(ativo), eq("Segunda msg"), eq(null));
+        verify(ticketInteracaoService).registrarMensagemEntradaExterna(eq(ativo), eq("Segunda msg"), eq(null), any());
     }
 }

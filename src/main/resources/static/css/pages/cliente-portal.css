@@ -1,0 +1,416 @@
+/* Sprint 310 — Portal do Cliente */
+
+/* ============================================================
+   PORTAL LOGIN SCREEN
+   ============================================================ */
+.portal-login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--corp-bg-deep);
+    padding: 24px;
+    background-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 255, 170, 0.15) 0%, transparent 70%);
+}
+
+.portal-login-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 255, 170, 0.2);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 255, 170, 0.06);
+    backdrop-filter: blur(8px);
+}
+
+.portal-login-brand {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.portal-login-brand .logo-container {
+    margin-bottom: 12px;
+}
+
+.portal-login-brand h1 {
+    color: var(--corp-text-on-dark);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+}
+
+.portal-login-subtitle {
+    color: var(--corp-text-muted-on-dark);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.portal-login-box .form-group label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.portal-login-box .form-group input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(0, 255, 170, 0.2);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.portal-login-box .form-group input:focus {
+    outline: none;
+    border-color: var(--corp-accent-neon);
+    box-shadow: 0 0 0 3px rgba(0, 255, 170, 0.15);
+}
+
+.portal-login-box .form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.portal-login-box .form-group {
+    margin-bottom: 16px;
+}
+
+.portal-login-box .button-primary {
+    width: 100%;
+    background: var(--corp-accent-neon);
+    color: var(--corp-bg-deep);
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+}
+
+.portal-login-box .button-primary:hover:not(:disabled) {
+    background: #33ffc0;
+    box-shadow: 0 0 20px rgba(0, 255, 170, 0.35);
+}
+
+.portal-login-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.portal-login-footer a {
+    color: rgba(0, 255, 170, 0.8);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+}
+
+.portal-login-footer a:hover {
+    color: var(--corp-accent-neon);
+}
+
+#portalLoginAlert {
+    margin-top: 12px;
+}
+
+/* ============================================================
+   PORTAL APP SCREEN
+   ============================================================ */
+#portalAppScreen.screen-active {
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg);
+    overflow-y: auto;
+}
+
+.portal-topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    height: 60px;
+    background: var(--corp-bg-deep);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.portal-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--corp-text-on-dark);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.portal-topbar-brand .logo-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+.portal-topbar-brand .portal-badge {
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--corp-accent-neon);
+    color: var(--corp-bg-deep);
+    padding: 2px 7px;
+    border-radius: 99px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.portal-topbar-user {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.portal-topbar-user-name {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+}
+
+.portal-topbar-logout {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.portal-topbar-logout:hover {
+    background: rgba(0, 255, 170, 0.15);
+    color: var(--corp-accent-neon);
+    border-color: rgba(0, 255, 170, 0.3);
+}
+
+.portal-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.portal-nav-btn {
+    padding: 14px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    margin-bottom: -1px;
+}
+
+.portal-nav-btn:hover {
+    color: var(--text);
+}
+
+.portal-nav-btn.active {
+    color: var(--corp-bg-deep);
+    border-bottom-color: var(--corp-accent-neon);
+    font-weight: 600;
+}
+
+.portal-main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 24px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.portal-page {
+    display: none;
+}
+
+.portal-page.portal-page-active {
+    display: block;
+}
+
+/* Portal page headers */
+.portal-page-header {
+    margin-bottom: 24px;
+}
+
+.portal-page-header h1 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--corp-text-on-light);
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+}
+
+.portal-page-header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Dashboard metric cards */
+.portal-dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.portal-metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.portal-metric-card.portal-metric-card--highlight {
+    border-color: rgba(0, 255, 170, 0.35);
+    background: rgba(0, 255, 170, 0.04);
+}
+
+.portal-metric-card-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.portal-metric-card-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--corp-text-on-light);
+    line-height: 1;
+}
+
+.portal-metric-card--highlight .portal-metric-card-value {
+    color: var(--corp-bg-deep);
+}
+
+.portal-metric-card-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Portal tickets table */
+.portal-tickets-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.portal-tickets-section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.portal-tickets-section-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--corp-text-on-light);
+    margin: 0;
+}
+
+.portal-tickets-table-wrap {
+    overflow-x: auto;
+}
+
+.portal-tickets-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.portal-tickets-table th {
+    background: var(--surface-hover);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.portal-tickets-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+}
+
+.portal-tickets-table tr:last-child td {
+    border-bottom: none;
+}
+
+.portal-tickets-table tr:hover td {
+    background: var(--surface-hover);
+}
+
+.portal-ticket-numero {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--corp-bg-deep);
+    white-space: nowrap;
+}
+
+.portal-ticket-titulo {
+    max-width: 280px;
+    font-weight: 500;
+}
+
+.portal-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+#portalAppAlert {
+    margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+    .portal-main {
+        padding: 16px 14px;
+    }
+
+    .portal-nav-btn {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+
+    .portal-dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

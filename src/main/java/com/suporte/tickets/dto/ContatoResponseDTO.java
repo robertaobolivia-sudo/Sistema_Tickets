@@ -34,7 +34,14 @@ public class ContatoResponseDTO {
         dto.setId(contato.getId());
         if (contato.getCliente() != null) {
             dto.setClienteId(contato.getCliente().getId());
-            dto.setClienteNome(contato.getCliente().getNome());
+            String rotulo = contato.getCliente().getRazaoSocial();
+            if (rotulo == null || rotulo.isBlank()) {
+                rotulo = contato.getCliente().getEmpresa();
+            }
+            if (rotulo == null || rotulo.isBlank()) {
+                rotulo = contato.getCliente().getNome();
+            }
+            dto.setClienteNome(rotulo);
         }
         dto.setNome(contato.getNome());
         dto.setWhatsapp(contato.getWhatsapp());

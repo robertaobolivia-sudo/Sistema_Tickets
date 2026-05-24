@@ -46,6 +46,8 @@ class IntegracaoMensagemEntradaSmokeTest {
     private ContatoService contatoService;
     @Mock
     private InteracaoPendenteDecisaoService interacaoPendenteDecisaoService;
+    @Mock
+    private ContatoEtiquetaService contatoEtiquetaService;
 
     @InjectMocks
     private IntegracaoMensagemEntradaService service;
@@ -74,7 +76,8 @@ class IntegracaoMensagemEntradaSmokeTest {
         Contato ent = new Contato();
         ent.setId(contatoId);
         when(contatoService.buscarEntidade(contatoId)).thenReturn(ent);
-        when(ticketAtivoService.buscarEntidadeAtiva(eq(50), eq(contatoId), eq(null), any()))
+        when(contatoEtiquetaService.resolverClassificacaoOperacional(ent)).thenReturn(null);
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(eq(50), eq(contatoId), any()))
                 .thenReturn(Optional.empty());
         when(ticketAtivoService.buscarUltimoEncerradoPorClienteEContato(50, contatoId))
                 .thenReturn(Optional.empty());
@@ -125,7 +128,7 @@ class IntegracaoMensagemEntradaSmokeTest {
         ativo.setNumeroTicket("TK-S204-B");
         ativo.setStatus(TicketStatus.ABERTO);
         ativo.setCliente(clienteContratante());
-        when(ticketAtivoService.buscarEntidadeAtiva(eq(50), eq(702), eq(null), eq("5511999002042")))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(eq(50), eq(702), eq("5511999002042")))
                 .thenReturn(Optional.of(ativo));
 
         IntegracaoWhatsappMensagemRequestDTO req = new IntegracaoWhatsappMensagemRequestDTO();
@@ -138,7 +141,8 @@ class IntegracaoMensagemEntradaSmokeTest {
 
         assertFalse(res.isTicketCriado());
         assertEquals("TK-S204-B", res.getNumeroTicket());
-        verify(ticketInteracaoService).registrarMensagemEntradaExterna(eq(ativo), eq("Segunda mensagem smoke 204"), eq(null));
+        verify(ticketInteracaoService)
+                .registrarMensagemEntradaExterna(eq(ativo), eq("Segunda mensagem smoke 204"), eq(null), any());
         verify(ticketService, times(0)).criarTicketPorWebhook(any());
         verify(contatoService, times(1)).criarSeNaoExistir(eq(50), eq("5511999002042"), eq("Smoke Contato Existente"));
     }

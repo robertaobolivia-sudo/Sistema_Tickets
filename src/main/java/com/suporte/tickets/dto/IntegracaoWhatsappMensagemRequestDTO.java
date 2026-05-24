@@ -28,7 +28,5 @@ public class IntegracaoWhatsappMensagemRequestDTO {
     /** Numero matriz receptor; alternativa a whatsappMatrizId. */
     private String numeroMatriz;
 
-    private Integer contatoSolicitanteId;
-
     private String origemExternaId;
 }

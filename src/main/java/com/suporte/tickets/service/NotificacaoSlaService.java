@@ -98,7 +98,6 @@ public class NotificacaoSlaService {
     }
 
     private boolean isTicketFinalizado(Ticket ticket) {
-        return ticket.getStatus() == TicketStatus.RESOLVIDO
-                || ticket.getStatus() == TicketStatus.CANCELADO;
+        return TicketAtivoService.STATUS_FORA_ATENDIMENTO_OPERACIONAL.contains(ticket.getStatus());
     }
 }

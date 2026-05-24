@@ -5,7 +5,9 @@ import com.suporte.tickets.dto.ContatoResponseDTO;
 import com.suporte.tickets.entity.Cliente;
 import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.repository.ClienteRepository;
+import com.suporte.tickets.entity.ContatoTelefone;
 import com.suporte.tickets.repository.ContatoRepository;
+import com.suporte.tickets.repository.ContatoTelefoneRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -32,6 +34,9 @@ class ContatoServiceTest {
     @Mock
     private ClienteRepository clienteRepository;
 
+    @Mock
+    private ContatoTelefoneRepository contatoTelefoneRepository;
+
     @InjectMocks
     private ContatoService contatoService;
 
@@ -40,6 +45,8 @@ class ContatoServiceTest {
         Cliente cliente = cliente(1, "Fenix");
         when(clienteRepository.findById(1)).thenReturn(Optional.of(cliente));
         when(contatoRepository.existsByCliente_IdAndWhatsappNormalizado(1, "11999990001")).thenReturn(false);
+        when(contatoTelefoneRepository.existsByCliente_IdAndTelefoneNormalizado(1, "11999990001"))
+                .thenReturn(false);
         when(contatoRepository.save(any(Contato.class))).thenAnswer(inv -> {
             Contato c = inv.getArgument(0);
             c.setId(10);
@@ -78,6 +85,8 @@ class ContatoServiceTest {
     void criar_permiteMesmoWhatsappEmOutroCliente() {
         when(clienteRepository.findById(2)).thenReturn(Optional.of(cliente(2, "B")));
         when(contatoRepository.existsByCliente_IdAndWhatsappNormalizado(2, "5511888000000")).thenReturn(false);
+        when(contatoTelefoneRepository.existsByCliente_IdAndTelefoneNormalizado(2, "5511888000000"))
+                .thenReturn(false);
         when(contatoRepository.save(any(Contato.class))).thenAnswer(inv -> inv.getArgument(0));
 
         ContatoRequestDTO dto = new ContatoRequestDTO();
@@ -122,6 +131,28 @@ class ContatoServiceTest {
         ContatoResponseDTO dto = contatoService.criarSeNaoExistir(1, "5511", "Outro");
 
         assertEquals(7, dto.getId());
+        verify(contatoRepository, never()).save(any());
+    }
+
+    @Test
+    void criarSeNaoExistir_resolveTelefoneAdicional_semCriarDuplicado() {
+        Contato principal = new Contato();
+        principal.setId(42);
+        principal.setCliente(cliente(1, "A"));
+        principal.setNome("Maria");
+        principal.setWhatsapp("5511111111111");
+        principal.setWhatsappNormalizado("5511111111111");
+
+        when(contatoRepository.findByCliente_IdAndWhatsappNormalizado(1, "5522222222222"))
+                .thenReturn(Optional.empty());
+        ContatoTelefone adicional = new ContatoTelefone();
+        adicional.setContato(principal);
+        when(contatoTelefoneRepository.findByCliente_IdAndTelefoneNormalizado(1, "5522222222222"))
+                .thenReturn(Optional.of(adicional));
+
+        ContatoResponseDTO dto = contatoService.criarSeNaoExistir(1, "5522222222222", "Maria outro");
+
+        assertEquals(42, dto.getId());
         verify(contatoRepository, never()).save(any());
     }
 

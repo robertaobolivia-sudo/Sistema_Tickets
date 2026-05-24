@@ -43,14 +43,22 @@ public class IndicadoresChamadosService {
         List<Ticket> tickets = ticketRepository.findByDataAberturaPeriodo(inicio, fim);
         // classificacaoCliente: parâmetro legado ignorado (Sprint 130 — etiquetas flexíveis no futuro).
 
+        List<Ticket> indevidos = tickets.stream()
+                .filter(t -> TicketAtivoService.isTicketIndevido(t.getStatus()))
+                .toList();
+        List<Ticket> atendimentoValido = tickets.stream()
+                .filter(t -> TicketAtivoService.isAtendimentoOperacionalValido(t.getStatus()))
+                .toList();
+
         IndicadoresChamadosDTO dto = new IndicadoresChamadosDTO();
-        dto.setTotalChamados(tickets.size());
-        dto.setTotalClientes(contarClientesDistintos(tickets));
-        dto.setChamadosPorAtendente(agruparPorAtendente(tickets));
-        dto.setChamadosPorGrupo(agruparTopGrupos(tickets));
-        dto.setChamadosPorSubgrupo(agruparTopSubgrupos(tickets));
-        dto.setChamadosPorPrioridade(agruparPorPrioridade(tickets));
-        dto.setChamadosPorStatus(agruparPorStatus(tickets));
+        dto.setTotalChamados(atendimentoValido.size());
+        dto.setTotalNaoAtendimento(indevidos.size());
+        dto.setTotalClientes(contarClientesDistintos(atendimentoValido));
+        dto.setChamadosPorAtendente(agruparPorAtendente(atendimentoValido));
+        dto.setChamadosPorGrupo(agruparTopGrupos(atendimentoValido));
+        dto.setChamadosPorSubgrupo(agruparTopSubgrupos(atendimentoValido));
+        dto.setChamadosPorPrioridade(agruparPorPrioridade(atendimentoValido));
+        dto.setChamadosPorStatus(agruparPorStatusComNaoAtendimento(atendimentoValido, indevidos.size()));
         dto.setChamadosPorClassificacaoCliente(List.of());
         return dto;
     }
@@ -132,16 +140,22 @@ public class IndicadoresChamadosService {
         return lista;
     }
 
-    private static List<IndicadorContagemDTO> agruparPorStatus(List<Ticket> tickets) {
+    private static List<IndicadorContagemDTO> agruparPorStatusComNaoAtendimento(
+            List<Ticket> ticketsAtendimentoValido,
+            long totalIndevidos) {
         Map<String, Long> mapa = new LinkedHashMap<>();
-        for (Ticket ticket : tickets) {
+        for (Ticket ticket : ticketsAtendimentoValido) {
             String status = ticket.getStatus() != null ? ticket.getStatus().name() : "SEM_STATUS";
             mapa.merge(status, 1L, Long::sum);
         }
-        return mapa.entrySet().stream()
+        List<IndicadorContagemDTO> lista = mapa.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(e -> new IndicadorContagemDTO(e.getKey(), e.getValue()))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
+        if (totalIndevidos > 0) {
+            lista.add(new IndicadorContagemDTO("NAO_ATENDIMENTO_INDEVIDO", totalIndevidos));
+        }
+        return lista;
     }
 
     private static List<IndicadorContagemDTO> ordenarTop(Map<String, Long> mapa, int limite) {

@@ -31,6 +31,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
      */
     Optional<Cliente> findByNome(String nome);
 
+    Optional<Cliente> findByCnpj(String cnpj);
+
     List<Cliente> findAllByOrderByDataCadastroDesc();
 
     List<Cliente> findByAtivoTrueOrderByDataCadastroDesc();
@@ -39,7 +41,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 
     @Query("""
             SELECT c FROM Cliente c
-            LEFT JOIN c.carteira carteira
             WHERE LOWER(c.nome) LIKE LOWER(CONCAT('%', :termo, '%'))
                OR LOWER(COALESCE(c.telefone, '')) LIKE LOWER(CONCAT('%', :termo, '%'))
                OR LOWER(COALESCE(c.telefoneContato, '')) LIKE LOWER(CONCAT('%', :termo, '%'))
@@ -48,7 +49,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
                OR LOWER(COALESCE(c.email, '')) LIKE LOWER(CONCAT('%', :termo, '%'))
                OR LOWER(COALESCE(c.cidade, '')) LIKE LOWER(CONCAT('%', :termo, '%'))
                OR LOWER(COALESCE(c.uf, '')) LIKE LOWER(CONCAT('%', :termo, '%'))
-               OR LOWER(COALESCE(carteira.nome, '')) LIKE LOWER(CONCAT('%', :termo, '%'))
             ORDER BY c.dataCadastro DESC
             """)
     List<Cliente> pesquisar(@Param("termo") String termo);

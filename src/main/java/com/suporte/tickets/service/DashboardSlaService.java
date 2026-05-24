@@ -4,9 +4,11 @@ import com.suporte.tickets.dto.DashboardSlaBlocoDTO;
 import com.suporte.tickets.dto.DashboardSlaDTO;
 import com.suporte.tickets.dto.DashboardSlaPrioridadeDTO;
 import com.suporte.tickets.dto.DashboardSlaTicketCriticoDTO;
+import com.suporte.tickets.dto.DashboardSlaVivoResumoDTO;
 import com.suporte.tickets.entity.PrioridadeTicket;
 import com.suporte.tickets.entity.SlaStatus;
 import com.suporte.tickets.entity.Ticket;
+import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,16 @@ public class DashboardSlaService {
 
         List<DashboardSlaTicketCriticoDTO> criticos = new ArrayList<>();
         long ticketsEscalonados = 0;
+        long vivoDentro = 0;
+        long vivoProximo = 0;
+        long vivoVencido = 0;
         for (Ticket ticket : tickets) {
+            if (ticket.getStatus() == TicketStatus.INDEVIDO) {
+                continue;
+            }
+            if (!TicketAtivoService.isStatusAtivo(ticket.getStatus())) {
+                continue;
+            }
             if (Boolean.TRUE.equals(ticket.getEscalonado())) {
                 ticketsEscalonados++;
             }
@@ -69,6 +80,15 @@ public class DashboardSlaService {
             if (isTicketCriticoSla(ticket, statusPrimeiro, statusResolucao)) {
                 criticos.add(mapearTicketCritico(ticket, statusPrimeiro, statusResolucao));
             }
+
+            int pressao = piorPressaoSla(statusPrimeiro, statusResolucao);
+            if (pressao >= 3) {
+                vivoVencido++;
+            } else if (pressao >= 2) {
+                vivoProximo++;
+            } else {
+                vivoDentro++;
+            }
         }
 
         criticos.sort(Comparator
@@ -90,7 +110,30 @@ public class DashboardSlaService {
         ));
         dto.setTicketsCriticosSla(criticos);
         dto.setTicketsEscalonados(ticketsEscalonados);
+
+        DashboardSlaVivoResumoDTO vivo = new DashboardSlaVivoResumoDTO();
+        vivo.setDentroDoPrazo(vivoDentro);
+        vivo.setProximosDoLimite(vivoProximo);
+        vivo.setVencidos(vivoVencido);
+        vivo.setTicketMaisCritico(criticos.isEmpty() ? null : criticos.get(0));
+        dto.setVivo(vivo);
         return dto;
+    }
+
+    private static int piorPressaoSla(SlaStatus primeiro, SlaStatus resolucao) {
+        return Math.max(rankPressao(primeiro), rankPressao(resolucao));
+    }
+
+    private static int rankPressao(SlaStatus status) {
+        if (status == null) {
+            return 0;
+        }
+        return switch (status) {
+            case VENCIDO, VIOLADO -> 3;
+            case PROXIMO_DO_VENCIMENTO, PAUSADO -> 2;
+            case DENTRO_DO_PRAZO -> 1;
+            default -> 0;
+        };
     }
 
     private int rankTicketCriticoEscalonamento(DashboardSlaTicketCriticoDTO ticket) {

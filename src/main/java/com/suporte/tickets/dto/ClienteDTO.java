@@ -15,6 +15,5 @@ public class ClienteDTO {
     private Integer id;
     private String nome;
     private String telefone;
-    private Integer carteiraId;
 
 }

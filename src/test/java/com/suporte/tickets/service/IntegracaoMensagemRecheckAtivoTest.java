@@ -63,7 +63,7 @@ class IntegracaoMensagemRecheckAtivoTest {
         Ticket ativo = new Ticket();
         ativo.setNumeroTicket("TK-000086");
         ativo.setStatus(TicketStatus.ABERTO);
-        when(ticketAtivoService.buscarEntidadeAtiva(eq(69), eq(8), eq(null), eq("5511963978963")))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(eq(69), eq(8), eq("5511963978963")))
                 .thenReturn(Optional.of(ativo));
 
         IntegracaoWhatsappMensagemRequestDTO req = new IntegracaoWhatsappMensagemRequestDTO();
@@ -75,6 +75,6 @@ class IntegracaoMensagemRecheckAtivoTest {
 
         assertFalse(res.isTicketCriado());
         verify(ticketService, never()).criarTicketPorWebhook(any());
-        verify(ticketInteracaoService).registrarMensagemEntradaExterna(eq(ativo), eq("msg recheck"), any());
+        verify(ticketInteracaoService).registrarMensagemEntradaExterna(eq(ativo), eq("msg recheck"), any(), any());
     }
 }

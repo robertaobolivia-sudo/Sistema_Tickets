@@ -24,11 +24,12 @@ public class AuditoriaService {
     public static final String ACAO_TICKET_CRIAR_UI = "TICKET_CRIAR_UI";
     public static final String ACAO_TICKET_STATUS = "TICKET_STATUS";
     public static final String ACAO_TICKET_ENCERRAR = "TICKET_ENCERRAR";
+    public static final String ACAO_TICKET_CLASSIFICAR_INDEVIDO = "TICKET_CLASSIFICAR_INDEVIDO";
+    public static final String ACAO_TICKET_REVERTER_INDEVIDO = "TICKET_REVERTER_INDEVIDO";
     public static final String ACAO_TICKET_REABRIR = "TICKET_REABRIR";
     public static final String ACAO_TICKET_ESCALONAR = "TICKET_ESCALONAR";
     public static final String ACAO_TICKET_REMOVER_ESCALONAMENTO = "TICKET_REMOVER_ESCALONAMENTO";
     public static final String ACAO_TICKET_OBSERVACAO_ATENDIMENTO = "TICKET_OBSERVACAO_ATENDIMENTO";
-    public static final String ACAO_TICKET_ETIQUETAS = "TICKET_ETIQUETAS";
     public static final String ACAO_CONTATO_ETIQUETAS = "CONTATO_ETIQUETAS";
     public static final String ACAO_INTERACAO_PENDENTE_VINCULAR = "INTERACAO_PENDENTE_VINCULAR";
     public static final String ACAO_INTERACAO_PENDENTE_NOVO_TICKET = "INTERACAO_PENDENTE_NOVO_TICKET";

@@ -42,11 +42,7 @@ class TicketEncerramentoMotivoTest {
     @Mock
     private com.suporte.tickets.repository.ClienteRepository clienteRepository;
     @Mock
-    private com.suporte.tickets.repository.CarteiraRepository carteiraRepository;
-    @Mock
     private AnalistaService analistaService;
-    @Mock
-    private ContatoClienteService contatoClienteService;
     @Mock
     private ContatoService contatoService;
     @Mock
@@ -59,6 +55,8 @@ class TicketEncerramentoMotivoTest {
     private TicketSatisfacaoService ticketSatisfacaoService;
     @Mock
     private PesquisaSatisfacaoEnvioService pesquisaSatisfacaoEnvioService;
+    @Mock
+    private TicketStatusTransicaoService ticketStatusTransicaoService;
 
     @InjectMocks
     private TicketService ticketService;
@@ -129,6 +127,7 @@ class TicketEncerramentoMotivoTest {
         motivo.setAtivo(true);
         motivo.setSubgrupoCategoria(sub);
         when(motivoService.buscarEntidadeAtiva(7L)).thenReturn(motivo);
+        when(ticketStatusTransicaoService.isStatusAtivoOperacional(TicketStatus.EM_ATENDIMENTO)).thenReturn(true);
 
         EncerrarTicketRequestDTO dto = new EncerrarTicketRequestDTO();
         dto.setGrupoId(1L);

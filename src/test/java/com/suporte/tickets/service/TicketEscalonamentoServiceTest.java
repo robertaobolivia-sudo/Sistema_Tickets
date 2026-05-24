@@ -4,7 +4,6 @@ import com.suporte.tickets.dto.TicketEscalonamentoRequestDTO;
 import com.suporte.tickets.dto.TicketResponseDTO;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketStatus;
-import com.suporte.tickets.repository.CarteiraRepository;
 import com.suporte.tickets.repository.ClienteRepository;
 import com.suporte.tickets.repository.GrupoCategoriaRepository;
 import com.suporte.tickets.repository.SubgrupoCategoriaRepository;
@@ -31,8 +30,6 @@ class TicketEscalonamentoServiceTest {
     @Mock
     private ClienteRepository clienteRepository;
     @Mock
-    private CarteiraRepository carteiraRepository;
-    @Mock
     private GrupoCategoriaRepository grupoCategoriaRepository;
     @Mock
     private SubgrupoCategoriaRepository subgrupoCategoriaRepository;
@@ -40,8 +37,6 @@ class TicketEscalonamentoServiceTest {
     private TicketInteracaoService ticketInteracaoService;
     @Mock
     private AnalistaService analistaService;
-    @Mock
-    private ContatoClienteService contatoClienteService;
     @Mock
     private TicketSlaPrimeiroAtendimentoService ticketSlaPrimeiroAtendimentoService;
     @Mock

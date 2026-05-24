@@ -26,10 +26,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>, JpaSpe
      */
     Optional<Ticket> findByNumeroTicket(String numeroTicket);
 
-    Optional<Ticket> findFirstByContatoSolicitante_IdAndStatusInOrderByDataAberturaDesc(
-            Integer contatoSolicitanteId,
-            List<TicketStatus> statuses);
-
     Optional<Ticket> findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(
             Integer clienteId,
             List<TicketStatus> statuses);
@@ -39,6 +35,20 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>, JpaSpe
             Integer contatoId,
             List<TicketStatus> statuses);
 
+    long countByContato_Id(Integer contatoId);
+
+    long countByContato_IdAndStatusIn(Integer contatoId, List<TicketStatus> statuses);
+
+    @Query("""
+            SELECT t FROM Ticket t
+            LEFT JOIN FETCH t.grupoCategoria
+            LEFT JOIN FETCH t.subgrupoCategoria
+            LEFT JOIN FETCH t.motivo
+            WHERE t.contato.id = :contatoId
+            ORDER BY t.dataAbertura DESC
+            """)
+    List<Ticket> findHistoricoByContatoIdOrderByDataAberturaDesc(@Param("contatoId") Integer contatoId);
+
     @Query("""
             SELECT t FROM Ticket t
             WHERE t.cliente.id = :clienteId
@@ -46,10 +56,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>, JpaSpe
               AND t.status IN :statuses
             ORDER BY COALESCE(t.dataEncerramento, t.dataAbertura) DESC
             """)
-    Optional<Ticket> findFirstUltimoEncerradoPorClienteEContato(
+    List<Ticket> findUltimoEncerradoPorClienteEContato(
             @Param("clienteId") Integer clienteId,
             @Param("contatoId") Integer contatoId,
-            @Param("statuses") List<TicketStatus> statuses);
+            @Param("statuses") List<TicketStatus> statuses,
+            Pageable pageable);
 
     List<Ticket> findByCliente_IdInAndStatusInOrderByDataAberturaDesc(
             List<Integer> clienteIds,
@@ -101,13 +112,15 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>, JpaSpe
 
     List<Ticket> findByAnalistaResponsavelIdAndStatusOrderByDataAberturaAsc(Long analistaId, TicketStatus status);
 
-    List<Ticket> findByStatusInOrderByConexaoAscDataAberturaAsc(List<TicketStatus> statuses);
+    List<Ticket> findByStatusInOrderByDataAberturaAsc(List<TicketStatus> statuses);
 
     long countByAnalistaResponsavelId(Long analistaResponsavelId);
 
     long countByStatus(TicketStatus status);
 
     long countByAnalistaResponsavelIsNull();
+
+    long countByAnalistaResponsavelIsNullAndStatusIn(List<TicketStatus> statuses);
 
     long countByDataAberturaGreaterThanEqual(LocalDateTime dataInicio);
 
@@ -159,6 +172,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>, JpaSpe
             JOIN FETCH sub.grupoCategoria gr
             LEFT JOIN FETCH t.cliente c
             WHERE t.dataEncerramento IS NOT NULL
+              AND t.status <> :statusIndevido
               AND (:inicio IS NULL OR t.dataEncerramento >= :inicio)
               AND (:fim IS NULL OR t.dataEncerramento <= :fim)
               AND (:clienteId IS NULL OR c.id = :clienteId)
@@ -168,6 +182,33 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>, JpaSpe
             @Param("inicio") LocalDateTime inicio,
             @Param("fim") LocalDateTime fim,
             @Param("clienteId") Integer clienteId,
-            @Param("motivoId") Long motivoId);
+            @Param("motivoId") Long motivoId,
+            @Param("statusIndevido") TicketStatus statusIndevido);
+
+    @Query("""
+            SELECT t FROM Ticket t
+            LEFT JOIN FETCH t.motivo m
+            LEFT JOIN FETCH m.subgrupoCategoria
+            LEFT JOIN FETCH t.subgrupoCategoria
+            WHERE t.dataEncerramento IS NOT NULL
+              AND t.dataEncerramento >= :inicio
+              AND t.dataEncerramento < :fimExclusivo
+              AND t.status <> :statusIndevido
+            """)
+    List<Ticket> findEncerradosOperacionaisNoPeriodo(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fimExclusivo") LocalDateTime fimExclusivo,
+            @Param("statusIndevido") TicketStatus statusIndevido);
+
+    @Query("""
+            SELECT t FROM Ticket t
+            JOIN FETCH t.cliente c
+            LEFT JOIN FETCH t.analistaResponsavel
+            LEFT JOIN FETCH t.contato
+            WHERE c.ativo = true
+              AND t.status IN :statuses
+            ORDER BY c.nome ASC, t.dataAbertura ASC
+            """)
+    List<Ticket> findOperacionaisPorClientesAtivos(@Param("statuses") List<TicketStatus> statuses);
 
 }

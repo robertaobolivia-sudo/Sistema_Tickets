@@ -9,25 +9,25 @@
     --chats-ease: 0.16s ease;
     --chats-scrollbar-thumb: rgba(var(--corp-accent-neon-rgb), 0.35);
     --chats-scrollbar-track: transparent;
-    --chats-conexao-header-bg-image: none;
-    --chats-conexao-header-fallback-a: color-mix(in srgb, var(--corp-bg-deep) 12%, var(--surface-alt, #f1f5f9));
-    --chats-conexao-header-fallback-b: color-mix(in srgb, var(--surface, #fff) 94%, var(--corp-accent-neon) 6%);
-    --chats-conexao-header-overlay-top: rgba(255, 255, 255, 0.72);
-    --chats-conexao-header-overlay-bottom: rgba(255, 255, 255, 0.45);
-    --chats-conexao-logo-bg: color-mix(in srgb, var(--surface, #fff) 90%, var(--corp-accent-neon) 10%);
-    --chats-conexao-logo-ring: var(--corp-border-subtle);
+    --chats-cliente-header-bg-image: none;
+    --chats-cliente-header-fallback-a: color-mix(in srgb, var(--corp-bg-deep) 12%, var(--surface-alt, #f1f5f9));
+    --chats-cliente-header-fallback-b: color-mix(in srgb, var(--surface, #fff) 94%, var(--corp-accent-neon) 6%);
+    --chats-cliente-header-overlay-top: rgba(255, 255, 255, 0.72);
+    --chats-cliente-header-overlay-bottom: rgba(255, 255, 255, 0.45);
+    --chats-cliente-logo-bg: color-mix(in srgb, var(--surface, #fff) 90%, var(--corp-accent-neon) 10%);
+    --chats-cliente-logo-ring: var(--corp-border-subtle);
     /* Altura tabs (52) + borda + bloco busca lateral — só referência; sidebar não é alterada */
     --chats-header-align-rail: 112.5px;
 }
 
 html[data-theme="dark"] #page-chats {
     --chats-scrollbar-thumb: rgba(var(--corp-accent-neon-rgb), 0.4);
-    --chats-conexao-header-fallback-a: color-mix(in srgb, var(--corp-bg-deep) 55%, var(--surface-alt, #1e293b));
-    --chats-conexao-header-fallback-b: color-mix(in srgb, var(--surface, #0f172a) 90%, var(--corp-bg-deep) 10%);
-    --chats-conexao-header-overlay-top: rgba(15, 47, 58, 0.78);
-    --chats-conexao-header-overlay-bottom: rgba(15, 47, 58, 0.55);
-    --chats-conexao-logo-bg: color-mix(in srgb, var(--surface-alt, #1e293b) 88%, var(--corp-bg-deep) 12%);
-    --chats-conexao-logo-ring: var(--corp-border-subtle);
+    --chats-cliente-header-fallback-a: color-mix(in srgb, var(--corp-bg-deep) 55%, var(--surface-alt, #1e293b));
+    --chats-cliente-header-fallback-b: color-mix(in srgb, var(--surface, #0f172a) 90%, var(--corp-bg-deep) 10%);
+    --chats-cliente-header-overlay-top: rgba(15, 47, 58, 0.78);
+    --chats-cliente-header-overlay-bottom: rgba(15, 47, 58, 0.55);
+    --chats-cliente-logo-bg: color-mix(in srgb, var(--surface-alt, #1e293b) 88%, var(--corp-bg-deep) 12%);
+    --chats-cliente-logo-ring: var(--corp-border-subtle);
     --chats-muted-readable: color-mix(in srgb, var(--text-muted) 82%, var(--corp-accent-neon));
 }
 
@@ -45,15 +45,6 @@ html[data-theme="dark"] #page-chats {
 .main-content:has(#page-chats.active) {
     overflow: hidden;
     min-height: 0;
-    height: 100vh;
-    max-height: 100vh;
-}
-
-@supports (height: 100dvh) {
-    .main-content:has(#page-chats.active) {
-        height: 100dvh;
-        max-height: 100dvh;
-    }
 }
 
 .main-content:has(#page-chats.active) .app-topbar {
@@ -278,6 +269,24 @@ html[data-theme="dark"] #page-chats .chats-tab.active .chats-tab-count {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+#page-chats .chats-list-item-tel-extra {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--corp-accent-teal, #0d9488);
+    background: rgba(13, 148, 136, 0.12);
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+#page-chats .chats-panel-telefone-origem-hint {
+    font-size: 12px;
+    color: var(--text-muted, #6b7280);
+    font-weight: 400;
 }
 
 #page-chats .chats-list-item-ticket {
@@ -628,7 +637,7 @@ html[data-theme="dark"] #page-chats .chats-canal-pill--api {
 }
 
 #page-chats .chats-main-header,
-#page-chats .chats-conexao-header {
+#page-chats .chats-cliente-header {
     grid-row: 1;
     position: relative;
     padding: 0;
@@ -639,37 +648,37 @@ html[data-theme="dark"] #page-chats .chats-canal-pill--api {
     isolation: isolate;
 }
 
-#page-chats .chats-conexao-header-bg {
+#page-chats .chats-cliente-header-bg {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-color: var(--chats-conexao-header-fallback-b);
+    background-color: var(--chats-cliente-header-fallback-b);
     background-image: linear-gradient(
             125deg,
-            var(--chats-conexao-header-fallback-a) 0%,
-            var(--chats-conexao-header-fallback-b) 48%,
-            var(--chats-conexao-header-fallback-a) 100%
+            var(--chats-cliente-header-fallback-a) 0%,
+            var(--chats-cliente-header-fallback-b) 48%,
+            var(--chats-cliente-header-fallback-a) 100%
         ),
-        var(--chats-conexao-header-bg-image);
+        var(--chats-cliente-header-bg-image);
     background-size: cover, cover;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
 }
 
-#page-chats .chats-conexao-header--bg-fallback {
-    --chats-conexao-header-bg-image: none;
+#page-chats .chats-cliente-header--bg-fallback {
+    --chats-cliente-header-bg-image: none;
 }
 
-#page-chats .chats-conexao-header--has-custom-bg .chats-conexao-header-bg {
-    background-color: var(--chats-conexao-header-fallback-b);
-    background-image: var(--chats-conexao-header-bg-image);
+#page-chats .chats-cliente-header--has-custom-bg .chats-cliente-header-bg {
+    background-color: var(--chats-cliente-header-fallback-b);
+    background-image: var(--chats-cliente-header-bg-image);
     background-size: cover;
     background-position: center 42%;
     background-repeat: no-repeat;
 }
 
 /* Sprint 176 — overlay mais leve sobre arte WL; leitura via sombra discreta no texto */
-#page-chats .chats-conexao-header--has-custom-bg .chats-conexao-header-overlay {
+#page-chats .chats-cliente-header--has-custom-bg .chats-cliente-header-overlay {
     background: linear-gradient(
         105deg,
         color-mix(in srgb, var(--surface, #fff) 55%, transparent) 0%,
@@ -678,7 +687,7 @@ html[data-theme="dark"] #page-chats .chats-canal-pill--api {
     );
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-conexao-header-overlay {
+html[data-theme="dark"] #page-chats .chats-cliente-header--has-custom-bg .chats-cliente-header-overlay {
     background: linear-gradient(
         105deg,
         rgba(15, 23, 42, 0.58) 0%,
@@ -687,47 +696,47 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     );
 }
 
-#page-chats .chats-conexao-header--has-custom-bg .chats-conexao-title {
+#page-chats .chats-cliente-header--has-custom-bg .chats-cliente-title {
     text-shadow:
         0 1px 2px color-mix(in srgb, var(--surface, #fff) 80%, transparent),
         0 0 12px color-mix(in srgb, var(--surface, #fff) 40%, transparent);
 }
 
-#page-chats .chats-conexao-header--has-custom-bg .chats-conexao-meta,
-#page-chats .chats-conexao-header--has-custom-bg .chats-conexao-meta-line,
-#page-chats .chats-conexao-header--has-custom-bg .chats-conexao-canal-label {
+#page-chats .chats-cliente-header--has-custom-bg .chats-cliente-meta,
+#page-chats .chats-cliente-header--has-custom-bg .chats-cliente-meta-line,
+#page-chats .chats-cliente-header--has-custom-bg .chats-cliente-canal-label {
     text-shadow: 0 1px 1px color-mix(in srgb, var(--surface, #fff) 70%, transparent);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-conexao-title {
+html[data-theme="dark"] #page-chats .chats-cliente-header--has-custom-bg .chats-cliente-title {
     text-shadow:
         0 1px 3px rgba(0, 0, 0, 0.5),
         0 0 10px rgba(15, 23, 42, 0.55);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-conexao-meta,
-html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-conexao-meta-line,
-html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-conexao-canal-label {
+html[data-theme="dark"] #page-chats .chats-cliente-header--has-custom-bg .chats-cliente-meta,
+html[data-theme="dark"] #page-chats .chats-cliente-header--has-custom-bg .chats-cliente-meta-line,
+html[data-theme="dark"] #page-chats .chats-cliente-header--has-custom-bg .chats-cliente-canal-label {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
-#page-chats .chats-conexao-header--has-custom-bg .chats-canal-pill--header {
+#page-chats .chats-cliente-header--has-custom-bg .chats-canal-pill--header {
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 12%, transparent);
 }
 
-#page-chats .chats-conexao-header-overlay {
+#page-chats .chats-cliente-header-overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
     background: linear-gradient(
         180deg,
-        var(--chats-conexao-header-overlay-top) 0%,
-        var(--chats-conexao-header-overlay-bottom) 100%
+        var(--chats-cliente-header-overlay-top) 0%,
+        var(--chats-cliente-header-overlay-bottom) 100%
     );
 }
 
-#page-chats .chats-conexao-header-content {
+#page-chats .chats-cliente-header-content {
     position: relative;
     z-index: 2;
     display: flex;
@@ -740,7 +749,7 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     max-height: 88px;
 }
 
-#page-chats .chats-conexao-brand {
+#page-chats .chats-cliente-brand {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -748,26 +757,26 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     flex: 1 1 200px;
 }
 
-#page-chats .chats-conexao-header .chats-conexao-logo-slot {
+#page-chats .chats-cliente-header .chats-cliente-logo-slot {
     width: 40px;
     height: 40px;
 }
 
-#page-chats .chats-conexao-logo-slot {
+#page-chats .chats-cliente-logo-slot {
     flex-shrink: 0;
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    border: 1px solid var(--chats-conexao-logo-ring);
-    background-color: var(--chats-conexao-logo-bg);
-    background-image: var(--chats-conexao-logo-image, none);
+    border: 1px solid var(--chats-cliente-logo-ring);
+    background-color: var(--chats-cliente-logo-bg);
+    background-image: var(--chats-cliente-logo-image, none);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 8%, transparent);
 }
 
-#page-chats .chats-conexao-logo-slot--empty::before {
+#page-chats .chats-cliente-logo-slot--empty::before {
     content: '';
     display: block;
     width: 20px;
@@ -779,17 +788,17 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     opacity: 0.55;
 }
 
-#page-chats .chats-conexao-logo-slot--has-image::before {
+#page-chats .chats-cliente-logo-slot--has-image::before {
     display: none;
 }
 
-#page-chats .chats-conexao-canal {
+#page-chats .chats-cliente-canal {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
 }
 
-#page-chats .chats-conexao-canal-label--sistema {
+#page-chats .chats-cliente-canal-label--sistema {
     font-size: 11px;
     font-weight: 500;
     color: var(--text-muted);
@@ -805,12 +814,12 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     box-shadow: 0 1px 1px color-mix(in srgb, var(--text) 6%, transparent);
 }
 
-#page-chats .chats-conexao-text {
+#page-chats .chats-cliente-text {
     min-width: 0;
     flex: 1;
 }
 
-#page-chats .chats-conexao-title,
+#page-chats .chats-cliente-title,
 #page-chats .chats-main-header h2 {
     margin: 0 0 3px;
     font-size: 16px;
@@ -825,7 +834,7 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
 }
 
 #page-chats .chats-main-header-meta,
-#page-chats .chats-conexao-meta {
+#page-chats .chats-cliente-meta {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -836,7 +845,7 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     line-height: 1.3;
 }
 
-#page-chats .chats-conexao-meta-line {
+#page-chats .chats-cliente-meta-line {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -852,14 +861,14 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
 
 /* Sprint 171 — header só identidade (arte WL futura); sem SLA/status no card */
 /* Sprint 172–173 — banner WL; altura alinhada à base do bloco abas+busca lateral (~116px) */
-#page-chats .chats-conexao-header--brand-only {
+#page-chats .chats-cliente-header--brand-only {
     box-sizing: border-box;
     min-height: var(--chats-header-align-rail);
     height: var(--chats-header-align-rail);
     max-height: 120px;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-conexao-header-content {
+#page-chats .chats-cliente-header--brand-only .chats-cliente-header-content {
     box-sizing: border-box;
     height: 100%;
     min-height: 0;
@@ -868,22 +877,22 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     padding: 12px 16px;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-conexao-logo-slot {
+#page-chats .chats-cliente-header--brand-only .chats-cliente-logo-slot {
     width: 44px;
     height: 44px;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-conexao-brand {
+#page-chats .chats-cliente-header--brand-only .chats-cliente-brand {
     flex: 1 1 auto;
     min-width: 0;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-conexao-title {
+#page-chats .chats-cliente-header--brand-only .chats-cliente-title {
     font-size: 17px;
     margin-bottom: 2px;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-conexao-meta {
+#page-chats .chats-cliente-header--brand-only .chats-cliente-meta {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
@@ -892,37 +901,37 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--has-custom-bg .chats-
     opacity: 0.92;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-header-protocol {
+#page-chats .chats-cliente-header--brand-only .chats-header-protocol {
     font-weight: 500;
     font-size: 11px;
 }
 
-#page-chats .chats-conexao-header--brand-only .chats-header-ops,
-#page-chats .chats-conexao-header--brand-only .chats-header-badges,
-#page-chats .chats-conexao-header--brand-only .chats-header-sla {
+#page-chats .chats-cliente-header--brand-only .chats-header-ops,
+#page-chats .chats-cliente-header--brand-only .chats-header-badges,
+#page-chats .chats-cliente-header--brand-only .chats-header-sla {
     display: none !important;
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header--brand-only .chats-conexao-meta {
+html[data-theme="dark"] #page-chats .chats-cliente-header--brand-only .chats-cliente-meta {
     opacity: 0.95;
 }
 
 /* Sprint 168 — header central: operacional compacto (legado; bloco removido no HTML) */
-#page-chats .chats-conexao-header .chats-conexao-meta {
+#page-chats .chats-cliente-header .chats-cliente-meta {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     gap: 4px 10px;
 }
 
-#page-chats .chats-conexao-header .chats-header-protocol {
+#page-chats .chats-cliente-header .chats-header-protocol {
     flex-shrink: 0;
     font-size: 11px;
     font-weight: 600;
     color: color-mix(in srgb, var(--text-muted) 92%, var(--text));
 }
 
-#page-chats .chats-conexao-header .chats-header-ops {
+#page-chats .chats-cliente-header .chats-header-ops {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
@@ -931,37 +940,37 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--brand-only .chats-con
     min-width: 0;
 }
 
-#page-chats .chats-conexao-header .chats-header-badges {
+#page-chats .chats-cliente-header .chats-header-badges {
     gap: 4px;
     flex-shrink: 0;
 }
 
-#page-chats .chats-conexao-header .chats-header-sla {
+#page-chats .chats-cliente-header .chats-header-sla {
     flex: 1 1 auto;
     width: auto;
     max-width: 100%;
     min-width: 0;
 }
 
-#page-chats .chats-conexao-header .chats-header-sla-inner {
+#page-chats .chats-cliente-header .chats-header-sla-inner {
     gap: 3px 7px;
     font-size: 9px;
     font-weight: 500;
     line-height: 1.25;
 }
 
-#page-chats .chats-conexao-header .chats-sla-wait {
+#page-chats .chats-cliente-header .chats-sla-wait {
     font-weight: 500;
     font-size: 9px;
 }
 
-#page-chats .chats-conexao-header .chats-sla-due,
-#page-chats .chats-conexao-header .chats-sla-line--neutro {
+#page-chats .chats-cliente-header .chats-sla-due,
+#page-chats .chats-cliente-header .chats-sla-line--neutro {
     font-size: 9px;
 }
 
-#page-chats .chats-conexao-header .chats-header-sla-inner .chats-sla-badge,
-#page-chats .chats-conexao-header .chats-header-sla-inner .sla-badge {
+#page-chats .chats-cliente-header .chats-header-sla-inner .chats-sla-badge,
+#page-chats .chats-cliente-header .chats-header-sla-inner .sla-badge {
     font-size: 9px;
     font-weight: 500;
     padding: 1px 5px;
@@ -970,8 +979,8 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--brand-only .chats-con
     opacity: 0.92;
 }
 
-#page-chats .chats-conexao-header .chats-status-pill,
-#page-chats .chats-conexao-header .chats-priority-pill {
+#page-chats .chats-cliente-header .chats-status-pill,
+#page-chats .chats-cliente-header .chats-priority-pill {
     font-size: 10px;
     font-weight: 500;
     padding: 1px 6px;
@@ -980,65 +989,65 @@ html[data-theme="dark"] #page-chats .chats-conexao-header--brand-only .chats-con
     border-color: color-mix(in srgb, var(--border) 75%, transparent);
 }
 
-#page-chats .chats-conexao-header .chats-status-pill--aberto {
+#page-chats .chats-cliente-header .chats-status-pill--aberto {
     background: color-mix(in srgb, var(--color-info-soft) 50%, transparent);
 }
 
-#page-chats .chats-conexao-header .chats-status-pill--em-atendimento {
+#page-chats .chats-cliente-header .chats-status-pill--em-atendimento {
     background: color-mix(in srgb, var(--color-warning-soft, #fef3c7) 50%, transparent);
 }
 
-#page-chats .chats-conexao-header .chats-status-pill--aguardando {
+#page-chats .chats-cliente-header .chats-status-pill--aguardando {
     background: color-mix(in srgb, #f3e8ff 45%, transparent);
 }
 
-#page-chats .chats-conexao-header .chats-status-pill--resolvido {
+#page-chats .chats-cliente-header .chats-status-pill--resolvido {
     background: color-mix(in srgb, var(--color-success-soft, #dcfce7) 50%, transparent);
 }
 
-#page-chats .chats-conexao-header .chats-status-pill--cancelado,
-#page-chats .chats-conexao-header .chats-status-pill--default {
+#page-chats .chats-cliente-header .chats-status-pill--cancelado,
+#page-chats .chats-cliente-header .chats-status-pill--default {
     background: color-mix(in srgb, var(--surface-hover, var(--border)) 40%, transparent);
 }
 
-#page-chats .chats-conexao-header .chats-priority-pill--critica,
-#page-chats .chats-conexao-header .chats-priority-pill--alta,
-#page-chats .chats-conexao-header .chats-priority-pill--media,
-#page-chats .chats-conexao-header .chats-priority-pill--baixa {
+#page-chats .chats-cliente-header .chats-priority-pill--critica,
+#page-chats .chats-cliente-header .chats-priority-pill--alta,
+#page-chats .chats-cliente-header .chats-priority-pill--media,
+#page-chats .chats-cliente-header .chats-priority-pill--baixa {
     filter: saturate(0.88);
 }
 
-#page-chats .chats-conexao-header .chats-contexto-toggle {
+#page-chats .chats-cliente-header .chats-contexto-toggle {
     align-self: center;
     margin-top: 0;
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header .chats-status-pill--aberto {
+html[data-theme="dark"] #page-chats .chats-cliente-header .chats-status-pill--aberto {
     background: color-mix(in srgb, rgba(var(--corp-accent-neon-rgb), 0.22) 65%, transparent);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header .chats-status-pill--em-atendimento {
+html[data-theme="dark"] #page-chats .chats-cliente-header .chats-status-pill--em-atendimento {
     background: color-mix(in srgb, rgba(180, 83, 9, 0.28) 65%, transparent);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header .chats-status-pill--aguardando {
+html[data-theme="dark"] #page-chats .chats-cliente-header .chats-status-pill--aguardando {
     background: color-mix(in srgb, rgba(147, 51, 234, 0.22) 65%, transparent);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header .chats-status-pill--resolvido {
+html[data-theme="dark"] #page-chats .chats-cliente-header .chats-status-pill--resolvido {
     background: color-mix(in srgb, rgba(21, 128, 61, 0.28) 65%, transparent);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-header .chats-header-protocol {
+html[data-theme="dark"] #page-chats .chats-cliente-header .chats-header-protocol {
     color: color-mix(in srgb, var(--text-muted) 85%, #e2e8f0);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-title,
+html[data-theme="dark"] #page-chats .chats-cliente-title,
 html[data-theme="dark"] #page-chats .chats-main-header h2 {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-html[data-theme="dark"] #page-chats .chats-conexao-canal-label--sistema {
+html[data-theme="dark"] #page-chats .chats-cliente-canal-label--sistema {
     background: color-mix(in srgb, var(--surface-alt, #1e293b) 65%, transparent);
 }
 
@@ -1118,6 +1127,12 @@ html[data-theme="dark"] #page-chats .chats-status-pill--aguardando {
 }
 
 #page-chats .chats-status-pill--cancelado {
+    background: var(--surface-hover, #f3f4f6);
+    color: var(--text-muted);
+    border-color: var(--border);
+}
+
+#page-chats .chats-status-pill--indevido {
     background: var(--surface-hover, #f3f4f6);
     color: var(--text-muted);
     border-color: var(--border);
@@ -1243,11 +1258,11 @@ html[data-theme="dark"] #page-chats .chats-msg-type {
     letter-spacing: 0.01em;
 }
 
-#page-chats .chats-main.is-loading-conversa .chats-conexao-header {
+#page-chats .chats-main.is-loading-conversa .chats-cliente-header {
     opacity: 0.92;
 }
 
-#page-chats .chats-main.is-loading-conversa .chats-conexao-title {
+#page-chats .chats-main.is-loading-conversa .chats-cliente-title {
     color: var(--text-muted);
 }
 
@@ -1372,6 +1387,17 @@ html[data-theme="dark"] #page-chats .chats-timeline::before {
 #page-chats .chats-msg-time {
     font-weight: 500;
     color: color-mix(in srgb, var(--text-muted) 95%, transparent);
+}
+
+#page-chats .chats-msg-origem {
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: color-mix(in srgb, var(--primary) 70%, var(--text-muted));
 }
 
 #page-chats .chats-msg-type {
@@ -1669,6 +1695,19 @@ html[data-theme="dark"] #page-chats .chats-panel-block {
     color: var(--text-muted);
 }
 
+#page-chats .chats-status-flow-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+#page-chats .chats-status-select {
+    flex: 1 1 140px;
+    min-width: 0;
+    max-width: 100%;
+}
+
 #page-chats .chats-panel-block .chats-dl dd .chats-priority-pill {
     font-size: 10px;
     padding: 2px 6px;
@@ -1804,9 +1843,28 @@ html[data-theme="dark"] #page-chats .chats-panel-block {
     color: var(--text);
 }
 
+#page-chats .chats-panel-chamado-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+#page-chats .chats-panel-chamado-actions .chats-panel-ver-ticket,
+#page-chats .chats-panel-chamado-actions #chatsClassificarIndevidoBtn {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-top: 0;
+}
+
 #page-chats .chats-panel-ver-ticket {
     width: 100%;
     margin-top: 8px;
+}
+
+#page-chats .chats-list-item--indevido {
+    border-left: 3px solid var(--corp-text-muted, #6b7280);
+    opacity: 0.92;
 }
 
 #page-chats .chats-panel-salvar-obs,
@@ -2140,6 +2198,24 @@ body.chats-panel-drawer-open {
 
 /* Sprint 169 — tema claro/escuro: contraste e superfícies (somente Chats) */
 
+#page-chats .chats-list-item-tel-extra {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--corp-accent-teal, #0d9488);
+    background: rgba(13, 148, 136, 0.12);
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+#page-chats .chats-panel-telefone-origem-hint {
+    font-size: 12px;
+    color: var(--text-muted, #6b7280);
+    font-weight: 400;
+}
+
 #page-chats .chats-list-item-ticket {
     color: color-mix(in srgb, var(--text-muted) 92%, var(--text));
 }
@@ -2255,4 +2331,18 @@ html[data-theme="dark"] #page-chats .chats-composer-count {
         box-shadow: -10px 0 32px rgba(0, 0, 0, 0.48);
         border-left: 1px solid color-mix(in srgb, var(--border) 60%, #334155);
     }
+}
+
+/* Sprint 252 — menos verde fluorescente em focos e abas */
+html[data-theme='dark'] #page-chats .chats-tab:focus-visible {
+    outline-color: var(--corp-outline-accent, rgba(0, 255, 170, 0.22));
+}
+
+html[data-theme='dark'] #page-chats .chats-tab.active {
+    box-shadow: inset 0 -2px 0 var(--corp-outline-accent, rgba(0, 255, 170, 0.35));
+    color: var(--corp-premium-text, #e8f0f4);
+}
+
+html[data-theme='dark'] #page-chats .chats-search input:focus-visible {
+    box-shadow: 0 0 0 2px var(--corp-outline-accent, rgba(0, 255, 170, 0.18));
 }

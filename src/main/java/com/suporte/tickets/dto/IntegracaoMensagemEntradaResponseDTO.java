@@ -16,4 +16,6 @@ public class IntegracaoMensagemEntradaResponseDTO {
     /** Sprint 195: mensagem aguardando decisão do analista (ticket anterior encerrado). */
     private boolean aguardandoDecisao;
     private Long pendenciaDecisaoId;
+    /** Sprint 303: motivo operacional quando contato bloqueado por etiqueta (ex: INDEVIDO, PROPAGANDA). */
+    private String motivoOperacional;
 }

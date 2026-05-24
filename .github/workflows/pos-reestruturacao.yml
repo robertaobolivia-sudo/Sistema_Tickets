@@ -1,0 +1,107 @@
+# Gate pos-reestruturacao (F48): Maven + Vitest + package + Playwright F45
+# Nucleo Cliente / Contato / Ticket — sem regressao de legado operacional.
+
+name: Gate pos-reestruturacao
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+concurrency:
+  group: gate-pos-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Gate pos-reestruturacao
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: e2e_ci_root
+          MYSQL_DATABASE: suporte_tickets
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pe2e_ci_root"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      CI: true
+      E2E_BASE_URL: http://localhost:8080
+      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/suporte_tickets?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: e2e_ci_root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SMOKE_ADMIN_EMAIL: robertaobolivia@gmail.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Maven test
+        run: mvn -B test
+
+      - name: Setup Node.js (Vitest + E2E)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: |
+            e2e/package-lock.json
+            src/main/resources/static/js/package-lock.json
+
+      - name: Vitest
+        working-directory: src/main/resources/static/js
+        run: |
+          npm ci
+          npm test
+
+      - name: Maven package
+        run: mvn -B -q package -DskipTests
+
+      - name: Install E2E dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright F45 (pos-reestruturacao)
+        working-directory: e2e
+        env:
+          # Required check: configure secret SMOKE_ADMIN_SENHA in repo Settings → Secrets.
+          # Fallback abaixo só para bootstrap CI; preferir secret em produção.
+          SMOKE_ADMIN_SENHA: ${{ secrets.SMOKE_ADMIN_SENHA }}
+        run: |
+          if [ -z "${SMOKE_ADMIN_SENHA}" ]; then
+            echo "::warning::SMOKE_ADMIN_SENHA não definido; usando fallback de dev (defina o secret no repositório)."
+            export SMOKE_ADMIN_SENHA='@Hipcom123789'
+          fi
+          npm run test:pos-reestruturacao
+
+      - name: Upload Playwright report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-pos-reestruturacao
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7

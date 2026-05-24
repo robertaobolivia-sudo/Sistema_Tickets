@@ -7,6 +7,7 @@ import com.suporte.tickets.dto.IndicadoresPesquisaResumoDTO;
 import com.suporte.tickets.entity.Motivo;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketSatisfacao;
+import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.entity.TicketSatisfacaoEnvioStatus;
 import com.suporte.tickets.entity.TicketSatisfacaoStatus;
 import com.suporte.tickets.repository.TicketRepository;
@@ -50,10 +51,10 @@ public class IndicadoresEncerramentoAvaliacaoService {
         TicketSatisfacaoStatus statusSat = resolverStatusPesquisa(statusPesquisa);
 
         List<TicketSatisfacao> avaliacoes = ticketSatisfacaoRepository.findForIndicadoresEncerramento(
-                inicio, fim, clienteId, motivoId, statusSat, notaAvaliacao);
+                inicio, fim, clienteId, motivoId, statusSat, notaAvaliacao, TicketStatus.INDEVIDO);
 
         List<Ticket> ticketsMotivo = ticketRepository.findEncerradosComMotivoParaIndicadores(
-                inicio, fim, clienteId, motivoId);
+                inicio, fim, clienteId, motivoId, TicketStatus.INDEVIDO);
 
         IndicadoresEncerramentoAvaliacaoDTO dto = new IndicadoresEncerramentoAvaliacaoDTO();
         dto.setTopMotivos(agregarTopMotivos(ticketsMotivo));

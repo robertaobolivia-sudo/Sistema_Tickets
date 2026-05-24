@@ -20,7 +20,7 @@ public class ChatsHistoricoResumoService {
 
     private static final int LIMITE_RECENTES = 3;
     private static final List<TicketStatus> STATUS_ENCERRADO =
-            List.of(TicketStatus.RESOLVIDO, TicketStatus.CANCELADO);
+            List.of(TicketStatus.RESOLVIDO, TicketStatus.CANCELADO, TicketStatus.INDEVIDO);
 
     private final TicketRepository ticketRepository;
 
@@ -73,6 +73,12 @@ public class ChatsHistoricoResumoService {
         item.setDataEncerramento(ticket.getDataEncerramento());
         GrupoCategoria grupo = ticket.getGrupoCategoria();
         item.setGrupoCategoriaNome(grupo != null ? grupo.getNome() : null);
+        if (ticket.getAtendimentoTelefone() != null && !ticket.getAtendimentoTelefone().isBlank()) {
+            item.setAtendimentoTelefone(ticket.getAtendimentoTelefone().trim());
+        }
+        if (ticket.getAtendimentoTelefoneTipo() != null && !ticket.getAtendimentoTelefoneTipo().isBlank()) {
+            item.setAtendimentoTelefoneTipo(ticket.getAtendimentoTelefoneTipo().trim());
+        }
         return item;
     }
 }

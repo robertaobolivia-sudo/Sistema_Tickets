@@ -7,18 +7,17 @@ import com.suporte.tickets.dto.TicketEscalonamentoRequestDTO;
 import com.suporte.tickets.dto.TicketResponseDTO;
 import com.suporte.tickets.dto.TicketWebhookRequestDTO;
 import com.suporte.tickets.entity.Analista;
-import com.suporte.tickets.entity.Carteira;
 import com.suporte.tickets.entity.Cliente;
 import com.suporte.tickets.entity.Contato;
-import com.suporte.tickets.entity.ContatoCliente;
 import com.suporte.tickets.entity.WhatsappMatriz;
 import com.suporte.tickets.entity.GrupoCategoria;
 import com.suporte.tickets.entity.Motivo;
 import com.suporte.tickets.entity.SubgrupoCategoria;
 import com.suporte.tickets.entity.Ticket;
+import com.suporte.tickets.entity.TicketOrigem;
 import com.suporte.tickets.entity.PrioridadeTicket;
+import com.suporte.tickets.entity.TicketClassificacaoOperacional;
 import com.suporte.tickets.entity.TicketStatus;
-import com.suporte.tickets.repository.CarteiraRepository;
 import com.suporte.tickets.repository.ClienteRepository;
 import com.suporte.tickets.repository.GrupoCategoriaRepository;
 import com.suporte.tickets.repository.SubgrupoCategoriaRepository;
@@ -47,13 +46,11 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final ClienteRepository clienteRepository;
-    private final CarteiraRepository carteiraRepository;
     private final GrupoCategoriaRepository grupoCategoriaRepository;
     private final SubgrupoCategoriaRepository subgrupoCategoriaRepository;
     private final MotivoService motivoService;
     private final TicketInteracaoService ticketInteracaoService;
     private final AnalistaService analistaService;
-    private final ContatoClienteService contatoClienteService;
     private final ContatoService contatoService;
     private final WhatsappMatrizService whatsappMatrizService;
     private final TicketSlaPrimeiroAtendimentoService ticketSlaPrimeiroAtendimentoService;
@@ -62,6 +59,8 @@ public class TicketService {
     private final NotificacaoInternaService notificacaoInternaService;
     private final TicketSatisfacaoService ticketSatisfacaoService;
     private final PesquisaSatisfacaoEnvioService pesquisaSatisfacaoEnvioService;
+    private final ContatoAtendimentoOrigemService contatoAtendimentoOrigemService;
+    private final TicketStatusTransicaoService ticketStatusTransicaoService;
 
     /**
      * Cria um novo ticket a partir de dados de webhook
@@ -79,6 +78,7 @@ public class TicketService {
     @Transactional
     public TicketResponseDTO criarTicketPorWebhook(TicketWebhookRequestDTO dto) {
         Cliente cliente = resolverClienteParaCriacao(dto);
+        exigirContatoWhatsappAberturaOperacional(dto, cliente);
 
         // Passo 2: Gerar número sequencial do ticket
         String numeroTicket = gerarNumeroTicket();
@@ -88,7 +88,6 @@ public class TicketService {
         novoTicket.setNumeroTicket(numeroTicket);
         novoTicket.setCliente(cliente);
         novoTicket.setCanal(dto.getCanal());
-        novoTicket.setConexao(resolverConexaoLegado(dto, cliente));
         novoTicket.setMensagemInicial(dto.getMensagem());
         if (dto.getWhatsappMatrizId() != null) {
             WhatsappMatriz matriz = whatsappMatrizService.buscarEntidadeAtivaPorId(dto.getWhatsappMatrizId());
@@ -96,15 +95,17 @@ public class TicketService {
         }
         novoTicket.setStatus(TicketStatus.ABERTO);
         novoTicket.setPrioridade(resolverPrioridade(dto.getPrioridade()));
+        novoTicket.setOrigemTicket(TicketOrigemResolver.resolverOrigemNaCriacao(dto));
         novoTicket.setDataAbertura(LocalDateTime.now());
 
-        if (dto.getContatoSolicitanteId() != null) {
-            ContatoCliente contato = contatoClienteService.buscarEntidadeParaTicket(
-                    dto.getContatoSolicitanteId(), cliente.getId());
-            novoTicket.setContatoSolicitante(contato);
+        vincularContatoModeloAlvo(novoTicket, dto, cliente);
+        if (dto.getWhatsappMatrizId() != null && novoTicket.getContato() == null) {
+            vincularContatoWhatsAppAoTicket(novoTicket, dto, cliente);
         }
-
-        vincularContatoWhatsAppAoTicket(novoTicket, dto, cliente);
+        if (novoTicket.getContato() != null) {
+            contatoAtendimentoOrigemService.aplicarOrigemNoTicket(
+                    novoTicket, novoTicket.getContato(), telefoneBrutoMensagemWhatsapp(dto));
+        }
 
         if (novoTicket.getContato() != null && novoTicket.getContato().getId() != null) {
             Optional<Ticket> ativoMesmoContato = ticketRepository
@@ -131,8 +132,50 @@ public class TicketService {
     }
 
     /**
+     * Sprint 303: cria ticket já como INDEVIDO quando contato tem etiqueta operacional.
+     * Sem SLA, sem avaliação, sem fila. Terminal desde a criação.
+     */
+    @Transactional
+    public TicketResponseDTO criarTicketEntradaOperacional(
+            TicketWebhookRequestDTO dto, TicketClassificacaoOperacional motivo) {
+        Cliente cliente = resolverClienteParaCriacao(dto);
+        String numeroTicket = gerarNumeroTicket();
+        LocalDateTime agora = LocalDateTime.now();
+
+        Ticket ticket = new Ticket();
+        ticket.setNumeroTicket(numeroTicket);
+        ticket.setCliente(cliente);
+        ticket.setCanal(dto.getCanal());
+        ticket.setMensagemInicial(dto.getMensagem());
+        if (dto.getWhatsappMatrizId() != null) {
+            WhatsappMatriz matriz = whatsappMatrizService.buscarEntidadeAtivaPorId(dto.getWhatsappMatrizId());
+            ticket.setWhatsappMatriz(matriz);
+        }
+        ticket.setStatus(TicketStatus.INDEVIDO);
+        ticket.setPrioridade(resolverPrioridade(dto.getPrioridade()));
+        ticket.setOrigemTicket(TicketOrigemResolver.resolverOrigemNaCriacao(dto));
+        ticket.setDataAbertura(agora);
+        ticket.setDataEncerramento(agora);
+        ticket.setClassificacaoOperacional(motivo);
+        ticket.setClassificadoOperacionalEm(agora);
+
+        vincularContatoModeloAlvo(ticket, dto, cliente);
+        if (dto.getWhatsappMatrizId() != null && ticket.getContato() == null) {
+            vincularContatoWhatsAppAoTicket(ticket, dto, cliente);
+        }
+        if (ticket.getContato() != null) {
+            contatoAtendimentoOrigemService.aplicarOrigemNoTicket(
+                    ticket, ticket.getContato(), telefoneBrutoMensagemWhatsapp(dto));
+        }
+
+        Ticket salvo = ticketRepository.save(ticket);
+        ticketInteracaoService.registrarEntradaOperacional(salvo, motivo.name());
+        return converterParaResponseSeguro(salvo);
+    }
+
+    /**
      * Lista todos os tickets ordenados por data de abertura (decrescente)
-     * 
+     *
      * @return Lista de DTO com todos os tickets
      */
     @Transactional(readOnly = true)
@@ -218,6 +261,19 @@ public class TicketService {
         TicketStatus novoStatus = TicketStatus.valueOf(novoStatusStr);
         TicketStatus statusAnterior = ticket.getStatus();
 
+        if (novoStatus == TicketStatus.INDEVIDO) {
+            throw new IllegalArgumentException(
+                    "Use o endpoint de classificacao indevido com confirmacao do analista.");
+        }
+        if (novoStatus == TicketStatus.RESOLVIDO) {
+            throw new IllegalArgumentException("Use o endpoint de encerramento para resolver o ticket.");
+        }
+
+        ticketStatusTransicaoService.validarTransicao(
+                statusAnterior,
+                novoStatus,
+                TicketStatusTransicaoService.MotivoTransicao.ATUALIZACAO_MANUAL);
+
         if (novoStatus == TicketStatus.EM_ATENDIMENTO) {
             if (ticket.getStatus() == TicketStatus.EM_ATENDIMENTO && ticket.getAnalistaResponsavel() != null) {
                 throw new IllegalArgumentException("Ticket ja esta em atendimento");
@@ -257,9 +313,11 @@ public class TicketService {
         Ticket ticket = ticketRepository.findByNumeroTicket(numeroTicket)
                 .orElseThrow(() -> new RuntimeException("Ticket não encontrado: " + numeroTicket));
 
-        if (ticket.getStatus() != TicketStatus.RESOLVIDO && ticket.getStatus() != TicketStatus.CANCELADO) {
-            throw new IllegalArgumentException("Somente tickets resolvidos ou cancelados podem ser reabertos");
-        }
+        TicketStatus statusAnterior = ticket.getStatus();
+        ticketStatusTransicaoService.validarTransicao(
+                statusAnterior,
+                TicketStatus.ABERTO,
+                TicketStatusTransicaoService.MotivoTransicao.REABERTURA);
 
         ticket.setStatus(TicketStatus.ABERTO);
         ticket.setAnalistaResponsavel(null);
@@ -322,9 +380,17 @@ public class TicketService {
             throw new IllegalArgumentException("Motivo nao pertence ao subgrupo informado");
         }
 
+        if (!ticketStatusTransicaoService.isStatusAtivoOperacional(ticket.getStatus())) {
+            throw new IllegalArgumentException("Somente tickets ativos podem ser encerrados.");
+        }
+
         ticketSlaPausaService.finalizarPausaSeNecessario(ticket);
 
-        // Definir status como RESOLVIDO
+        ticketStatusTransicaoService.validarTransicao(
+                ticket.getStatus(),
+                TicketStatus.RESOLVIDO,
+                TicketStatusTransicaoService.MotivoTransicao.ENCERRAMENTO);
+
         ticket.setStatus(TicketStatus.RESOLVIDO);
 
         // Preencher dataEncerramento
@@ -438,12 +504,7 @@ public class TicketService {
     }
 
     /**
-     * Busca um cliente existente ou cria um novo
-     * 
-     * @param nomeCliente Nome do cliente
-     * @param telefone Telefone do cliente
-     * @param nomeCarteira Nome da carteira (opcional)
-     * @return Cliente encontrado ou criado
+     * Resolve Cliente contratante na criação (id explícito ou buscarOuCriarCliente).
      */
     private Cliente resolverClienteParaCriacao(TicketWebhookRequestDTO dto) {
         if (dto.getClienteContratanteId() != null) {
@@ -451,77 +512,77 @@ public class TicketService {
                     .orElseThrow(() -> new RuntimeException(
                             "Cliente nao encontrado: " + dto.getClienteContratanteId()));
         }
-        return buscarOuCriarCliente(dto.getCliente(), dto.getTelefone(), dto.getConexao());
-    }
-
-    private static String resolverConexaoLegado(TicketWebhookRequestDTO dto, Cliente cliente) {
-        if (dto.getConexao() != null && !dto.getConexao().isBlank()) {
-            return dto.getConexao().trim();
-        }
-        if (cliente.getNome() != null && !cliente.getNome().isBlank()) {
-            return cliente.getNome().trim();
-        }
-        return null;
+        return buscarOuCriarCliente(dto.getCliente(), dto.getTelefone());
     }
 
     /**
-     * Vincula {@link Contato} (pessoa WhatsApp) ao ticket novo quando há telefone (Sprint 190).
+     * Sprint F6: abertura pela UI (clienteContratanteId) ou cliente com Contatos exige contatoWhatsappId.
+     * Entrada WhatsApp (whatsappMatrizId) segue fluxo proprio.
+     */
+    private void exigirContatoWhatsappAberturaOperacional(TicketWebhookRequestDTO dto, Cliente cliente) {
+        if (dto.getWhatsappMatrizId() != null) {
+            return;
+        }
+        if (dto.getContatoWhatsappId() != null) {
+            return;
+        }
+        if (dto.getClienteContratanteId() != null) {
+            throw new IllegalArgumentException(
+                    "Informe contatoWhatsappId para abrir atendimento deste cliente.");
+        }
+        if (contatoService.clientePossuiContatoWhatsappAtivo(cliente.getId())) {
+            throw new IllegalArgumentException(
+                    "Cliente possui Contatos cadastrados. Informe contatoWhatsappId para abrir o atendimento.");
+        }
+    }
+
+    /**
+     * Sprint F8: apenas {@code contatoWhatsappId} vincula {@link Ticket#contato}.
+     * Legado removido F38; telefone automático só em fluxo Matriz.
+     */
+    private void vincularContatoModeloAlvo(Ticket ticket, TicketWebhookRequestDTO dto, Cliente cliente) {
+        if (dto.getContatoWhatsappId() == null) {
+            return;
+        }
+        Contato contato = contatoService.buscarEntidade(dto.getContatoWhatsappId());
+        if (contato.getCliente() == null
+                || contato.getCliente().getId() == null
+                || !contato.getCliente().getId().equals(cliente.getId())) {
+            throw new IllegalArgumentException("Contato nao pertence ao cliente do ticket");
+        }
+        ticket.setContato(contato);
+    }
+
+    /**
+     * Sprint F8: cria Contato só a partir do telefone da mensagem (fluxo Matriz).
      */
     private void vincularContatoWhatsAppAoTicket(Ticket ticket, TicketWebhookRequestDTO dto, Cliente cliente) {
-        String telefoneBruto = resolverTelefoneBrutoParaContato(dto, ticket, cliente);
+        String telefoneBruto = telefoneBrutoMensagemWhatsapp(dto);
         if (telefoneBruto == null) {
             return;
         }
-        String nome = resolverNomeParaNovoContato(dto, ticket, cliente);
+        String nome = resolverNomeParaNovoContato(dto);
         var contatoResp = contatoService.criarSeNaoExistir(cliente.getId(), telefoneBruto, nome);
         Contato contato = contatoService.buscarEntidade(contatoResp.getId());
         ticket.setContato(contato);
     }
 
-    private static String resolverTelefoneBrutoParaContato(
-            TicketWebhookRequestDTO dto, Ticket ticket, Cliente cliente) {
+    private static String telefoneBrutoMensagemWhatsapp(TicketWebhookRequestDTO dto) {
         if (dto.getTelefone() != null && TicketAtivoService.normalizarTelefone(dto.getTelefone()) != null) {
             return dto.getTelefone().trim();
         }
-        if (ticket.getContatoSolicitante() != null) {
-            ContatoCliente cc = ticket.getContatoSolicitante();
-            if (cc.getCelular() != null && TicketAtivoService.normalizarTelefone(cc.getCelular()) != null) {
-                return cc.getCelular().trim();
-            }
-            if (cc.getTelefone() != null && TicketAtivoService.normalizarTelefone(cc.getTelefone()) != null) {
-                return cc.getTelefone().trim();
-            }
-        }
-        if (cliente.getTelefone() != null && TicketAtivoService.normalizarTelefone(cliente.getTelefone()) != null) {
-            return cliente.getTelefone().trim();
-        }
-        if (cliente.getTelefoneContato() != null
-                && TicketAtivoService.normalizarTelefone(cliente.getTelefoneContato()) != null) {
-            return cliente.getTelefoneContato().trim();
-        }
         return null;
     }
 
-    private static String resolverNomeParaNovoContato(
-            TicketWebhookRequestDTO dto, Ticket ticket, Cliente cliente) {
+    private static String resolverNomeParaNovoContato(TicketWebhookRequestDTO dto) {
         if (dto.getNomeContato() != null && !dto.getNomeContato().isBlank()) {
             return dto.getNomeContato().trim();
         }
-        if (ticket.getContatoSolicitante() != null
-                && ticket.getContatoSolicitante().getNome() != null
-                && !ticket.getContatoSolicitante().getNome().isBlank()) {
-            return ticket.getContatoSolicitante().getNome().trim();
-        }
-        if (dto.getCliente() != null && !dto.getCliente().isBlank()) {
-            return dto.getCliente().trim();
-        }
-        if (cliente.getNome() != null && !cliente.getNome().isBlank()) {
-            return cliente.getNome().trim();
-        }
         return null;
     }
 
-    private Cliente buscarOuCriarCliente(String nomeCliente, String telefone, String nomeCarteira) {
+    /** Busca ou cria Cliente por nome/telefone (F39: sem Carteira/Conexão). */
+    private Cliente buscarOuCriarCliente(String nomeCliente, String telefone) {
         // Primeiro tenta buscar por telefone se existir
         if (telefone != null && !telefone.isEmpty()) {
             Optional<Cliente> clienteExistente = clienteRepository.findByTelefone(telefone);
@@ -541,20 +602,6 @@ public class TicketService {
         novoCliente.setNome(nomeCliente);
         novoCliente.setTelefone(telefone);
         novoCliente.setTelefoneContato(telefone);
-
-        // Associa a carteira se informada
-        if (nomeCarteira != null && !nomeCarteira.isEmpty()) {
-            Optional<Carteira> carteira = carteiraRepository.findByNome(nomeCarteira);
-            if (carteira.isPresent()) {
-                novoCliente.setCarteira(carteira.get());
-            } else {
-                // Cria nova carteira se não existir
-                Carteira novaCarteira = new Carteira();
-                novaCarteira.setNome(nomeCarteira);
-                Carteira carteiraSalva = carteiraRepository.save(novaCarteira);
-                novoCliente.setCarteira(carteiraSalva);
-            }
-        }
 
         return clienteRepository.save(novoCliente);
     }
@@ -607,9 +654,6 @@ public class TicketService {
             response.setCnpj(valorOuPadrao(ticket.getCliente().getCnpj()));
             response.setCidade(valorOuPadrao(ticket.getCliente().getCidade()));
             response.setUf(valorOuPadrao(ticket.getCliente().getUf()));
-            response.setCarteira(ticket.getCliente().getCarteira() != null
-                    ? valorOuPadrao(ticket.getCliente().getCarteira().getNome())
-                    : "-");
         } else {
             response.setCliente("-");
             response.setTelefone("-");
@@ -619,18 +663,6 @@ public class TicketService {
             response.setCnpj("-");
             response.setCidade("-");
             response.setUf("-");
-            response.setCarteira("-");
-        }
-        if (ticket.getContatoSolicitante() != null) {
-            ContatoCliente contato = ticket.getContatoSolicitante();
-            response.setContatoSolicitanteId(contato.getId());
-            response.setContatoSolicitanteNome(valorOuPadrao(contato.getNome()));
-            response.setContatoSolicitanteTelefone(formatarTelefoneContato(contato));
-            response.setContatoSolicitanteEmail(valorOuPadrao(contato.getEmail()));
-        } else {
-            response.setContatoSolicitanteNome("-");
-            response.setContatoSolicitanteTelefone("-");
-            response.setContatoSolicitanteEmail("-");
         }
         if (ticket.getContato() != null) {
             com.suporte.tickets.entity.Contato contatoWa = ticket.getContato();
@@ -651,6 +683,12 @@ public class TicketService {
             response.setContatoUf("-");
             response.setContatoObservacoes("-");
         }
+        if (ticket.getAtendimentoTelefone() != null && !ticket.getAtendimentoTelefone().isBlank()) {
+            response.setAtendimentoTelefone(ticket.getAtendimentoTelefone().trim());
+        }
+        if (ticket.getAtendimentoTelefoneTipo() != null && !ticket.getAtendimentoTelefoneTipo().isBlank()) {
+            response.setAtendimentoTelefoneTipo(ticket.getAtendimentoTelefoneTipo().trim());
+        }
         if (ticket.getWhatsappMatriz() != null) {
             WhatsappMatriz matriz = ticket.getWhatsappMatriz();
             response.setWhatsappMatrizId(matriz.getId());
@@ -663,8 +701,9 @@ public class TicketService {
             response.setWhatsappMatrizNumero("-");
             response.setWhatsappMatrizNome("-");
         }
+        TicketOrigem origem = TicketOrigemResolver.resolverOrigemParaExibicao(ticket);
+        response.setOrigemTicket(origem != null ? origem.name() : null);
         response.setCanal(valorOuPadrao(ticket.getCanal()));
-        response.setConexao(valorOuPadrao(ticket.getConexao()));
         response.setMensagemInicial(valorOuPadrao(ticket.getMensagemInicial()));
         response.setStatus(ticket.getStatus() != null ? ticket.getStatus().name() : "-");
         response.setPrioridade(ticket.getPrioridade() != null ? ticket.getPrioridade().name() : "-");
@@ -705,6 +744,13 @@ public class TicketService {
             response.setMotivoNome("-");
         }
         response.setComentarioEncerramento(valorOuPadrao(ticket.getComentarioEncerramento()));
+        if (ticket.getClassificacaoOperacional() != null) {
+            response.setClassificacaoOperacional(ticket.getClassificacaoOperacional().name());
+        }
+        response.setClassificadoOperacionalEm(ticket.getClassificadoOperacionalEm());
+        response.setClassificadoOperacionalPorAnalistaId(ticket.getClassificadoOperacionalPorAnalistaId());
+        response.setComentarioClassificacaoOperacional(
+                valorOuPadraoOpcional(ticket.getComentarioClassificacaoOperacional()));
         response.setObservacaoAtendimento(valorOuPadraoOpcional(ticket.getObservacaoAtendimento()));
         response.setEscalonado(Boolean.TRUE.equals(ticket.getEscalonado()));
         response.setEscalonadoEm(ticket.getEscalonadoEm());
@@ -763,23 +809,6 @@ public class TicketService {
         dto.setStatus(ticket.getStatus() != null ? ticket.getStatus().name() : null);
         dto.setDataAbertura(ticket.getDataAbertura());
         return dto;
-    }
-
-    private String formatarTelefoneContato(ContatoCliente contato) {
-        String telefone = contato.getTelefone();
-        String celular = contato.getCelular();
-        boolean temTelefone = telefone != null && !telefone.isBlank();
-        boolean temCelular = celular != null && !celular.isBlank();
-        if (temTelefone && temCelular) {
-            return telefone.trim() + " / " + celular.trim();
-        }
-        if (temTelefone) {
-            return telefone.trim();
-        }
-        if (temCelular) {
-            return celular.trim();
-        }
-        return "-";
     }
 
 }

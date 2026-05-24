@@ -58,6 +58,10 @@ public class InteracaoPendenteDecisao {
     @Column(name = "origem_externa_id", length = 128)
     private String origemExternaId;
 
+    /** Telefone normalizado da mensagem de entrada (Sprint 292/293). */
+    @Column(name = "telefone_entrada", length = 20)
+    private String telefoneEntrada;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
     private InteracaoPendenteDecisaoStatus status = InteracaoPendenteDecisaoStatus.PENDENTE;

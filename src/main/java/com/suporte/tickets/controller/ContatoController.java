@@ -1,13 +1,18 @@
 package com.suporte.tickets.controller;
 
+import com.suporte.tickets.dto.ContatoGestaoResponseDTO;
 import com.suporte.tickets.dto.ContatoRequestDTO;
 import com.suporte.tickets.dto.ContatoResponseDTO;
+import com.suporte.tickets.dto.ContatoTelefoneRequestDTO;
+import com.suporte.tickets.dto.ContatoTelefoneResponseDTO;
+import com.suporte.tickets.dto.ContatoTicketHistoricoItemDTO;
 import com.suporte.tickets.dto.EtiquetaResponseDTO;
-import com.suporte.tickets.dto.TicketEtiquetasRequestDTO;
+import com.suporte.tickets.dto.ContatoEtiquetasRequestDTO;
 import com.suporte.tickets.entity.Analista;
 import com.suporte.tickets.service.AuditoriaService;
 import com.suporte.tickets.service.ContatoEtiquetaService;
 import com.suporte.tickets.service.ContatoService;
+import com.suporte.tickets.service.ContatoTelefoneService;
 import com.suporte.tickets.service.PerfilAcessoAutorizacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,7 @@ import java.util.List;
 public class ContatoController {
 
     private final ContatoService contatoService;
+    private final ContatoTelefoneService contatoTelefoneService;
     private final ContatoEtiquetaService contatoEtiquetaService;
     private final AuditoriaService auditoriaService;
     private final PerfilAcessoAutorizacaoService perfilAcessoAutorizacaoService;
@@ -46,12 +52,43 @@ public class ContatoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ContatoResponseDTO>> listar(
+    public ResponseEntity<?> listar(
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
-            @RequestParam Integer clienteId) {
+            @RequestParam(required = false) Integer clienteId,
+            @RequestParam(required = false) String busca,
+            @RequestParam(required = false) Long etiquetaId,
+            @RequestParam(required = false) String cidade,
+            @RequestParam(required = false) String uf,
+            @RequestParam(required = false) Boolean comTicketsAbertos,
+            @RequestParam(required = false) Boolean comAvaliacaoRuim,
+            @RequestParam(required = false) Boolean semEtiqueta,
+            @RequestParam(required = false, defaultValue = "false") boolean gestao) {
         perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        if (gestao) {
+            return ResponseEntity.ok(contatoService.listarParaGestao(
+                    clienteId,
+                    busca,
+                    etiquetaId,
+                    cidade,
+                    uf,
+                    comTicketsAbertos,
+                    comAvaliacaoRuim,
+                    semEtiqueta));
+        }
+        if (clienteId == null) {
+            throw new IllegalArgumentException("Informe clienteId ou use gestao=true.");
+        }
         return ResponseEntity.ok(contatoService.listarPorCliente(clienteId));
+    }
+
+    @GetMapping("/{id}/historico-tickets")
+    public ResponseEntity<List<ContatoTicketHistoricoItemDTO>> listarHistoricoTickets(
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
+            @PathVariable Integer id) {
+        perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        return ResponseEntity.ok(contatoService.listarHistoricoTickets(id));
     }
 
     @GetMapping("/{id}")
@@ -101,6 +138,25 @@ public class ContatoController {
         return ResponseEntity.ok(contatoService.inativar(id));
     }
 
+    @GetMapping("/{id}/telefones-adicionais")
+    public ResponseEntity<List<ContatoTelefoneResponseDTO>> listarTelefonesAdicionais(
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
+            @PathVariable Integer id) {
+        perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        return ResponseEntity.ok(contatoTelefoneService.listarPorContato(id));
+    }
+
+    @PostMapping("/{id}/telefones-adicionais")
+    public ResponseEntity<ContatoTelefoneResponseDTO> adicionarTelefoneAdicional(
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
+            @PathVariable Integer id,
+            @Valid @RequestBody ContatoTelefoneRequestDTO request) {
+        perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        return ResponseEntity.status(HttpStatus.CREATED).body(contatoTelefoneService.adicionar(id, request));
+    }
+
     @GetMapping("/{id}/etiquetas")
     public ResponseEntity<List<EtiquetaResponseDTO>> listarEtiquetasDoContato(
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
@@ -115,7 +171,7 @@ public class ContatoController {
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
             @PathVariable Integer id,
-            @Valid @RequestBody(required = false) TicketEtiquetasRequestDTO requestDTO) {
+            @Valid @RequestBody(required = false) ContatoEtiquetasRequestDTO requestDTO) {
         Analista executor = perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
         List<Long> ids = requestDTO != null && requestDTO.getEtiquetaIds() != null
                 ? requestDTO.getEtiquetaIds()

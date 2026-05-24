@@ -250,3 +250,105 @@ html[data-theme='dark'] #page-indicadores .data-table thead {
 #page-indicadores .data-table tbody tr:hover {
     background: rgba(var(--corp-accent-neon-rgb), 0.05);
 }
+
+/* Sprint 310 — indicadores metric cards: neon value accent */
+#page-indicadores .indicadores-card-metric {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    background: var(--corp-surface-card);
+    box-shadow: var(--corp-shadow-soft);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+#page-indicadores .indicadores-card-metric:hover {
+    border-color: rgba(0, 255, 170, 0.45);
+    box-shadow: 0 4px 20px rgba(0, 255, 170, 0.1);
+}
+
+#page-indicadores .indicadores-card-metric .card-value {
+    color: var(--corp-bg-deep);
+    font-weight: 800;
+}
+
+html[data-theme='dark'] #page-indicadores .indicadores-card-metric .card-value {
+    color: var(--corp-accent-neon);
+}
+
+#page-indicadores .indicadores-filtros-panel {
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    background: var(--corp-surface-card);
+    box-shadow: var(--corp-shadow-soft);
+}
+
+#page-indicadores .indicadores-card-metric .card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+#page-indicadores .indicadores-bloco-titulo {
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--corp-border-subtle);
+    margin-bottom: 16px;
+}
+
+/* Sprint 310 — tabelas dos subpainéis clientes/atendentes/sla */
+.indicadores-table-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--corp-text-on-light);
+    margin: 20px 0 10px;
+    letter-spacing: -0.01em;
+}
+
+html[data-theme='dark'] .indicadores-table-title {
+    color: var(--corp-accent-neon);
+}
+
+.indicadores-table-wrap {
+    overflow-x: auto;
+    border-radius: var(--corp-radius-sm);
+    border: 1px solid var(--corp-border-strong);
+}
+
+.indicadores-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.indicadores-table th {
+    background: rgba(var(--corp-bg-deep-rgb), 0.06);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--corp-text-on-light);
+    border-bottom: 1px solid var(--corp-border-strong);
+    white-space: nowrap;
+}
+
+html[data-theme='dark'] .indicadores-table th {
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
+    color: var(--corp-accent-neon);
+}
+
+.indicadores-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--corp-border-subtle);
+    color: var(--text);
+}
+
+.indicadores-table tr:last-child td {
+    border-bottom: none;
+}
+
+.indicadores-table tbody tr:hover td {
+    background: rgba(var(--corp-accent-neon-rgb), 0.05);
+}

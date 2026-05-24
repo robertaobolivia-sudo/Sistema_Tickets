@@ -33,10 +33,6 @@ public class Ticket {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contato_solicitante_id")
-    private ContatoCliente contatoSolicitante;
-
     /** Pessoa final WhatsApp (Sprint 189); opcional ate migracao completa. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contato_id")
@@ -54,9 +50,6 @@ public class Ticket {
     @Column(length = 50)
     private String canal;
 
-    @Column(length = 100)
-    private String conexao;
-
     @Lob
     private String mensagemInicial;
 
@@ -67,6 +60,11 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     @Column(name = "prioridade", length = 20)
     private PrioridadeTicket prioridade;
+
+    /** Sprint F16: origem operacional (receptivo WhatsApp vs abertura manual). */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "origem_ticket", length = 30)
+    private TicketOrigem origemTicket;
 
     @Column(nullable = false)
     private LocalDateTime dataAbertura;
@@ -142,5 +140,31 @@ public class Ticket {
 
     @Column(name = "escalonado_por_analista_id", nullable = true)
     private Long escalonadoPorAnalistaId;
+
+    /** Classificação operacional (Sprint 274), preenchida ao status INDEVIDO. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "classificacao_operacional", length = 30)
+    private TicketClassificacaoOperacional classificacaoOperacional;
+
+    @Column(name = "classificado_operacional_em")
+    private LocalDateTime classificadoOperacionalEm;
+
+    @Column(name = "classificado_operacional_por_analista_id")
+    private Long classificadoOperacionalPorAnalistaId;
+
+    @Lob
+    @Column(name = "comentario_classificacao_operacional")
+    private String comentarioClassificacaoOperacional;
+
+    /** Telefone pelo qual o atendimento entrou (WhatsApp), Sprint 292. */
+    @Column(name = "atendimento_telefone", length = 30)
+    private String atendimentoTelefone;
+
+    @Column(name = "atendimento_telefone_normalizado", length = 20)
+    private String atendimentoTelefoneNormalizado;
+
+    /** PRINCIPAL ou ADICIONAL em relacao ao Contato. */
+    @Column(name = "atendimento_telefone_tipo", length = 15)
+    private String atendimentoTelefoneTipo;
 
 }

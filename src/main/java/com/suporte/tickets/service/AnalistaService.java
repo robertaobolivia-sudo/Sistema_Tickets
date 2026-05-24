@@ -165,7 +165,10 @@ public class AnalistaService {
         StatusOperador novoStatus = converterStatusOperador(statusOperador);
         Analista analista = buscarPorId(id);
         analista.setStatusOperador(novoStatus);
-        analista.setOnline(novoStatus == StatusOperador.ONLINE || novoStatus == StatusOperador.AUSENTE);
+        analista.setOnline(
+                novoStatus == StatusOperador.ONLINE
+                        || novoStatus == StatusOperador.OCUPADO
+                        || novoStatus == StatusOperador.AUSENTE);
         return converterAnalista(analistaRepository.save(analista));
     }
 
@@ -384,7 +387,6 @@ public class AnalistaService {
         response.setCliente(ticket.getCliente().getNome());
         response.setTelefone(ticket.getCliente().getTelefone());
         response.setCanal(ticket.getCanal());
-        response.setConexao(ticket.getConexao());
         response.setMensagemInicial(ticket.getMensagemInicial());
         response.setStatus(ticket.getStatus().name());
         response.setDataAbertura(ticket.getDataAbertura());

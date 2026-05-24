@@ -1,25 +1,17 @@
 package com.suporte.tickets.service;
 
 import com.suporte.tickets.dto.TicketResponseDTO;
-import com.suporte.tickets.entity.Cliente;
-import com.suporte.tickets.entity.Contato;
-import com.suporte.tickets.entity.ContatoCliente;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketStatus;
-import com.suporte.tickets.repository.ClienteRepository;
-import com.suporte.tickets.repository.ContatoClienteRepository;
 import com.suporte.tickets.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -48,36 +40,31 @@ public class TicketAtivoService {
 
     public static final String CONSULTA_ATIVO_MODO_CLIENTE_CONTATO = "CLIENTE_CONTATO";
     public static final String CONSULTA_ATIVO_MODO_LEGADO = "LEGADO";
+    public static final String CONSULTA_ATIVO_MODO_REJEITADO = "REJEITADO";
     public static final String LEGADO_MOTIVO_CLIENTE_SEM_CONTATO_WHATSAPP = "CLIENTE_ID_SEM_CONTATO_WHATSAPP";
+    public static final String REJEITADO_MOTIVO_CLIENTE_SEM_CONTATO_F6 = "CLIENTE_ID_SEM_CONTATO_WHATSAPP_F6";
+    public static final String REJEITADO_MOTIVO_SEM_PAR_CLIENTE_CONTATO_F7 = "EXIGE_CLIENTE_ID_E_CONTATO_WHATSAPP_F7";
 
     private final TicketRepository ticketRepository;
-    private final ClienteRepository clienteRepository;
-    private final ContatoClienteRepository contatoClienteRepository;
     private final TicketService ticketService;
 
     @Transactional(readOnly = true)
-    public Optional<TicketResponseDTO> buscarTicketAtivo(Integer clienteId, Integer contatoSolicitanteId, String telefone) {
-        return buscarTicketAtivo(clienteId, null, contatoSolicitanteId, telefone);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<TicketResponseDTO> buscarTicketAtivo(
-            Integer clienteId,
-            Integer contatoWhatsappId,
-            Integer contatoSolicitanteId,
-            String telefone) {
+    public Optional<TicketResponseDTO> buscarTicketAtivo(Integer clienteId, Integer contatoWhatsappId, String telefone) {
         Optional<Ticket> ticket;
         String consultaModo;
         String legadoMotivo = null;
         if (clienteId != null && contatoWhatsappId != null) {
-            ticket = buscarEntidadeAtivaAtendimentoWhatsapp(
-                    clienteId, contatoWhatsappId, contatoSolicitanteId, telefone);
+            ticket = buscarEntidadeAtivaAtendimentoWhatsapp(clienteId, contatoWhatsappId, telefone);
             consultaModo = CONSULTA_ATIVO_MODO_CLIENTE_CONTATO;
         } else {
-            ticket = buscarEntidadeAtiva(clienteId, contatoSolicitanteId, telefone);
-            consultaModo = CONSULTA_ATIVO_MODO_LEGADO;
-            if (clienteId != null && contatoWhatsappId == null) {
-                legadoMotivo = LEGADO_MOTIVO_CLIENTE_SEM_CONTATO_WHATSAPP;
+            // Sprint F6/F7: sem par Cliente+Contato não decide ticket ativo operacional.
+            ticket = Optional.empty();
+            consultaModo = CONSULTA_ATIVO_MODO_REJEITADO;
+            if (isConsultaAtivoLegadoPorClienteSemContato(clienteId, contatoWhatsappId)
+                    && !temTelefone(telefone)) {
+                legadoMotivo = REJEITADO_MOTIVO_CLIENTE_SEM_CONTATO_F6;
+            } else {
+                legadoMotivo = REJEITADO_MOTIVO_SEM_PAR_CLIENTE_CONTATO_F7;
             }
         }
         final String modoResposta = consultaModo;
@@ -91,7 +78,10 @@ public class TicketAtivoService {
             String consultaModo,
             String legadoMotivo) {
         dto.setConsultaAtivoModo(consultaModo);
-        if (CONSULTA_ATIVO_MODO_LEGADO.equals(consultaModo)) {
+        if (CONSULTA_ATIVO_MODO_REJEITADO.equals(consultaModo)) {
+            dto.setConsultaAtivoLegadoDeprecated(true);
+            dto.setConsultaAtivoLegadoMotivo(legadoMotivo);
+        } else if (CONSULTA_ATIVO_MODO_LEGADO.equals(consultaModo)) {
             dto.setConsultaAtivoLegadoDeprecated(true);
             dto.setConsultaAtivoLegadoMotivo(legadoMotivo);
         } else {
@@ -106,88 +96,25 @@ public class TicketAtivoService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Ticket> buscarEntidadeAtiva(Integer clienteId, Integer contatoSolicitanteId, String telefone) {
-        return buscarEntidadeAtiva(clienteId, null, contatoSolicitanteId, telefone);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Ticket> buscarEntidadeAtiva(
-            Integer clienteId,
-            Integer contatoWhatsappId,
-            Integer contatoSolicitanteId,
-            String telefone) {
-        if (contatoWhatsappId == null && contatoSolicitanteId == null && clienteId == null && !temTelefone(telefone)) {
-            throw new IllegalArgumentException(
-                    "Informe telefone, clienteId ou contatoSolicitanteId para buscar ticket ativo.");
-        }
-
-        // Sprint 206: com Contato WhatsApp resolvido, nunca reaproveitar ticket ativo de outro Contato do mesmo Cliente.
+    public Optional<Ticket> buscarEntidadeAtiva(Integer clienteId, Integer contatoWhatsappId, String telefone) {
         if (clienteId != null && contatoWhatsappId != null) {
             return ticketRepository.findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(
                     clienteId,
                     contatoWhatsappId,
                     LISTA_STATUS_ATIVOS);
         }
-
-        if (contatoSolicitanteId != null) {
-            Optional<Ticket> porContato = ticketRepository
-                    .findFirstByContatoSolicitante_IdAndStatusInOrderByDataAberturaDesc(
-                            contatoSolicitanteId,
-                            LISTA_STATUS_ATIVOS);
-            if (porContato.isPresent()) {
-                return porContato;
-            }
-        }
-
-        if (clienteId != null) {
-            Optional<Ticket> porCliente = ticketRepository
-                    .findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(
-                            clienteId,
-                            LISTA_STATUS_ATIVOS);
-            if (porCliente.isPresent()) {
-                return porCliente;
-            }
-        }
-
-        if (temTelefone(telefone)) {
-            String telefoneNorm = normalizarTelefone(telefone);
-            Set<Integer> clienteIds = resolverClienteIdsPorTelefone(telefoneNorm);
-            if (!clienteIds.isEmpty()) {
-                List<Ticket> candidatos = ticketRepository.findByCliente_IdInAndStatusInOrderByDataAberturaDesc(
-                        new ArrayList<>(clienteIds),
-                        LISTA_STATUS_ATIVOS,
-                        PageRequest.of(0, 1));
-                if (!candidatos.isEmpty()) {
-                    return Optional.of(candidatos.get(0));
-                }
-            }
-        }
-
         return Optional.empty();
     }
 
     /**
-     * Sprint F1 (C02/C03): fluxo WhatsApp / Contato resolvido — não reutiliza ticket ativo só por {@code clienteId}.
-     * Com par Cliente+Contato, busca apenas esse par; com {@code clienteId} sem {@code contatoWhatsappId}, retorna vazio
-     * (evita anexar mensagem ao ticket de outro Contato do mesmo contratante).
-     * Sem {@code clienteId}, delega à busca legado ({@link #buscarEntidadeAtiva}).
+     * Sprint F1/F7: fluxo WhatsApp — apenas par Cliente+Contato; demais entradas retornam vazio.
      */
     @Transactional(readOnly = true)
     public Optional<Ticket> buscarEntidadeAtivaAtendimentoWhatsapp(
             Integer clienteId,
             Integer contatoWhatsappId,
-            Integer contatoSolicitanteId,
             String telefone) {
-        if (clienteId != null && contatoWhatsappId != null) {
-            return ticketRepository.findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(
-                    clienteId,
-                    contatoWhatsappId,
-                    LISTA_STATUS_ATIVOS);
-        }
-        if (clienteId != null) {
-            return Optional.empty();
-        }
-        return buscarEntidadeAtiva(clienteId, contatoWhatsappId, contatoSolicitanteId, telefone);
+        return buscarEntidadeAtiva(clienteId, contatoWhatsappId, telefone);
     }
 
     @Transactional(readOnly = true)
@@ -222,21 +149,6 @@ public class TicketAtivoService {
         }
         String apenasDigitos = telefone.replaceAll("\\D", "");
         return apenasDigitos.isEmpty() ? null : apenasDigitos;
-    }
-
-    private Set<Integer> resolverClienteIdsPorTelefone(String telefoneNorm) {
-        Set<Integer> ids = new LinkedHashSet<>();
-        if (telefoneNorm == null) {
-            return ids;
-        }
-        clienteRepository.findByTelefone(telefoneNorm).ifPresent(c -> ids.add(c.getId()));
-        clienteRepository.findByTelefoneContato(telefoneNorm).ifPresent(c -> ids.add(c.getId()));
-        for (ContatoCliente contato : contatoClienteRepository.findByTelefoneOuCelular(telefoneNorm)) {
-            if (contato.getCliente() != null && contato.getCliente().getId() != null) {
-                ids.add(contato.getCliente().getId());
-            }
-        }
-        return ids;
     }
 
     private static boolean temTelefone(String telefone) {

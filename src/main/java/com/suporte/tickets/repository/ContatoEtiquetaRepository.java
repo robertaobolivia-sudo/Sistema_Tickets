@@ -12,5 +12,9 @@ public interface ContatoEtiquetaRepository extends JpaRepository<ContatoEtiqueta
 
     List<ContatoEtiqueta> findByContatoOrderByEtiqueta_NomeAsc(Contato contato);
 
+    boolean existsByContato_IdAndEtiqueta_Id(Integer contatoId, Long etiquetaId);
+
+    long countByContato_Id(Integer contatoId);
+
     void deleteByContato(Contato contato);
 }

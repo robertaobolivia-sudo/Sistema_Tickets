@@ -311,8 +311,28 @@ public class TicketSatisfacaoService {
                 .orElseThrow(() -> new IllegalArgumentException("Ticket nao encontrado: " + numeroTicket));
     }
 
+    /**
+     * Impede pesquisa pendente após classificação indevida (Sprint 274).
+     */
+    @Transactional
+    public void tratarAvaliacaoAoClassificarIndevido(Ticket ticket) {
+        if (ticket == null || ticket.getId() == null) {
+            return;
+        }
+        ticketSatisfacaoRepository.findByTicket_Id(ticket.getId()).ifPresent(satisfacao -> {
+            if (satisfacao.getStatus() == TicketSatisfacaoStatus.PENDENTE) {
+                satisfacao.setStatus(TicketSatisfacaoStatus.NAO_ENVIADA);
+                satisfacao.setExpiraEm(null);
+                ticketSatisfacaoRepository.save(satisfacao);
+            }
+        });
+    }
+
     static void validarTicketPodeReceberSatisfacao(Ticket ticket) {
         TicketStatus status = ticket.getStatus();
+        if (status == TicketStatus.INDEVIDO) {
+            throw new IllegalArgumentException("Ticket indevido nao pode receber avaliacao de satisfacao.");
+        }
         if (status != TicketStatus.RESOLVIDO && status != TicketStatus.CANCELADO) {
             throw new IllegalArgumentException(
                     "Satisfacao so pode ser registrada em ticket encerrado (RESOLVIDO ou CANCELADO).");

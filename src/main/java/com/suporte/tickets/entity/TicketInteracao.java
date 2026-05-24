@@ -49,6 +49,16 @@ public class TicketInteracao {
     @Column(nullable = false)
     private LocalDateTime criadoEm;
 
+    /** Origem WhatsApp da mensagem (Sprint 294). */
+    @Column(name = "telefone_origem", length = 30)
+    private String telefoneOrigem;
+
+    @Column(name = "telefone_origem_normalizado", length = 20)
+    private String telefoneOrigemNormalizado;
+
+    @Column(name = "telefone_origem_tipo", length = 15)
+    private String telefoneOrigemTipo;
+
     @PrePersist
     void prePersist() {
         if (criadoEm == null) {

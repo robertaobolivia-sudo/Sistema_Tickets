@@ -290,3 +290,26 @@ html[data-theme='dark'] #loginScreen .login-footer {
         max-width: 400px;
     }
 }
+
+/* Sprint 310 — Portal do Cliente: link no rodapé do login corporativo */
+#loginScreen .login-footer-portal {
+    width: 100%;
+    text-align: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(var(--corp-accent-neon-rgb), 0.15);
+    margin-top: 2px;
+}
+
+#loginScreen .login-portal-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(var(--corp-accent-neon-rgb), 0.85);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.2s;
+}
+
+#loginScreen .login-portal-link:hover {
+    color: var(--corp-accent-neon);
+    text-decoration: underline;
+}

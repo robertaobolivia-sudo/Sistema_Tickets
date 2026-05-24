@@ -21,5 +21,6 @@ class TicketAtivoServiceTest {
         assertTrue(TicketAtivoService.isStatusAtivo(TicketStatus.EM_ATENDIMENTO));
         assertFalse(TicketAtivoService.isStatusAtivo(TicketStatus.RESOLVIDO));
         assertFalse(TicketAtivoService.isStatusAtivo(TicketStatus.CANCELADO));
+        assertFalse(TicketAtivoService.isStatusAtivo(TicketStatus.INDEVIDO));
     }
 }

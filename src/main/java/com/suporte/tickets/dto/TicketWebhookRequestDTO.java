@@ -28,9 +28,8 @@ public class TicketWebhookRequestDTO {
 
     private String canal;
 
-    private String conexao;
-
-    private Integer contatoSolicitanteId;
+    /** Contato WhatsApp (pessoa atendida). Prioridade sobre telefone generico do cliente na abertura manual. */
+    private Integer contatoWhatsappId;
 
     private String prioridade;
 

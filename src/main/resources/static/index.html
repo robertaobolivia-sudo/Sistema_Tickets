@@ -1,27 +1,37 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Suporte Tickets</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "@shared/":     "/js/shared/",
+            "@features/":   "/js/features/",
+            "@components/": "/js/components/"
+        }
+    }
+    </script>
     <link rel="stylesheet" href="css/theme.css?v=sprint249" />
     <link rel="stylesheet" href="css/base.css?v=sprint249" />
-    <link rel="stylesheet" href="css/layout.css?v=sprint249" />
-    <link rel="stylesheet" href="css/pages/login.css?v=sprint237" />
-    <link rel="stylesheet" href="css/components.css?v=sprint249" />
+    <link rel="stylesheet" href="css/layout.css?v=sprint-sidebar-v5" />
+    <link rel="stylesheet" href="css/pages/login.css?v=sprint310-portal" />
+    <link rel="stylesheet" href="css/components.css?v=sprint310-visual" />
     <link rel="stylesheet" href="css/modals.css?v=sprint249" />
-    <link rel="stylesheet" href="css/pages/dashboard.css?v=sprint242" />
+    <link rel="stylesheet" href="css/pages/dashboard.css?v=sprint302-layout" />
     <link rel="stylesheet" href="css/pages/tickets.css?v=sprint241" />
-    <link rel="stylesheet" href="css/pages/clientes.css?v=sprint239" />
-    <link rel="stylesheet" href="css/pages/atendentes.css?v=sprint249" />
-    <link rel="stylesheet" href="css/pages/perfil.css?v=sprint249" />
+    <link rel="stylesheet" href="css/pages/clientes.css?v=sprint291-telefones" />
+    <link rel="stylesheet" href="css/pages/atendentes.css?v=sprint310-visual" />
+    <link rel="stylesheet" href="css/pages/perfil.css?v=sprint311" />
     <link rel="stylesheet" href="css/pages/relatorios.css?v=sprint244" />
-    <link rel="stylesheet" href="css/pages/indicadores.css?v=sprint242" />
+    <link rel="stylesheet" href="css/pages/indicadores.css?v=sprint310-visual" />
     <link rel="stylesheet" href="css/pages/auditoria.css?v=sprint246" />
     <link rel="stylesheet" href="css/pages/configuracoes.css?v=sprint245" />
     <link rel="stylesheet" href="css/pages/abrir-ticket.css?v=sprint246" />
-    <link rel="stylesheet" href="css/pages/chats.css?v=sprint249" />
+    <link rel="stylesheet" href="css/pages/chats.css?v=sprint291-telefones" />
     <link rel="stylesheet" href="css/pages/avaliacao-publica.css?v=sprint237" />
+    <link rel="stylesheet" href="css/pages/cliente-portal.css?v=sprint310" />
     <link rel="stylesheet" href="style.css?v=sprint111" />
 </head>
 <body>
@@ -29,7 +39,7 @@
     <!-- APP SHELL                                                              -->
     <!-- ====================================================================== -->
 
-    <!-- AVALIAÇÃO PÚBLICA (sem login) -->
+    <!-- AVALIAÃ‡ÃƒO PÚBLICA (sem login) -->
     <div id="avaliacaoPublicaScreen" class="screen" data-testid="avaliacao-publica-screen">
         <div class="avaliacao-publica-wrapper">
             <div class="avaliacao-publica-card">
@@ -40,11 +50,11 @@
                 <div id="avaliacaoPublicaForm" class="avaliacao-publica-form hidden">
                     <p class="avaliacao-publica-label">Como foi seu atendimento?</p>
                     <div class="avaliacao-notas" role="group" aria-label="Nota de 1 a 5">
-                        <button type="button" class="avaliacao-nota-btn" data-nota="1" title="1" data-testid="avaliacao-nota-1">😞<span>1</span></button>
-                        <button type="button" class="avaliacao-nota-btn" data-nota="2" title="2" data-testid="avaliacao-nota-2">😕<span>2</span></button>
-                        <button type="button" class="avaliacao-nota-btn" data-nota="3" title="3" data-testid="avaliacao-nota-3">😐<span>3</span></button>
-                        <button type="button" class="avaliacao-nota-btn" data-nota="4" title="4" data-testid="avaliacao-nota-4">🙂<span>4</span></button>
-                        <button type="button" class="avaliacao-nota-btn" data-nota="5" title="5" data-testid="avaliacao-nota-5">😄<span>5</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="1" title="1" data-testid="avaliacao-nota-1">ðŸ˜ž<span>1</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="2" title="2" data-testid="avaliacao-nota-2">ðŸ˜•<span>2</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="3" title="3" data-testid="avaliacao-nota-3">ðŸ˜<span>3</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="4" title="4" data-testid="avaliacao-nota-4">ðŸ™‚<span>4</span></button>
+                        <button type="button" class="avaliacao-nota-btn" data-nota="5" title="5" data-testid="avaliacao-nota-5">ðŸ˜„<span>5</span></button>
                     </div>
                     <div class="form-group">
                         <label for="avaliacaoPublicaComentario">Comentário (opcional)</label>
@@ -107,9 +117,115 @@
                 <footer class="login-footer">
                     <p>Não tem conta? <a href="#" onclick="return false;">Cadastre-se</a></p>
                     <button type="button" class="login-lang-btn">Mudar para Inglês</button>
+                    <div class="login-footer-portal">
+                        <a href="#" id="irParaPortalBtn" class="login-portal-link">Acesso Portal do Cliente →</a>
+                    </div>
                 </footer>
             </div>
         </div>
+    </div>
+
+    <!-- PORTAL DO CLIENTE: LOGIN -->
+    <div id="portalLoginScreen" class="screen">
+        <div class="portal-login-wrapper">
+            <div class="portal-login-box">
+                <div class="portal-login-brand">
+                    <div class="logo-container" aria-hidden="true">
+                        <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="45" fill="#0f2f3a" stroke="#00ffaa" stroke-width="2"/>
+                            <text x="50" y="65" font-size="45" font-weight="bold" text-anchor="middle" fill="white">ST</text>
+                        </svg>
+                    </div>
+                    <h1>Portal do Cliente</h1>
+                    <p class="portal-login-subtitle">Acompanhe seus tickets de suporte</p>
+                </div>
+                <form id="portalLoginForm" autocomplete="off">
+                    <div class="form-group">
+                        <label for="portalLoginEmail">E-mail</label>
+                        <input type="email" id="portalLoginEmail" placeholder="Seu e-mail" required autocomplete="username" />
+                    </div>
+                    <div class="form-group">
+                        <label for="portalLoginSenha">Senha</label>
+                        <input type="password" id="portalLoginSenha" placeholder="Sua senha" required autocomplete="current-password" />
+                    </div>
+                    <button type="submit" class="button button-primary button-large">Entrar no Portal</button>
+                    <div id="portalLoginAlert" class="alert hidden" role="alert"></div>
+                </form>
+                <footer class="portal-login-footer">
+                    <a href="#" id="portalVoltarLoginBtn">← Acesso corporativo</a>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTAL DO CLIENTE: APP -->
+    <div id="portalAppScreen" class="screen">
+        <header class="portal-topbar">
+            <div class="portal-topbar-brand">
+                <svg class="logo-small" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#0f2f3a" stroke="#00ffaa" stroke-width="2"/>
+                    <text x="50" y="65" font-size="45" font-weight="bold" text-anchor="middle" fill="white">ST</text>
+                </svg>
+                <span>Suporte Tickets</span>
+                <span class="portal-badge">Portal Cliente</span>
+            </div>
+            <div class="portal-topbar-user">
+                <span id="portalTopbarNome" class="portal-topbar-user-name"></span>
+                <button type="button" id="portalLogoutBtn" class="portal-topbar-logout">Sair</button>
+            </div>
+        </header>
+        <nav class="portal-nav">
+            <button type="button" class="portal-nav-btn active" data-portal-page="dashboard">Dashboard</button>
+            <button type="button" class="portal-nav-btn" data-portal-page="tickets">Meus Tickets</button>
+        </nav>
+        <main class="portal-main">
+            <div id="portalAppAlert" class="alert hidden" role="alert"></div>
+
+            <!-- DASHBOARD -->
+            <section id="portalPageDashboard" class="portal-page portal-page-active">
+                <div class="portal-page-header">
+                    <h1>Dashboard</h1>
+                    <p>Resumo dos seus chamados de suporte</p>
+                </div>
+                <div id="portalDashboardCards" class="portal-dashboard-cards">
+                    <p class="portal-empty">Carregando...</p>
+                </div>
+                <div class="portal-tickets-section">
+                    <div class="portal-tickets-section-header">
+                        <h2>Últimos Tickets</h2>
+                        <button type="button" class="portal-nav-btn" data-portal-page="tickets" style="padding:6px 14px;font-size:12px;border-bottom:none;margin-bottom:0;color:var(--corp-bg-deep);">Ver todos →</button>
+                    </div>
+                    <div id="portalDashboardTickets"></div>
+                </div>
+            </section>
+
+            <!-- TICKETS -->
+            <section id="portalPageTickets" class="portal-page">
+                <div class="portal-page-header">
+                    <h1>Meus Tickets</h1>
+                    <p>Histórico completo dos seus chamados</p>
+                </div>
+                <div class="portal-tickets-section">
+                    <div class="portal-tickets-table-wrap">
+                        <table class="portal-tickets-table">
+                            <thead>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Título</th>
+                                    <th>Status</th>
+                                    <th>Prioridade</th>
+                                    <th>Analista</th>
+                                    <th>Abertura</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portalTicketsTableBody">
+                                <tr><td colspan="6" class="portal-empty">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <!-- APP SCREEN (autenticado) -->
@@ -126,28 +242,65 @@
                 <span class="sidebar-title">Suporte Tickets</span>
             </div>
             <nav class="sidebar-nav">
-                <button class="nav-item active" data-page="dashboard">
-                    <span class="nav-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                            <rect x="4" y="4" width="7" height="7" rx="1.5"></rect>
-                            <rect x="13" y="4" width="7" height="7" rx="1.5"></rect>
-                            <rect x="4" y="13" width="7" height="7" rx="1.5"></rect>
-                            <rect x="13" y="13" width="7" height="7" rx="1.5"></rect>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Dashboard</span>
-                </button>
-                <button class="nav-item" data-page="clientes">
-                    <span class="nav-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="9" cy="8" r="3"></circle>
-                            <path d="M3.5 19c.7-3.1 2.7-5 5.5-5s4.8 1.9 5.5 5"></path>
-                            <circle cx="17" cy="9" r="2.5"></circle>
-                            <path d="M14.5 14.4c2.9.2 5 1.8 5.8 4.6"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Clientes</span>
-                </button>
+                <div class="nav-group nav-group-dashboard" id="navDashboardGroup">
+                    <button
+                        type="button"
+                        class="nav-item nav-item-parent"
+                        id="navDashboardToggle"
+                        aria-expanded="false"
+                        aria-controls="navDashboardSubmenu"
+                    >
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="7" height="7" rx="1.5"></rect>
+                                <rect x="13" y="4" width="7" height="7" rx="1.5"></rect>
+                                <rect x="4" y="13" width="7" height="7" rx="1.5"></rect>
+                                <rect x="13" y="13" width="7" height="7" rx="1.5"></rect>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Dashboard</span>
+                        <span class="nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="nav-submenu hidden" id="navDashboardSubmenu">
+                        <button type="button" class="nav-item nav-item-sub" data-page="dashboard" data-dashboard-sub="visao-geral">
+                            <span class="nav-label">Visão geral</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="dashboard-acompanhamento" data-dashboard-sub="acompanhamento">
+                            <span class="nav-label">Acompanhamento</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="nav-group nav-group-clientes" id="navClientesGroup">
+                    <button
+                        type="button"
+                        class="nav-item nav-item-parent"
+                        id="navClientesToggle"
+                        aria-expanded="false"
+                        aria-controls="navClientesSubmenu"
+                    >
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="9" cy="8" r="3"></circle>
+                                <path d="M3.5 19c.7-3.1 2.7-5 5.5-5s4.8 1.9 5.5 5"></path>
+                                <circle cx="17" cy="9" r="2.5"></circle>
+                                <path d="M14.5 14.4c2.9.2 5 1.8 5.8 4.6"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Clientes</span>
+                        <span class="nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="nav-submenu hidden" id="navClientesSubmenu">
+                        <button type="button" class="nav-item nav-item-sub" data-page="clientes" data-clientes-mode="listagem">
+                            <span class="nav-label">Listagem</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="clientes" data-clientes-mode="cadastro">
+                            <span class="nav-label">Cadastro</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="clientes" data-clientes-mode="contatos">
+                            <span class="nav-label">Contatos</span>
+                        </button>
+                    </div>
+                </div>
                 <button class="nav-item" data-page="atendentes">
                     <span class="nav-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
@@ -196,16 +349,27 @@
                     </span>
                     <span class="nav-label">Chats</span>
                 </button>
-                <button class="nav-item" data-page="relatorios">
-                    <span class="nav-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M5 19V5"></path>
-                            <path d="M5 19h14"></path>
-                            <path d="M8 15l3-3 2 2 5-6"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Relatórios</span>
-                </button>
+                <div class="nav-group nav-group-relatorios" id="navRelatoriosGroup">
+                    <button type="button" class="nav-item nav-item-parent" id="navRelatoriosToggle" aria-expanded="false" aria-controls="navRelatoriosSubmenu">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 19V5"></path>
+                                <path d="M5 19h14"></path>
+                                <path d="M8 15l3-3 2 2 5-6"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Relatórios</span>
+                        <span class="nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="nav-submenu hidden" id="navRelatoriosSubmenu">
+                        <button type="button" class="nav-item nav-item-sub" data-page="relatorios" data-relatorios-sub="detalhado">
+                            <span class="nav-label">Detalhado</span>
+                        </button>
+                        <button type="button" class="nav-item nav-item-sub" data-page="relatorios-evolucao" data-relatorios-sub="evolucao">
+                            <span class="nav-label">Evolução</span>
+                        </button>
+                    </div>
+                </div>
                 <div class="nav-group nav-group-indicadores" id="navIndicadoresGroup">
                     <button type="button" class="nav-item nav-item-parent" id="navIndicadoresToggle" aria-expanded="false" aria-controls="navIndicadoresSubmenu">
                         <span class="nav-icon" aria-hidden="true">
@@ -287,6 +451,23 @@
             <header class="app-topbar" id="appTopbar">
                 <div id="topbarTicketToast" class="topbar-ticket-toast hidden" role="status" aria-live="polite"></div>
                 <div class="app-topbar-actions">
+                    <button
+                        type="button"
+                        id="topbarChatsQuickBtn"
+                        class="topbar-chats-quick-btn"
+                        data-testid="topbar-chats-quick"
+                        aria-label="Ir para Chats"
+                        title="Chats"
+                    >
+                        <img
+                            src="assets/icons/chat.png"
+                            alt=""
+                            width="24"
+                            height="24"
+                            class="topbar-chats-quick-btn__img"
+                            decoding="async"
+                        />
+                    </button>
                     <div class="notificacoes-wrap app-topbar-notificacoes">
                         <button type="button" id="notificacoesBtn" class="notificacoes-btn" aria-label="Notificações" aria-expanded="false">
                             <span class="notificacoes-icon" aria-hidden="true">🔔</span>
@@ -315,6 +496,79 @@
                         </button>
                         <div id="topbarUserMenu" class="topbar-user-menu hidden" role="menu">
                             <button type="button" data-user-menu="perfil" role="menuitem">Meu Perfil</button>
+                            <div class="topbar-status-menu-wrap">
+                                <button
+                                    type="button"
+                                    id="topbarStatusToggle"
+                                    class="topbar-status-toggle"
+                                    data-user-menu="status-toggle"
+                                    role="menuitem"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    aria-controls="topbarStatusPanel"
+                                >
+                                    <span class="topbar-status-toggle-leading">
+                                        <span
+                                            id="topbarStatusCurrentSwatch"
+                                            class="topbar-status-swatch topbar-status-swatch--current topbar-status-swatch--offline"
+                                            aria-hidden="true"
+                                        ></span>
+                                        <span class="topbar-status-toggle-label">Status</span>
+                                    </span>
+                                    <span class="topbar-status-chevron" aria-hidden="true"></span>
+                                </button>
+                                <div
+                                    id="topbarStatusPanel"
+                                    class="topbar-status-panel hidden"
+                                    role="group"
+                                    aria-label="Status operador"
+                                >
+                                    <button
+                                        type="button"
+                                        class="topbar-status-option"
+                                        data-user-menu="status-ONLINE"
+                                        role="menuitemradio"
+                                        aria-checked="false"
+                                    >
+                                        <span class="topbar-status-swatch topbar-status-swatch--online" aria-hidden="true"></span>
+                                        <span class="topbar-status-option-label">Online</span>
+                                        <span class="topbar-status-check hidden" aria-hidden="true">✓</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="topbar-status-option"
+                                        data-user-menu="status-OCUPADO"
+                                        role="menuitemradio"
+                                        aria-checked="false"
+                                    >
+                                        <span class="topbar-status-swatch topbar-status-swatch--ocupado" aria-hidden="true"></span>
+                                        <span class="topbar-status-option-label">Ocupado</span>
+                                        <span class="topbar-status-check hidden" aria-hidden="true">✓</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="topbar-status-option"
+                                        data-user-menu="status-AUSENTE"
+                                        role="menuitemradio"
+                                        aria-checked="false"
+                                    >
+                                        <span class="topbar-status-swatch topbar-status-swatch--ausente" aria-hidden="true"></span>
+                                        <span class="topbar-status-option-label">Ausente</span>
+                                        <span class="topbar-status-check hidden" aria-hidden="true">✓</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="topbar-status-option"
+                                        data-user-menu="status-OFFLINE"
+                                        role="menuitemradio"
+                                        aria-checked="false"
+                                    >
+                                        <span class="topbar-status-swatch topbar-status-swatch--offline" aria-hidden="true"></span>
+                                        <span class="topbar-status-option-label">Offline</span>
+                                        <span class="topbar-status-check hidden" aria-hidden="true">✓</span>
+                                    </button>
+                                </div>
+                            </div>
                             <button type="button" data-user-menu="tema" role="menuitem">Tema Claro/Escuro</button>
                             <button type="button" data-user-menu="alerta-chat" role="menuitem">Alerta Chat: ON</button>
                             <button type="button" data-user-menu="alerta-ticket" role="menuitem">Alerta Ticket: ON</button>
@@ -327,307 +581,137 @@
             <!-- PAGES -->
             <!-- PAGE DASHBOARD -->
             <section id="page-dashboard" class="page active">
-                <div class="page-header">
+                <div class="page-header dashboard-page-header">
                     <h1>Dashboard</h1>
-                    <button id="refreshButton" class="button button-secondary">Atualizar</button>
+                    <button id="refreshButton" class="button button-secondary dashboard-refresh-btn" type="button">Atualizar</button>
                 </div>
 
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-icon">📋</div>
-                        <div class="card-content">
-                            <div class="card-label">Total de Tickets</div>
-                            <div class="card-value" id="totalTickets">0</div>
-                        </div>
+                <!-- 1. STATUS OPERADOR -->
+                <section class="dashboard-status-operador content-section" aria-labelledby="dashboardStatusOperadorTitle">
+                    <div class="section-header dashboard-section-header">
+                        <h2 id="dashboardStatusOperadorTitle">Status Operador</h2>
                     </div>
-                    <div class="card">
-                        <div class="card-icon">🔴</div>
-                        <div class="card-content">
-                            <div class="card-label">Tickets Abertos</div>
-                            <div class="card-value" id="openTickets">0</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">⚙️</div>
-                        <div class="card-content">
-                            <div class="card-label">Em Atendimento</div>
-                            <div class="card-value" id="inProgressTickets">0</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">✅</div>
-                        <div class="card-content">
-                            <div class="card-label">Resolvidos</div>
-                            <div class="card-value" id="resolvedTickets">0</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">⛔</div>
-                        <div class="card-content">
-                            <div class="card-label">Cancelados</div>
-                            <div class="card-value" id="cancelledTickets">0</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">👤</div>
-                        <div class="card-content">
-                            <div class="card-label">Sem analista</div>
-                            <div class="card-value" id="unassignedTickets">0</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">🆕</div>
-                        <div class="card-content">
-                            <div class="card-label">Abertos hoje</div>
-                            <div class="card-value" id="openedTodayTickets">0</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">🏁</div>
-                        <div class="card-content">
-                            <div class="card-label">Resolvidos hoje</div>
-                            <div class="card-value" id="resolvedTodayTickets">0</div>
-                        </div>
-                    </div>
-                </div>
+                    <div id="dashboardStatusOperadorGrid" class="dashboard-status-operador-grid" data-testid="dashboard-status-operador-grid"></div>
+                </section>
 
-                <div class="content-section dashboard-encerramento-section">
-                    <div class="section-header dashboard-encerramento-header">
-                        <div>
-                            <h2>Encerramento e satisfação</h2>
-                            <p id="dashboardEncPeriodoHint" class="section-subtitle">Últimos 30 dias</p>
-                        </div>
-                        <div class="dashboard-encerramento-filtros">
-                            <label class="dashboard-enc-filtro-label" for="dashboardEncFiltroDias">Período</label>
-                            <select id="dashboardEncFiltroDias" class="dashboard-enc-filtro-select" aria-label="Período">
-                                <option value="7">Últimos 7 dias</option>
-                                <option value="30" selected>Últimos 30 dias</option>
-                                <option value="90">Últimos 90 dias</option>
-                            </select>
-                            <label class="dashboard-enc-filtro-label" for="dashboardEncFiltroCliente">Cliente</label>
-                            <select id="dashboardEncFiltroCliente" class="dashboard-enc-filtro-select" aria-label="Cliente">
-                                <option value="">Todos os clientes</option>
-                            </select>
-                        </div>
+                <!-- 2. RESUMO OPERACIONAL -->
+                <section class="dashboard-resumo-operacional content-section" aria-labelledby="dashboardResumoOpTitle">
+                    <div class="section-header dashboard-section-header">
+                        <h2 id="dashboardResumoOpTitle">Resumo Operacional</h2>
                     </div>
-                    <div class="cards-grid dashboard-encerramento-cards">
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-label">Motivo mais recorrente</div>
-                                <div class="card-value card-value-compact" id="dashboardEncMotivo">—</div>
+                    <div class="dashboard-resumo-op-grupos">
+                        <!-- Grupo 1: EM ESPERA -->
+                        <div class="dashboard-resumo-grupo dashboard-resumo-grupo--espera">
+                            <div class="dashboard-resumo-grupo-topo">
+                                <span class="dashboard-resumo-grupo-titulo">EM ESPERA</span>
+                            </div>
+                            <div class="dashboard-resumo-grupo-metricas">
+                                <div class="dashboard-resumo-metrica">
+                                    <span class="dashboard-resumo-metrica-label">Aguardando</span>
+                                    <strong class="dashboard-resumo-metrica-valor" id="dashboardOpFilaQtd" data-testid="dashboard-op-fila-qtd">0</strong>
+                                </div>
+                                <div class="dashboard-resumo-grupo-sep" aria-hidden="true"></div>
+                                <div class="dashboard-resumo-metrica">
+                                    <span class="dashboard-resumo-metrica-label">TME</span>
+                                    <span class="dashboard-resumo-metrica-tempo" id="dashboardOpFilaTempo" data-testid="dashboard-op-fila-tme">—</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-label">Média de avaliação</div>
-                                <div class="card-value" id="dashboardEncMedia">—</div>
+                        <!-- Grupo 2: ATENDENDO -->
+                        <div class="dashboard-resumo-grupo dashboard-resumo-grupo--atendendo">
+                            <div class="dashboard-resumo-grupo-topo">
+                                <span class="dashboard-resumo-grupo-titulo">ATENDENDO</span>
+                            </div>
+                            <div class="dashboard-resumo-grupo-metricas">
+                                <div class="dashboard-resumo-metrica">
+                                    <span class="dashboard-resumo-metrica-label">Em Atendimento</span>
+                                    <strong class="dashboard-resumo-metrica-valor" id="dashboardOpAtendimentoQtd" data-testid="dashboard-op-atendimento-qtd">0</strong>
+                                </div>
+                                <div class="dashboard-resumo-grupo-sep" aria-hidden="true"></div>
+                                <div class="dashboard-resumo-metrica">
+                                    <span class="dashboard-resumo-metrica-label">TMA</span>
+                                    <span class="dashboard-resumo-metrica-tempo" id="dashboardOpAtendimentoTempo" data-testid="dashboard-op-atendimento-tma">—</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-label">Pesquisas respondidas</div>
-                                <div class="card-value" id="dashboardEncRespondidas">0</div>
+                        <!-- Grupo 3: SLA -->
+                        <div class="dashboard-resumo-grupo dashboard-resumo-grupo--sla">
+                            <div class="dashboard-resumo-grupo-topo">
+                                <span class="dashboard-resumo-grupo-titulo">SLA</span>
+                            </div>
+                            <div class="dashboard-resumo-grupo-metricas">
+                                <div class="dashboard-resumo-metrica dashboard-resumo-metrica--danger">
+                                    <span class="dashboard-resumo-metrica-label">Vencido</span>
+                                    <strong class="dashboard-resumo-metrica-valor" id="dashboardSlaVivoVencido" data-testid="dashboard-sla-vivo-vencido">0</strong>
+                                </div>
+                                <div class="dashboard-resumo-grupo-sep" aria-hidden="true"></div>
+                                <div class="dashboard-resumo-metrica dashboard-resumo-metrica--warn">
+                                    <span class="dashboard-resumo-metrica-label">Limite</span>
+                                    <strong class="dashboard-resumo-metrica-valor" id="dashboardSlaVivoProximo" data-testid="dashboard-sla-vivo-proximo">0</strong>
+                                </div>
+                                <div class="dashboard-resumo-grupo-sep" aria-hidden="true"></div>
+                                <div class="dashboard-resumo-metrica dashboard-resumo-metrica--ok">
+                                    <span class="dashboard-resumo-metrica-label">Dentro</span>
+                                    <strong class="dashboard-resumo-metrica-valor" id="dashboardSlaVivoDentro" data-testid="dashboard-sla-vivo-dentro">0</strong>
+                                </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-label">Pendentes</div>
-                                <div class="card-value" id="dashboardEncPendentes">0</div>
+                        <!-- Grupo 4: FINALIZADOS -->
+                        <div class="dashboard-resumo-grupo dashboard-resumo-grupo--encerramento">
+                            <div class="dashboard-resumo-grupo-topo">
+                                <span class="dashboard-resumo-grupo-titulo">FINALIZADOS</span>
                             </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-label">Expiradas</div>
-                                <div class="card-value" id="dashboardEncExpiradas">0</div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-label">Falhas de envio</div>
-                                <div class="card-value" id="dashboardEncFalhasEnvio">0</div>
+                            <div class="dashboard-resumo-grupo-metricas">
+                                <div class="dashboard-resumo-metrica">
+                                    <span class="dashboard-resumo-metrica-label">Hoje</span>
+                                    <strong class="dashboard-resumo-metrica-valor" id="dashboardEncDiaFinalizados" data-testid="dashboard-enc-dia-finalizados">0</strong>
+                                </div>
+                                <div class="dashboard-resumo-grupo-sep" aria-hidden="true"></div>
+                                <div class="dashboard-resumo-metrica">
+                                    <span class="dashboard-resumo-metrica-label">NPS</span>
+                                    <span class="dashboard-resumo-metrica-tempo" id="dashboardAvalMedia" data-testid="dashboard-aval-media">—</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                                <div class="content-section dashboard-gerencial-prioridades">
-                    <div class="section-header">
-                        <h2>Prioridades</h2>
+                <!-- 3. CARDS DAS CONEXÕES -->
+                <section class="dashboard-conexoes-operacionais content-section" aria-labelledby="dashboardConexoesTitle">
+                    <div class="section-header dashboard-section-header">
+                        <h2 id="dashboardConexoesTitle">Atendimentos por Cliente</h2>
                     </div>
-                    <div class="dashboard-priority-grid">
-                        <div class="dashboard-priority-item dashboard-priority-critica">
-                            <span>Crítica</span>
-                            <strong id="dashboardPrioridadeCritica">0</strong>
-                        </div>
-                        <div class="dashboard-priority-item dashboard-priority-alta">
-                            <span>Alta</span>
-                            <strong id="dashboardPrioridadeAlta">0</strong>
-                        </div>
-                        <div class="dashboard-priority-item dashboard-priority-media">
-                            <span>Média</span>
-                            <strong id="dashboardPrioridadeMedia">0</strong>
-                        </div>
-                        <div class="dashboard-priority-item dashboard-priority-baixa">
-                            <span>Baixa</span>
-                            <strong id="dashboardPrioridadeBaixa">0</strong>
-                        </div>
-                        <div class="dashboard-priority-item dashboard-priority-sem">
-                            <span>Sem prioridade</span>
-                            <strong id="dashboardPrioridadeSem">0</strong>
-                        </div>
-                    </div>
-                </div>
+                    <div id="conexoesPendencias" class="dashboard-conexoes-grid"></div>
+                </section>
 
-                <div class="dashboard-summary-grid dashboard-gerencial-categorias">
-                    <div class="content-section">
-                        <div class="section-header"><h2>Categorias mais recorrentes</h2></div>
-                        <h3 class="dashboard-subsection-title">Top grupos</h3>
-                        <ul id="dashboardTopGrupos" class="dashboard-summary-list">
-                            <li class="empty-state">-</li>
-                        </ul>
-                        <h3 class="dashboard-subsection-title">Top subgrupos</h3>
-                        <ul id="dashboardTopSubgrupos" class="dashboard-summary-list">
-                            <li class="empty-state">-</li>
-                        </ul>
-                    </div>
-                    <div class="content-section dashboard-criticos-section">
-                        <div class="section-header"><h2>Tickets críticos e altos</h2></div>
-                        <div class="table-responsive">
-                            <table class="data-table dashboard-criticos-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nº</th>
-                                        <th>Cliente</th>
-                                        <th>Prioridade</th>
-                                        <th>Status</th>
-                                        <th>Abertura</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dashboardCriticosBody"></tbody>
-                            </table>
-                            <p id="dashboardCriticosEmpty" class="empty-state hidden">Nenhum ticket crítico ou alto no momento.</p>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="content-section dashboard-sla-section">
-                    <div class="section-header dashboard-sla-section-header">
-                        <h2>SLA</h2>
-                        <button type="button" id="dashboardSlaVerificarBtn" class="button button-secondary button-small">Verificar SLA crítico</button>
-                    </div>
-                    <div class="dashboard-sla-grid">
-                        <div class="dashboard-sla-bloco">
-                            <h3>SLA 1º Atendimento</h3>
-                            <ul class="dashboard-sla-list">
-                                <li><span>Dentro do prazo</span><strong id="dashboardSlaPrimeiroDentro">0</strong></li>
-                                <li><span>Próximo do vencimento</span><strong id="dashboardSlaPrimeiroProximo">0</strong></li>
-                                <li><span>Vencido</span><strong id="dashboardSlaPrimeiroVencido">0</strong></li>
-                                <li><span>Cumprido</span><strong id="dashboardSlaPrimeiroCumprido">0</strong></li>
-                                <li><span>Violado</span><strong id="dashboardSlaPrimeiroViolado">0</strong></li>
-                                <li><span>Não calculado</span><strong id="dashboardSlaPrimeiroNaoCalc">0</strong></li>
-                            </ul>
-                        </div>
-                        <div class="dashboard-sla-bloco">
-                            <h3>SLA Resolução</h3>
-                            <ul class="dashboard-sla-list">
-                                <li><span>Dentro do prazo</span><strong id="dashboardSlaResolucaoDentro">0</strong></li>
-                                <li><span>Próximo do vencimento</span><strong id="dashboardSlaResolucaoProximo">0</strong></li>
-                                <li><span>Vencido</span><strong id="dashboardSlaResolucaoVencido">0</strong></li>
-                                <li><span>Pausado</span><strong id="dashboardSlaResolucaoPausado">0</strong></li>
-                                <li><span>Cumprido</span><strong id="dashboardSlaResolucaoCumprido">0</strong></li>
-                                <li><span>Violado</span><strong id="dashboardSlaResolucaoViolado">0</strong></li>
-                                <li><span>Não calculado</span><strong id="dashboardSlaResolucaoNaoCalc">0</strong></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="dashboard-sla-escalonados-resumo">Tickets escalonados: <strong id="dashboardSlaTicketsEscalonados">0</strong></p>
-                    <h3 class="dashboard-subsection-title">SLA por prioridade</h3>
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Prioridade</th>
-                                    <th>Total</th>
-                                    <th>1º Atend. violado</th>
-                                    <th>Resol. violado</th>
-                                    <th>Resol. vencido</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboardSlaPorPrioridadeBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="content-section">
-                    <div class="section-header"><h2>Tickets críticos de SLA</h2></div>
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nº</th>
-                                    <th>Cliente</th>
-                                    <th>Prioridade</th>
-                                    <th>Status</th>
-                                    <th>SLA 1º Atend.</th>
-                                    <th>SLA Resolução</th>
-                                    <th>Venc. crítico</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboardSlaCriticosBody"></tbody>
-                        </table>
-                        <p id="dashboardSlaCriticosEmpty" class="empty-state hidden">Nenhum ticket crítico de SLA no momento.</p>
-                    </div>
-                </div>
-
-                <div class="content-section dashboard-metrics-section">
-                    <div class="section-header">
-                        <h2>Indicadores operacionais</h2>
-                    </div>
-                    <div class="dashboard-metrics-grid">
-                        <div class="dashboard-metric-item"><span>Clientes ativos</span><strong id="activeClients">-</strong></div>
-                        <div class="dashboard-metric-item"><span>Analistas online</span><strong id="analystsOnline">-</strong></div>
-                        <div class="dashboard-metric-item"><span>Analistas ausentes</span><strong id="analystsAway">-</strong></div>
-                        <div class="dashboard-metric-item"><span>Analistas offline</span><strong id="analystsOffline">-</strong></div>
-                        <div class="dashboard-metric-item"><span>Tempo médio 1º atendimento</span><strong id="avgFirstResponse">-</strong></div>
-                        <div class="dashboard-metric-item"><span>Tempo médio resolução</span><strong id="avgResolution">-</strong></div>
-                    </div>
-                </div>
-
-                <div class="dashboard-summary-grid">
-                    <div class="content-section">
-                        <div class="section-header"><h2>Tickets por status</h2></div>
-                        <ul id="dashboardByStatus" class="dashboard-summary-list">
-                            <li class="empty-state">-</li>
-                        </ul>
-                    </div>
-                    <div class="content-section">
-                        <div class="section-header"><h2>Tickets por conexão</h2></div>
-                        <ul id="dashboardByConnection" class="dashboard-summary-list">
-                            <li class="empty-state">-</li>
-                        </ul>
-                    </div>
-                    <div class="content-section">
-                        <div class="section-header"><h2>Tickets por analista</h2></div>
-                        <ul id="dashboardByAnalyst" class="dashboard-summary-list">
-                            <li class="empty-state">-</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2>Painel por Conexão</h2>
-
-                    </div>
-                    <div id="conexoesPendencias" class="connection-grid">
-                        <p class="empty-state">Nenhuma pendência por conexão.</p>
-                    </div>
-                </div>
+                <p id="dashboardUltimaAtualizacao" class="dashboard-ultima-atualizacao" data-testid="dashboard-ultima-atualizacao" aria-live="polite"></p>
 
                 <div id="alertBox" class="alert hidden" role="alert"></div>
+            </section>
+
+            <section id="page-dashboard-acompanhamento" class="page">
+                <div class="page-header dashboard-acomp-header">
+                    <div>
+                        <h1>Acompanhamento</h1>
+                        <p class="section-subtitle">Supervisão em tempo real — somente leitura</p>
+                    </div>
+                    <button type="button" id="dashboardAcompVoltar" class="button button-secondary">Voltar Ã  visão geral</button>
+                </div>
+                <p id="dashboardAcompEmpty" class="empty-state dashboard-acomp-empty">
+                    Selecione um chamado em Operação por Cliente B2B e use Acompanhar, ou abra esta página após escolher um ticket.
+                </p>
+                <div id="dashboardAcompContent" class="dashboard-acomp-content hidden">
+                    <dl id="dashboardAcompResumo" class="dashboard-acomp-resumo"></dl>
+                    <div class="content-section dashboard-acomp-timeline-section">
+                        <div class="section-header">
+                            <h2>Conversa e eventos</h2>
+                        </div>
+                        <div class="dashboard-acomp-timeline-wrap">
+                            <div id="dashboardAcompTimeline" class="dashboard-acomp-timeline" role="log" aria-live="polite"></div>
+                            <p id="dashboardAcompTimelineEmpty" class="dashboard-acomp-timeline-empty hidden">Nenhuma mensagem ou evento registrado.</p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- PAGE ATENDENTES -->
@@ -706,8 +790,10 @@
                     <h1>Perfil</h1>
                 </div>
 
-                <div class="content-section profile-section">
-                    <div class="profile-header">
+                <div class="perfil-card">
+
+                    <!-- Header: avatar + name + status -->
+                    <div class="perfil-card-header">
                         <div class="profile-photo-column">
                             <div id="perfilFotoWrapper" class="profile-photo-wrapper" role="button" tabindex="0" aria-haspopup="menu" aria-label="Editar foto de perfil">
                                 <div id="perfilFoto" class="analyst-avatar analyst-avatar-profile">PF</div>
@@ -720,53 +806,182 @@
                             </div>
                             <input type="file" id="perfilFotoInput" class="hidden" accept=".png,.jpg,.jpeg,image/png,image/jpeg" />
                         </div>
-                        <div>
+                        <div class="perfil-header-info">
                             <h2 id="perfilNome">-</h2>
                             <p id="perfilStatus">-</p>
                         </div>
                     </div>
 
-                    <dl class="profile-grid">
-                        <dt>Nome completo</dt><dd id="perfilNomeCompleto">-</dd>
-                        <dt>CPF</dt><dd id="perfilCpf">-</dd>
-                        <dt>Data de nascimento</dt><dd id="perfilDataNascimento">-</dd>
-                        <dt>CEP</dt><dd id="perfilCep">-</dd>
-                        <dt>Rua</dt><dd id="perfilRua">-</dd>
-                        <dt>Número</dt><dd id="perfilNumero">-</dd>
-                        <dt>Bairro</dt><dd id="perfilBairro">-</dd>
-                        <dt>Cidade</dt><dd id="perfilCidade">-</dd>
-                        <dt>Estado</dt><dd id="perfilEstado">-</dd>
-                        <dt>UF</dt><dd id="perfilUf">-</dd>
-                        <dt>País</dt><dd id="perfilPais">-</dd>
-                        <dt>Celular</dt><dd id="perfilCelular">-</dd>
-                        <dt>Email</dt><dd id="perfilEmail">-</dd>
-                        <dt>Nível</dt><dd id="perfilNivel">-</dd>
-                        <dt>Perfil de acesso</dt><dd id="perfilAcesso">-</dd>
-                    </dl>
+                    <!-- Body: scrollable groups -->
+                    <div class="perfil-card-body">
 
-                    <div id="alertBoxPerfil" class="alert hidden" role="alert"></div>
-                </div>
+                        <div id="alertBoxPerfil" class="alert hidden" role="alert"></div>
+
+                        <!-- Identidade -->
+                        <div class="perfil-group">
+                            <div class="perfil-group-header">
+                                <span class="perfil-group-title">Identidade</span>
+                                <button type="button" class="perfil-edit-btn" data-target="identidade">Editar</button>
+                            </div>
+                            <div class="perfil-group-fields">
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilNomeCompletoInput">Nome completo</label>
+                                    <span class="perfil-value" id="perfilNomeCompleto">-</span>
+                                    <input class="perfil-input hidden" id="perfilNomeCompletoInput" type="text" autocomplete="name" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilCpfInput">CPF</label>
+                                    <span class="perfil-value" id="perfilCpf">-</span>
+                                    <input class="perfil-input hidden" id="perfilCpfInput" type="text" maxlength="14" autocomplete="off" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilDataNascimentoInput">Data de nascimento</label>
+                                    <span class="perfil-value" id="perfilDataNascimento">-</span>
+                                    <input class="perfil-input hidden" id="perfilDataNascimentoInput" type="date" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="perfil-separator" />
+
+                        <!-- Endereço -->
+                        <div class="perfil-group">
+                            <div class="perfil-group-header">
+                                <span class="perfil-group-title">Endereço</span>
+                                <button type="button" class="perfil-edit-btn" data-target="endereco">Editar</button>
+                            </div>
+                            <div class="perfil-group-fields">
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilCepInput">CEP</label>
+                                    <span class="perfil-value" id="perfilCep">-</span>
+                                    <input class="perfil-input hidden" id="perfilCepInput" type="text" maxlength="9" autocomplete="postal-code" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilNumeroInput">Número</label>
+                                    <span class="perfil-value" id="perfilNumero">-</span>
+                                    <input class="perfil-input hidden" id="perfilNumeroInput" type="text" autocomplete="address-line2" />
+                                </div>
+                                <div class="perfil-field perfil-field--full">
+                                    <label class="perfil-label" for="perfilRuaInput">Rua</label>
+                                    <span class="perfil-value" id="perfilRua">-</span>
+                                    <input class="perfil-input hidden" id="perfilRuaInput" type="text" autocomplete="address-line1" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilBairroInput">Bairro</label>
+                                    <span class="perfil-value" id="perfilBairro">-</span>
+                                    <input class="perfil-input hidden" id="perfilBairroInput" type="text" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilCidadeInput">Cidade</label>
+                                    <span class="perfil-value" id="perfilCidade">-</span>
+                                    <input class="perfil-input hidden" id="perfilCidadeInput" type="text" autocomplete="address-level2" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilEstadoInput">Estado</label>
+                                    <span class="perfil-value" id="perfilEstado">-</span>
+                                    <input class="perfil-input hidden" id="perfilEstadoInput" type="text" autocomplete="address-level1" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilUfInput">UF</label>
+                                    <span class="perfil-value" id="perfilUf">-</span>
+                                    <input class="perfil-input hidden" id="perfilUfInput" type="text" maxlength="2" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilPaisInput">País</label>
+                                    <span class="perfil-value" id="perfilPais">-</span>
+                                    <input class="perfil-input hidden" id="perfilPaisInput" type="text" autocomplete="country-name" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="perfil-separator" />
+
+                        <!-- Contato -->
+                        <div class="perfil-group">
+                            <div class="perfil-group-header">
+                                <span class="perfil-group-title">Contato</span>
+                                <button type="button" class="perfil-edit-btn" data-target="contato">Editar</button>
+                            </div>
+                            <div class="perfil-group-fields">
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilCelularInput">Celular</label>
+                                    <span class="perfil-value" id="perfilCelular">-</span>
+                                    <input class="perfil-input hidden" id="perfilCelularInput" type="tel" autocomplete="tel" />
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label" for="perfilEmailInput">E-mail</label>
+                                    <span class="perfil-value" id="perfilEmail">-</span>
+                                    <input class="perfil-input hidden" id="perfilEmailInput" type="email" autocomplete="email" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="perfil-separator" />
+
+                        <!-- Acesso (read-only) -->
+                        <div class="perfil-group">
+                            <div class="perfil-group-header">
+                                <span class="perfil-group-title">Acesso</span>
+                            </div>
+                            <div class="perfil-group-fields">
+                                <div class="perfil-field">
+                                    <label class="perfil-label">Nível</label>
+                                    <span class="perfil-value" id="perfilNivel">-</span>
+                                </div>
+                                <div class="perfil-field">
+                                    <label class="perfil-label">Perfil de acesso</label>
+                                    <span class="perfil-value" id="perfilAcesso">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /.perfil-card-body -->
+
+                    <!-- Footer: save/cancel (hidden until editing) -->
+                    <div class="perfil-card-footer hidden" id="perfilFooter">
+                        <div class="perfil-footer-actions">
+                            <button type="button" class="button button-secondary button-small" id="perfilCancelarBtn">Cancelar</button>
+                            <button type="button" class="button button-primary button-small" id="perfilSalvarBtn">Salvar alterações</button>
+                        </div>
+                    </div>
+
+                </div><!-- /.perfil-card -->
             </section>
 
             <!-- PAGE CLIENTES -->
-            <section id="page-clientes" class="page">
+            <section id="page-clientes" class="page page-clientes-full" data-clientes-mode="listagem">
                 <div class="page-header">
-                    <h1>Clientes</h1>
-                    <p class="page-header-hint">Contratantes atendidos pela F5. Busque e selecione um cadastro para editar.</p>
+                    <h1 id="clientesPageTitle">Clientes</h1>
+                    <p id="clientesPageSubtitle" class="page-header-hint">Listagem de contratantes F5.</p>
                 </div>
 
-                <div class="clientes-layout">
-                    <aside class="clientes-panel-list content-section" aria-label="Lista de clientes">
-                        <h2 class="clientes-panel-title">Clientes cadastrados</h2>
-                        <label class="clientes-busca-label" for="clienteListaBusca">Buscar cliente</label>
+                <div id="clientesViewListagem" class="clientes-view clientes-view--listagem" data-clientes-view="listagem">
+                    <div class="content-section clientes-panel-full" aria-label="Listagem de contratantes">
+                        <h2 class="clientes-panel-title">Contratantes B2B</h2>
+                        <label class="clientes-busca-label" for="clienteListaBusca">Buscar contratante</label>
                         <input
                             type="search"
                             id="clienteListaBusca"
                             class="clientes-busca-input"
-                            placeholder="Nome, razão social, CNPJ, telefone, e-mail, cidade ou UF"
+                            placeholder="Razão social, responsável, CNPJ, WhatsApp, e-mail, cidade ou UF"
                             autocomplete="off"
                         />
-                        <div id="clientesLista" class="clientes-list" role="listbox" aria-label="Resultados da busca"></div>
+                        <div class="clientes-table-scroll" role="region" aria-label="Tabela de contratantes">
+                            <table class="clientes-data-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Razão social</th>
+                                        <th scope="col">Responsável</th>
+                                        <th scope="col">WhatsApp</th>
+                                        <th scope="col">E-mail</th>
+                                        <th scope="col">Cidade/UF</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientesListaTableBody"></tbody>
+                            </table>
+                        </div>
                         <nav
                             id="clientesListaPagination"
                             class="list-pagination-bar hidden"
@@ -777,9 +992,123 @@
                         <p id="clientesListaErro" class="clientes-list-empty empty-state hidden" role="alert">
                             Não foi possível carregar clientes.
                         </p>
-                    </aside>
+                    </div>
+                </div>
 
-                    <div class="clientes-panel-form">
+                <div id="clientesViewContatos" class="clientes-view clientes-view--contatos hidden" data-clientes-view="contatos">
+                    <div class="content-section clientes-panel-full" aria-label="Contatos atendidos">
+                        <h2 class="clientes-panel-title">Contatos atendidos</h2>
+                        <p class="clientes-panel-hint">Pessoas finais vinculadas ao contratante (WhatsApp). Inativar preserva histórico e chamados. Etiquetas operacionais (Indevido, Contato Pessoal, Propaganda) qualificam o contato; tickets não são invalidados automaticamente.</p>
+                        <p
+                            id="contatosGestaoEtiquetasOperacionaisHint"
+                            class="contatos-gestao-operacional-hint hidden"
+                            role="status"
+                        ></p>
+                        <div class="clientes-contatos-filtros form-row">
+                            <div class="form-col col-half">
+                                <label for="contatosGestaoFiltroCliente">Contratante</label>
+                                <select id="contatosGestaoFiltroCliente">
+                                    <option value="">Todos os contratantes</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-half">
+                                <label for="contatosGestaoBusca">Nome ou WhatsApp</label>
+                                <input
+                                    type="search"
+                                    id="contatosGestaoBusca"
+                                    class="clientes-busca-input"
+                                    placeholder="Nome ou número do WhatsApp"
+                                    autocomplete="off"
+                                />
+                            </div>
+                        </div>
+                        <details id="contatosGestaoFiltrosAvancados" class="contatos-gestao-filtros-avancados">
+                            <summary class="contatos-gestao-filtros-avancados-summary">Filtros avançados</summary>
+                            <div class="contatos-gestao-filtros-avancados-body form-row">
+                                <div class="form-col col-third">
+                                    <label for="contatosGestaoFiltroEtiqueta">Etiqueta</label>
+                                    <select id="contatosGestaoFiltroEtiqueta">
+                                        <option value="">Qualquer etiqueta</option>
+                                    </select>
+                                </div>
+                                <div class="form-col col-third">
+                                    <label for="contatosGestaoFiltroCidade">Cidade</label>
+                                    <input
+                                        type="text"
+                                        id="contatosGestaoFiltroCidade"
+                                        class="clientes-busca-input"
+                                        placeholder="Parte do nome da cidade"
+                                        autocomplete="off"
+                                    />
+                                </div>
+                                <div class="form-col col-third">
+                                    <label for="contatosGestaoFiltroUf">UF</label>
+                                    <input
+                                        type="text"
+                                        id="contatosGestaoFiltroUf"
+                                        class="clientes-busca-input"
+                                        placeholder="Ex.: SP"
+                                        maxlength="2"
+                                        autocomplete="off"
+                                    />
+                                </div>
+                                <div class="form-col col-full contatos-gestao-filtros-checks">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="contatosGestaoFiltroTicketsAbertos" />
+                                        Com tickets abertos
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="contatosGestaoFiltroAvaliacaoRuim" />
+                                        Com avaliação ruim
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="contatosGestaoFiltroSemEtiqueta" />
+                                        Sem etiqueta
+                                    </label>
+                                </div>
+                                <div class="form-col col-full contatos-gestao-filtros-acoes">
+                                    <button type="button" class="button button-primary" id="contatosGestaoAplicarFiltros">
+                                        Aplicar filtros
+                                    </button>
+                                    <button type="button" class="button button-secondary" id="contatosGestaoLimparFiltrosAvancados">
+                                        Limpar avançados
+                                    </button>
+                                </div>
+                            </div>
+                        </details>
+                        <div class="clientes-table-scroll" role="region" aria-label="Tabela de contatos">
+                            <table class="clientes-data-table clientes-data-table--contatos">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Contratante</th>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">WhatsApp</th>
+                                        <th scope="col">E-mail</th>
+                                        <th scope="col">Empresa/local</th>
+                                        <th scope="col">Cidade/UF</th>
+                                        <th scope="col">Etiquetas</th>
+                                        <th scope="col">Chamados</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contatosGestaoTableBody"></tbody>
+                            </table>
+                        </div>
+                        <nav
+                            id="contatosGestaoPagination"
+                            class="list-pagination-bar hidden"
+                            data-testid="contatos-gestao-pagination"
+                            aria-label="Paginação da lista de contatos"
+                        ></nav>
+                        <p id="contatosGestaoEmpty" class="clientes-list-empty empty-state hidden" role="status"></p>
+                        <p id="contatosGestaoErro" class="clientes-list-empty empty-state hidden" role="alert">
+                            Não foi possível carregar contatos.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="clientesViewCadastro" class="clientes-view clientes-view--cadastro hidden" data-clientes-view="cadastro">
                 <div class="content-section clientes-form-panel">
                     <p
                         id="clienteFormEmpty"
@@ -797,48 +1126,41 @@
                         <input type="hidden" id="clienteEditId" value="" />
                         <input type="hidden" id="classificacaoCliente" value="SEM_CLASSIFICACAO" />
 
-                        <section class="clientes-form-block" aria-labelledby="clienteSecDadosLegend">
-                            <h3 id="clienteSecDadosLegend" class="clientes-form-block-title">Dados do cliente</h3>
-                            <div class="form-row">
-                                <div class="form-col col-full">
-                                    <label for="nomeCliente">Nome do cliente *</label>
-                                    <input type="text" id="nomeCliente" placeholder="Nome comercial do contratante" required />
-                                </div>
-                            </div>
+                        <input type="hidden" id="telefoneContato" value="" />
+                        <textarea id="observacoes" class="hidden" aria-hidden="true"></textarea>
+
+                        <section class="clientes-form-block" aria-labelledby="clienteSecCadastroLegend">
+                            <h3 id="clienteSecCadastroLegend" class="clientes-form-block-title">Cadastro do contratante</h3>
                             <div class="form-row">
                                 <div class="form-col col-half">
-                                    <label for="empresa">Razão social / Empresa</label>
-                                    <input type="text" id="empresa" placeholder="Razão social ou nome fantasia" />
+                                    <label for="empresa">Razão social *</label>
+                                    <input type="text" id="empresa" placeholder="Razão social" required />
                                 </div>
                                 <div class="form-col col-half">
                                     <label for="cnpj">CNPJ</label>
                                     <input type="text" id="cnpj" placeholder="00.000.000/0000-00" />
                                 </div>
                             </div>
-                        </section>
-
-                        <section class="clientes-form-block" aria-labelledby="clienteSecComunicacaoLegend">
-                            <h3 id="clienteSecComunicacaoLegend" class="clientes-form-block-title">Comunicação</h3>
                             <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="clienteIe">IE</label>
+                                    <input type="text" id="clienteIe" placeholder="Inscrição estadual" autocomplete="off" />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label for="nomeCliente">Responsável *</label>
+                                    <input type="text" id="nomeCliente" placeholder="Nome do responsável" required />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="telefonePrincipal">Whatsapp *</label>
+                                    <input type="text" id="telefonePrincipal" placeholder="(11) 99999-9999" required />
+                                </div>
                                 <div class="form-col col-half">
                                     <label for="emailCliente">E-mail *</label>
                                     <input type="email" id="emailCliente" placeholder="email@exemplo.com" required />
                                 </div>
-                                <div class="form-col col-half">
-                                    <label for="telefonePrincipal">Telefone principal *</label>
-                                    <input type="text" id="telefonePrincipal" placeholder="(11) 99999-9999" required />
-                                </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-col col-half">
-                                    <label for="telefoneContato">Telefone adicional *</label>
-                                    <input type="text" id="telefoneContato" placeholder="(11) 99999-9999" required />
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="clientes-form-block" aria-labelledby="clienteSecEnderecoLegend">
-                            <h3 id="clienteSecEnderecoLegend" class="clientes-form-block-title">Endereço e localização</h3>
                             <div class="form-row">
                                 <div class="form-col col-full">
                                     <label for="endereco">Endereço</label>
@@ -846,18 +1168,32 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-col col-half">
+                                <div class="form-col col-third">
+                                    <label for="clienteCep">CEP</label>
+                                    <input type="text" id="clienteCep" placeholder="00000-000" autocomplete="postal-code" />
+                                </div>
+                                <div class="form-col col-third">
                                     <label for="cidade">Cidade</label>
                                     <input type="text" id="cidade" placeholder="São Paulo" />
                                 </div>
-                                <div class="form-col col-half">
+                                <div class="form-col col-third">
                                     <label for="uf">UF</label>
                                     <input type="text" id="uf" placeholder="SP" maxlength="2" />
                                 </div>
                             </div>
+                            <div class="form-row">
+                                <div class="form-col col-half">
+                                    <label for="clienteSite">Site</label>
+                                    <input type="url" id="clienteSite" placeholder="https://exemplo.com.br" />
+                                </div>
+                                <div class="form-col col-half">
+                                    <label for="clienteHorarioFuncionamento">Horário de funcionamento</label>
+                                    <input type="text" id="clienteHorarioFuncionamento" placeholder="Ex.: Seg—“Sex 08h—“18h" />
+                                </div>
+                            </div>
                         </section>
 
-                        <section class="clientes-form-block" aria-labelledby="clienteSecStatusLegend">
+                        <section class="clientes-form-block clientes-form-advanced hidden" aria-labelledby="clienteSecStatusLegend">
                             <h3 id="clienteSecStatusLegend" class="clientes-form-block-title">Status do cadastro</h3>
                             <div class="form-row">
                                 <div class="form-col col-half">
@@ -868,15 +1204,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-col col-full">
-                                    <label for="observacoes">Observações</label>
-                                    <textarea id="observacoes" placeholder="Informações adicionais sobre o cliente" rows="4"></textarea>
-                                </div>
-                            </div>
                         </section>
 
-                        <section class="clientes-form-block" aria-labelledby="clienteSecArteLegend">
+                        <section class="clientes-form-block clientes-form-advanced hidden" aria-labelledby="clienteSecArteLegend">
                             <h3 id="clienteSecArteLegend" class="clientes-form-block-title">Arte do header do Chats</h3>
                             <p class="clientes-form-arte-hint">Recomendado: imagem horizontal 1200 x 240 px, proporção 5:1.</p>
                             <div class="clientes-arte-preview-wrap">
@@ -892,7 +1222,7 @@
 
                         <section
                             id="clienteWhatsappMatrizSection"
-                            class="clientes-form-block clientes-whatsapp-matriz-section hidden"
+                            class="clientes-form-block clientes-form-advanced clientes-whatsapp-matriz-section hidden"
                             aria-labelledby="clienteSecWhatsappMatrizLegend"
                         >
                             <h3 id="clienteSecWhatsappMatrizLegend" class="clientes-form-block-title">
@@ -959,83 +1289,44 @@
                         </section>
 
                         <div class="form-actions clientes-form-actions">
-                            <button type="button" class="button button-secondary" id="novoClienteBtn">Novo cliente</button>
+                            <button type="button" class="button button-secondary hidden" id="novoClienteBtn">Novo cliente</button>
                             <button type="submit" class="button button-primary">Salvar cliente</button>
                             <button type="reset" class="button button-secondary">Limpar formulário</button>
+                            <button type="button" class="button button-secondary" id="clientesVoltarListagemBtn">Voltar Ã  listagem</button>
                         </div>
                     </form>
                     </div>
                     <div id="alertBoxClientes" class="alert hidden" role="alert"></div>
                 </div>
 
-                <div id="clienteContatosSection" class="content-section clientes-contatos-legacy hidden">
-                    <h2 class="section-subtitle">Contatos internos (administrativo)</h2>
-                    <p class="clientes-contatos-legacy-hint">Cadastro legado. O atendimento WhatsApp usa Contato no Chats.</p>
-                    <form id="contatoClienteForm" class="form-multicolumn">
-                        <input type="hidden" id="contatoEditId" value="" />
-                        <div class="form-row">
-                            <div class="form-col col-half">
-                                <label for="contatoNome">Nome *</label>
-                                <input type="text" id="contatoNome" required />
-                            </div>
-                            <div class="form-col col-half">
-                                <label for="contatoCargo">Cargo</label>
-                                <input type="text" id="contatoCargo" />
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col col-half">
-                                <label for="contatoTelefone">Telefone</label>
-                                <input type="text" id="contatoTelefone" />
-                            </div>
-                            <div class="form-col col-half">
-                                <label for="contatoCelular">Celular</label>
-                                <input type="text" id="contatoCelular" />
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col col-half">
-                                <label for="contatoEmail">E-mail</label>
-                                <input type="email" id="contatoEmail" />
-                            </div>
-                            <div class="form-col col-half">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="contatoPrincipal" />
-                                    Contato principal
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col col-full">
-                                <label for="contatoObservacoes">Observações</label>
-                                <textarea id="contatoObservacoes" rows="3"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="button button-primary">Salvar contato</button>
-                            <button type="button" class="button button-secondary" id="contatoCancelarBtn">Cancelar</button>
-                        </div>
-                    </form>
-                    <div id="alertBoxContatos" class="alert hidden" role="alert"></div>
-                    <div class="table-responsive">
-                        <table class="data-table">
+                <section
+                    id="clienteContatosResumoSection"
+                    class="content-section clientes-contatos-resumo hidden"
+                    aria-labelledby="clienteContatosResumoLegend"
+                >
+                    <h3 id="clienteContatosResumoLegend" class="clientes-form-block-title">
+                        Contatos atendidos deste contratante
+                    </h3>
+                    <p class="clientes-panel-hint">
+                        Resumo das pessoas vinculadas ao WhatsApp. Cadastro completo em Clientes → Contatos.
+                    </p>
+                    <div class="clientes-table-scroll">
+                        <table class="clientes-data-table clientes-data-table--resumo">
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Cargo</th>
-                                    <th>Telefone/Celular</th>
-                                    <th>E-mail</th>
-                                    <th>Principal</th>
-                                    <th>Ativo</th>
-                                    <th>Ações</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">WhatsApp</th>
+                                    <th scope="col">E-mail</th>
+                                    <th scope="col">Local</th>
+                                    <th scope="col">Etiquetas</th>
+                                    <th scope="col">Chamados</th>
                                 </tr>
                             </thead>
-                            <tbody id="contatosClienteTableBody"></tbody>
+                            <tbody id="clienteContatosResumoTableBody"></tbody>
                         </table>
-                        <p id="contatosClienteEmpty" class="empty-state hidden">Nenhum contato cadastrado.</p>
                     </div>
-                </div>
-                    </div>
+                    <p id="clienteContatosResumoEmpty" class="empty-state hidden" role="status"></p>
+                </section>
                 </div>
             </section>
 
@@ -1048,7 +1339,6 @@
                 <div class="content-section">
                     <form id="ticketForm" class="form-standard">
                         <input type="hidden" id="cliente" name="cliente" />
-                        <input type="hidden" id="telefone" name="telefone" />
 
                         <div class="form-group">
                             <label for="clienteBusca">Buscar Cliente *</label>
@@ -1090,17 +1380,13 @@
                         </div>
 
                         <div id="ticketContatoGroup" class="form-group hidden">
-                            <label for="ticketContatoSolicitante">Contato solicitante (opcional)</label>
-                            <select id="ticketContatoSolicitante">
-                                <option value="">Nenhum</option>
+                            <label for="ticketContatoWhatsapp">Contato atendido (WhatsApp)</label>
+                            <select id="ticketContatoWhatsapp">
+                                <option value="">Selecione o Contato</option>
                             </select>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-col col-half">
-                                <label for="conexao">Carteira</label>
-                                <input type="text" id="conexao" name="conexao" placeholder="Selecione um cliente" readonly />
-                            </div>
                             <div class="form-col col-half">
                                 <label for="canal">Canal *</label>
                                 <input type="text" id="canal" name="canal" placeholder="Whatsapp, Email, etc" required />
@@ -1157,24 +1443,21 @@
                                     <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
                                     <option value="RESOLVIDO">RESOLVIDO</option>
                                     <option value="CANCELADO">CANCELADO</option>
+                                    <option value="INDEVIDO">Não atendimento (Indevido)</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-col col-half">
-                                <label for="ticketFiltroConexao">Conexão</label>
-                                <input type="text" id="ticketFiltroConexao" />
-                            </div>
-                            <div class="form-col col-half">
                                 <label for="ticketFiltroCliente">Cliente</label>
                                 <input type="text" id="ticketFiltroCliente" />
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col col-third">
+                            <div class="form-col col-half">
                                 <label for="ticketFiltroAnalistaId">Analista (ID)</label>
                                 <input type="number" id="ticketFiltroAnalistaId" min="1" />
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-col col-third">
                                 <label for="ticketFiltroDataInicio">Data início</label>
                                 <input type="date" id="ticketFiltroDataInicio" />
@@ -1212,13 +1495,13 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Nº</th>
+                                    <th>NÂº</th>
                                     <th>Cliente</th>
                                     <th>Telefone</th>
                                     <th>Canal</th>
                                     <th>Status</th>
                                     <th>Prioridade</th>
-                                    <th>SLA 1º Atend.</th>
+                                    <th>SLA 1Âº Atend.</th>
                                     <th>SLA Resol.</th>
                                     <th>Abertura</th>
                                     <th>Ações</th>
@@ -1256,40 +1539,44 @@
                                 <span class="chats-tab-label">Encerrados</span>
                                 <span class="chats-tab-count" id="chatsCountHistorico">0</span>
                             </button>
+                            <button type="button" class="chats-tab chats-tab--indevidos" data-chats-tab="indevidos" data-testid="chats-tab-indevidos" role="tab" aria-selected="false">
+                                <span class="chats-tab-label">Não atendimento</span>
+                                <span class="chats-tab-count" id="chatsCountIndevidos">0</span>
+                            </button>
                         </div>
                         <div class="chats-search">
                             <label class="sr-only" for="chatsBusca">Buscar conversas</label>
-                            <input type="search" id="chatsBusca" placeholder="Nome, telefone ou nº do ticket" autocomplete="off" />
+                            <input type="search" id="chatsBusca" placeholder="Nome, telefone ou nÂº do ticket" autocomplete="off" />
                         </div>
                         <div class="chats-list-wrap">
                             <div id="chatsLista" class="chats-list" role="list" data-testid="chats-list"></div>
                             <p id="chatsListaEmpty" class="chats-list-empty hidden">Nenhum atendimento encontrado.</p>
                         </div>
                     </aside>
-                    <main class="chats-main chats-main--empty" aria-label="Conversa">
+                    <div class="chats-main chats-main--empty" role="region" aria-label="Conversa">
                         <header
-                            class="chats-main-header chats-conexao-header chats-conexao-header--wl-ready chats-conexao-header--brand-only"
-                            id="chatsConexaoHeader"
+                            class="chats-main-header chats-cliente-header chats-cliente-header--wl-ready chats-cliente-header--brand-only"
+                            id="chatsClienteHeader"
                         >
                             <div
-                                class="chats-conexao-header-bg chats-conexao-header--bg-fallback"
+                                class="chats-cliente-header-bg chats-cliente-header--bg-fallback"
                                 aria-hidden="true"
                             ></div>
-                            <div class="chats-conexao-header-overlay" aria-hidden="true"></div>
-                            <div class="chats-conexao-header-content">
-                                <div class="chats-conexao-brand">
+                            <div class="chats-cliente-header-overlay" aria-hidden="true"></div>
+                            <div class="chats-cliente-header-content">
+                                <div class="chats-cliente-brand">
                                     <span
-                                        class="chats-conexao-logo-slot chats-conexao-logo-slot--empty"
-                                        id="chatsConexaoLogoSlot"
-                                        title="Logo da conexão (em breve)"
+                                        class="chats-cliente-logo-slot chats-cliente-logo-slot--empty"
+                                        id="chatsClienteLogoSlot"
+                                        title="Logo do cliente (em breve)"
                                         aria-hidden="true"
                                     ></span>
-                                    <span class="chats-conexao-canal" id="chatsConexaoCanalWrap" aria-hidden="true"></span>
-                                    <div class="chats-conexao-text">
-                                        <h2 class="chats-conexao-title" id="chatsConversaTitulo">Selecione uma conversa</h2>
-                                        <div class="chats-conexao-meta chats-main-header-meta">
+                                    <span class="chats-cliente-canal" id="chatsClienteCanalWrap" aria-hidden="true"></span>
+                                    <div class="chats-cliente-text">
+                                        <h2 class="chats-cliente-title" id="chatsClienteTitulo">Selecione uma conversa</h2>
+                                        <div class="chats-cliente-meta chats-main-header-meta">
                                             <span
-                                                class="chats-conexao-meta-line chats-header-protocol"
+                                                class="chats-cliente-meta-line chats-header-protocol"
                                                 id="chatsConversaProtocolo"
                                                 >Protocolo —</span
                                             >
@@ -1347,7 +1634,7 @@
                                     title="Anexar arquivo (em breve)"
                                     aria-label="Anexar"
                                 >
-                                    📎
+                                    ðŸ“Ž
                                 </button>
                                 <div class="chats-composer-main">
                                     <div class="chats-composer-field">
@@ -1378,7 +1665,7 @@
                                 </div>
                             </div>
                         </div>
-                    </main>
+                    </div>
                     <div id="chatsPanelBackdrop" class="chats-panel-backdrop" aria-hidden="true"></div>
                     <aside
                         id="chatsPanelAside"
@@ -1393,7 +1680,7 @@
                                 id="chatsPanelCloseBtn"
                                 aria-label="Fechar painel de contexto"
                             >
-                                ×
+                                Ã—
                             </button>
                         </div>
                         <div class="chats-panel-block" id="chatsPanelBlockCliente" data-testid="chats-panel-cliente">
@@ -1411,7 +1698,11 @@
                         <div class="chats-panel-block" id="chatsPanelBlockChamado" data-testid="chats-panel-chamado">
                             <h3>Chamado atual</h3>
                             <dl class="chats-dl" id="chatsPanelChamadoDl"></dl>
-                            <button type="button" class="button button-primary button-small chats-panel-ver-ticket" id="chatsVerTicketBtn" disabled data-testid="chats-primary-action">Detalhes</button>
+                            <div class="chats-panel-chamado-actions">
+                                <button type="button" class="button button-secondary button-small hidden" id="chatsClassificarIndevidoBtn" data-testid="chats-classificar-indevido">Classificar indevido</button>
+                                <button type="button" class="button button-warning button-small hidden" id="chatsReverterIndevidoBtn" data-testid="chats-reverter-indevido">Reverter indevido</button>
+                                <button type="button" class="button button-primary button-small chats-panel-ver-ticket" id="chatsVerTicketBtn" disabled data-testid="chats-primary-action">Detalhes</button>
+                            </div>
                         </div>
                         <div class="chats-panel-block" id="chatsPanelBlockHistorico">
                             <h3>Histórico resumido</h3>
@@ -1419,6 +1710,14 @@
                         </div>
                         <div class="chats-panel-block chats-panel-block--atendimento">
                             <h3>Atendimento</h3>
+                            <div class="chats-panel-subsection hidden" id="chatsPanelStatusFlow" data-testid="chats-status-flow">
+                                <h4 class="chats-panel-subtitle">Status do chamado</h4>
+                                <div class="chats-status-flow-row">
+                                    <select id="chatsStatusSelect" class="chats-status-select" aria-label="Novo status"></select>
+                                    <button type="button" class="button button-secondary button-small" id="chatsStatusApplyBtn" data-testid="chats-status-apply">Aplicar</button>
+                                </div>
+                                <p id="chatsStatusFeedback" class="chats-panel-feedback hidden" role="status"></p>
+                            </div>
                             <div class="chats-panel-subsection">
                                 <h4 class="chats-panel-subtitle" id="chatsTagsSubtitle">Etiquetas</h4>
                                 <p id="chatsTagsLegacyHint" class="chats-panel-legacy-hint hidden" role="note" data-testid="chats-etiquetas-legacy-hint"></p>
@@ -1446,7 +1745,7 @@
                 </div>
             </section>
 
-            <!-- PAGE RELATÓRIOS -->
+            <!-- PAGE RELATÃ“RIOS -->
             <section id="page-relatorios" class="page">
                 <div class="page-header">
                     <h1>Relatórios</h1>
@@ -1467,6 +1766,14 @@
                                 <input type="date" id="relatorioFiltroDataFim" />
                             </div>
                             <div class="form-col col-third">
+                                <label for="relatorioFiltroOrigem">Origem do ticket</label>
+                                <select id="relatorioFiltroOrigem">
+                                    <option value="">Todas</option>
+                                    <option value="RECEPTIVO_WHATSAPP">Receptivo WhatsApp</option>
+                                    <option value="ATIVO_MANUAL">Ativo manual</option>
+                                </select>
+                            </div>
+                            <div class="form-col col-third">
                                 <label for="relatorioFiltroStatus">Status</label>
                                 <select id="relatorioFiltroStatus">
                                     <option value="">Todos</option>
@@ -1475,6 +1782,7 @@
                                     <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
                                     <option value="RESOLVIDO">RESOLVIDO</option>
                                     <option value="CANCELADO">CANCELADO</option>
+                                    <option value="INDEVIDO">Não atendimento (Indevido)</option>
                                 </select>
                             </div>
                         </div>
@@ -1516,7 +1824,7 @@
                         </div>
                         <div class="form-row">
                             <div class="form-col col-half">
-                                <label for="relatorioFiltroSlaPrimeiro">SLA 1º Atendimento</label>
+                                <label for="relatorioFiltroSlaPrimeiro">SLA 1Âº Atendimento</label>
                                 <select id="relatorioFiltroSlaPrimeiro">
                                     <option value="">Todos</option>
                                     <option value="NAO_CALCULADO">Não calculado</option>
@@ -1640,30 +1948,30 @@
                     <div id="satisfacaoResumoConteudo" class="hidden">
                         <div class="cards-grid relatorio-satisfacao-grid">
                             <div class="card">
-                                <div class="card-icon">⭐</div>
+                                <div class="card-icon">â­</div>
                                 <div class="card-content">
                                     <div class="card-label">Média geral</div>
                                     <div class="card-value" id="satisfacaoResumoMedia">—</div>
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-icon">📝</div>
+                                <div class="card-icon">ðŸ“</div>
                                 <div class="card-content">
                                     <div class="card-label">Total de avaliações</div>
                                     <div class="card-value" id="satisfacaoResumoTotal">0</div>
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-icon">👍</div>
+                                <div class="card-icon">ðŸ‘</div>
                                 <div class="card-content">
-                                    <div class="card-label">Positivas (4–5)</div>
+                                    <div class="card-label">Positivas (4—“5)</div>
                                     <div class="card-value" id="satisfacaoResumoPositivas">0%</div>
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-icon">👎</div>
+                                <div class="card-icon">ðŸ‘Ž</div>
                                 <div class="card-content">
-                                    <div class="card-label">Negativas (1–2)</div>
+                                    <div class="card-label">Negativas (1—“2)</div>
                                     <div class="card-value" id="satisfacaoResumoNegativas">0%</div>
                                 </div>
                             </div>
@@ -1691,8 +1999,8 @@
                                         <th>Data</th>
                                         <th>Avaliações</th>
                                         <th>Média</th>
-                                        <th>Positivas (4–5)</th>
-                                        <th>Negativas (1–2)</th>
+                                        <th>Positivas (4—“5)</th>
+                                        <th>Negativas (1—“2)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="satisfacaoEvolucaoBody"></tbody>
@@ -1704,7 +2012,7 @@
 
                 <div class="cards-grid relatorio-resumo-grid">
                     <div class="card">
-                        <div class="card-icon">📊</div>
+                        <div class="card-icon">ðŸ“Š</div>
                         <div class="card-content">
                             <div class="card-label">Total encontrado</div>
                             <div class="card-value" id="relatorioTotal">0</div>
@@ -1725,49 +2033,49 @@
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">⏳</div>
+                        <div class="card-icon">â³</div>
                         <div class="card-content">
                             <div class="card-label">Aguardando cliente</div>
                             <div class="card-value" id="relatorioAguardandoCliente">0</div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">✅</div>
+                        <div class="card-icon">âœ…</div>
                         <div class="card-content">
                             <div class="card-label">Resolvidos</div>
                             <div class="card-value" id="relatorioResolvidos">0</div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">⛔</div>
+                        <div class="card-icon">â›”</div>
                         <div class="card-content">
                             <div class="card-label">Cancelados</div>
                             <div class="card-value" id="relatorioCancelados">0</div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">🚨</div>
+                        <div class="card-icon">ðŸš¨</div>
                         <div class="card-content">
                             <div class="card-label">Total Crítica</div>
                             <div class="card-value" id="relatorioCritica">0</div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">⚠️</div>
+                        <div class="card-icon">âš ï¸</div>
                         <div class="card-content">
                             <div class="card-label">Total Alta</div>
                             <div class="card-value" id="relatorioAlta">0</div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">📋</div>
+                        <div class="card-icon">ðŸ“‹</div>
                         <div class="card-content">
                             <div class="card-label">Total Média</div>
                             <div class="card-value" id="relatorioMedia">0</div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon">📎</div>
+                        <div class="card-icon">ðŸ“Ž</div>
                         <div class="card-content">
                             <div class="card-label">Total Baixa</div>
                             <div class="card-value" id="relatorioBaixa">0</div>
@@ -1785,16 +2093,16 @@
                                 <tr>
                                     <th>Número</th>
                                     <th>Cliente</th>
+                                    <th>Origem</th>
                                     <th>Status</th>
                                     <th>Prioridade</th>
                                     <th>Canal</th>
-                                    <th>Conexão/Carteira</th>
                                     <th>Analista</th>
                                     <th>Grupo</th>
                                     <th>Subgrupo</th>
                                     <th>Abertura</th>
                                     <th>Encerramento</th>
-                                    <th>SLA 1º Atend.</th>
+                                    <th>SLA 1Âº Atend.</th>
                                     <th>SLA Resolução</th>
                                 </tr>
                             </thead>
@@ -1805,6 +2113,16 @@
                     </div>
                 </div>
                 <div id="alertBoxRelatorios" class="alert hidden" role="alert"></div>
+            </section>
+
+            <!-- PAGE RELATÓRIOS — EVOLUÇÃO -->
+            <section id="page-relatorios-evolucao" class="page">
+                <div class="page-header">
+                    <h1>Evolução</h1>
+                </div>
+                <div class="empty-state">
+                    <p>Em construção.</p>
+                </div>
             </section>
 
             <!-- PAGE INDICADORES -->
@@ -1846,6 +2164,10 @@
                         <div class="indicadores-card-metric">
                             <div class="card-label">Total de clientes</div>
                             <div class="card-value" id="indicadoresTotalClientes">0</div>
+                        </div>
+                        <div class="indicadores-card-metric">
+                            <div class="card-label">Não atendimento</div>
+                            <div class="card-value" id="indicadoresTotalNaoAtendimento">0</div>
                         </div>
                     </div>
 
@@ -1993,11 +2315,11 @@
                                 <div class="card-value" id="indicSatResumoTotal">0</div>
                             </div>
                             <div class="indicadores-card-metric">
-                                <div class="card-label">Positivas (4–5)</div>
+                                <div class="card-label">Positivas (4—“5)</div>
                                 <div class="card-value" id="indicSatResumoPositivas">0%</div>
                             </div>
                             <div class="indicadores-card-metric">
-                                <div class="card-label">Negativas (1–2)</div>
+                                <div class="card-label">Negativas (1—“2)</div>
                                 <div class="card-value" id="indicSatResumoNegativas">0%</div>
                             </div>
                         </div>
@@ -2028,8 +2350,8 @@
                                             <th>Data</th>
                                             <th>Avaliações</th>
                                             <th>Média</th>
-                                            <th>Positivas (4–5)</th>
-                                            <th>Negativas (1–2)</th>
+                                            <th>Positivas (4—“5)</th>
+                                            <th>Negativas (1—“2)</th>
                                         </tr>
                                     </thead>
                                     <tbody id="indicSatEvolucaoBody"></tbody>
@@ -2161,14 +2483,125 @@
                         </div>
                     </div>
                 </div>
+                <!-- ===== CLIENTES ===== -->
                 <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-clientes">
-                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                    <div class="indicadores-filtros-panel">
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="indicClientesFiltroDataInicio">Data inicial</label>
+                                <input type="date" id="indicClientesFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicClientesFiltroDataFim">Data final</label>
+                                <input type="date" id="indicClientesFiltroDataFim" />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="indicClientesAtualizarBtn" class="button button-primary">Atualizar</button>
+                        </div>
+                    </div>
+                    <p id="indicClientesVazio" class="empty-state hidden">Nenhum dado encontrado no período.</p>
+                    <div id="indicClientesConteudo" class="hidden">
+                        <div class="indicadores-cards-grid">
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Total de tickets</div>
+                                <div class="card-value" id="indicClientesTotalTickets">0</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Clientes com chamados</div>
+                                <div class="card-value" id="indicClientesTotalClientes">0</div>
+                            </div>
+                        </div>
+                        <h4 class="indicadores-table-title">Ranking de clientes</h4>
+                        <div class="indicadores-table-wrap">
+                            <table class="indicadores-table">
+                                <thead><tr><th>Cliente</th><th>Tickets</th><th>TME méd. (min)</th><th>TMA méd. (min)</th><th>SLA %</th></tr></thead>
+                                <tbody id="indicClientesRankingBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- ===== ATENDENTES ===== -->
                 <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-atendentes">
-                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                    <div class="indicadores-filtros-panel">
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="indicAtendFiltroDataInicio">Data inicial</label>
+                                <input type="date" id="indicAtendFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicAtendFiltroDataFim">Data final</label>
+                                <input type="date" id="indicAtendFiltroDataFim" />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="indicAtendAtualizarBtn" class="button button-primary">Atualizar</button>
+                        </div>
+                    </div>
+                    <p id="indicAtendVazio" class="empty-state hidden">Nenhum dado encontrado no período.</p>
+                    <div id="indicAtendConteudo" class="hidden">
+                        <div class="indicadores-cards-grid">
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Total de tickets</div>
+                                <div class="card-value" id="indicAtendTotalTickets">0</div>
+                            </div>
+                        </div>
+                        <h4 class="indicadores-table-title">Desempenho por atendente</h4>
+                        <div class="indicadores-table-wrap">
+                            <table class="indicadores-table">
+                                <thead><tr><th>Atendente</th><th>Tickets</th><th>TMA méd. (min)</th><th>SLA %</th><th>Avaliação méd.</th><th>Avaliações</th></tr></thead>
+                                <tbody id="indicAtendDesempenhoBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- ===== SLA ===== -->
                 <div class="indicadores-subpanel hidden" data-indicadores-subpanel="indicadores-sla">
-                    <p class="indicadores-placeholder empty-state">Indicador em construção.</p>
+                    <div class="indicadores-filtros-panel">
+                        <div class="form-row">
+                            <div class="form-col col-third">
+                                <label for="indicSlaFiltroDataInicio">Data inicial</label>
+                                <input type="date" id="indicSlaFiltroDataInicio" />
+                            </div>
+                            <div class="form-col col-third">
+                                <label for="indicSlaFiltroDataFim">Data final</label>
+                                <input type="date" id="indicSlaFiltroDataFim" />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="indicSlaAtualizarBtn" class="button button-primary">Atualizar</button>
+                        </div>
+                    </div>
+                    <p id="indicSlaVazio" class="empty-state hidden">Nenhum ticket encerrado encontrado no período.</p>
+                    <div id="indicSlaConteudo" class="hidden">
+                        <div class="indicadores-cards-grid">
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Tickets encerrados</div>
+                                <div class="card-value" id="indicSlaTotalEncerrados">0</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Cumpridos</div>
+                                <div class="card-value" id="indicSlaTotalCumpridos">0</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">% Geral SLA</div>
+                                <div class="card-value" id="indicSlaPctGeral">—</div>
+                            </div>
+                            <div class="indicadores-card-metric">
+                                <div class="card-label">Meta (min)</div>
+                                <div class="card-value" id="indicSlaMetaMinutos">60</div>
+                            </div>
+                        </div>
+                        <h4 class="indicadores-table-title">SLA por prioridade</h4>
+                        <div class="indicadores-table-wrap">
+                            <table class="indicadores-table">
+                                <thead><tr><th>Prioridade</th><th>Tickets</th><th>Cumpridos</th><th>Não avaliados</th><th>% Cumprimento</th><th>TMA méd. (min)</th></tr></thead>
+                                <tbody id="indicSlaPrioridadeBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="alertBoxIndicadores" class="alert hidden" role="alert"></div>
@@ -2298,7 +2731,7 @@
                 <div id="alertBoxAuditoria" class="alert hidden" role="alert"></div>
             </section>
 
-            <!-- PAGE CONFIGURAÇÕES -->
+            <!-- PAGE CONFIGURAÃ‡Ã•ES -->
             <section id="page-configuracoes" class="page">
                 <div class="page-header">
                     <h1>Configurações</h1>
@@ -2350,7 +2783,7 @@
                         <h2>Feriados</h2>
                     </div>
                     <p class="config-hint">Usado futuramente no cálculo de SLA. Feriados ativos não contarão como horário útil.</p>
-                    <p class="config-hint config-hint-rule">Fuso: America/Sao_Paulo. Horário útil: segunda a sexta, 08:00 às 18:00. Sábados, domingos e feriados ativos não contam.</p>
+                    <p class="config-hint config-hint-rule">Fuso: America/Sao_Paulo. Horário útil: segunda a sexta, 08:00 Ã s 18:00. Sábados, domingos e feriados ativos não contam.</p>
 
                     <form id="feriadoForm" class="form-multicolumn">
                         <input type="hidden" id="feriadoEditId" value="" />
@@ -2415,7 +2848,7 @@
                         <h2>Metas de SLA por prioridade</h2>
                     </div>
                     <p class="config-hint">Os prazos são definidos em minutos úteis e serão usados futuramente no cálculo de SLA.</p>
-                    <p class="config-hint config-hint-rule">Calendário base: America/Sao_Paulo, segunda a sexta, 08:00 às 18:00, ignorando sábados, domingos e feriados ativos.</p>
+                    <p class="config-hint config-hint-rule">Calendário base: America/Sao_Paulo, segunda a sexta, 08:00 Ã s 18:00, ignorando sábados, domingos e feriados ativos.</p>
                     <p class="config-hint">Ticket sem prioridade definida será tratado como MEDIA no cálculo futuro de SLA.</p>
 
                     <div class="form-actions" style="margin-bottom: 12px;">
@@ -2443,7 +2876,7 @@
                     <div class="section-header">
                         <h2>Conexões / Revendas</h2>
                     </div>
-                    <p class="config-hint">Cadastro técnico em <strong>Carteira</strong> (nome exibido como conexão nos tickets). A arte do header do Chats é cadastrada na tela <strong>Clientes</strong>.</p>
+                    <p class="config-hint">Cadastro global <strong>Conexões/Revendas</strong> (entidade técnica Carteira). Arte operacional do Chats fica na tela <strong>Clientes</strong>. Não confundir com Cliente contratante nem Ticket.</p>
 
                     <form id="carteiraForm" class="form-multicolumn">
                         <input type="hidden" id="carteiraEditId" value="" />
@@ -2534,7 +2967,7 @@
                     <div class="section-header">
                         <h2>Etiquetas</h2>
                     </div>
-                    <p class="config-hint">Etiquetas flexíveis usadas no Chats para classificar atendimentos. Indicadores por etiqueta serão habilitados em sprint futura.</p>
+                    <p class="config-hint">Etiquetas globais no Chats e em Contatos. Para uso operacional, mantenha ativas: <strong>Indevido</strong>, <strong>Contato Pessoal</strong> e <strong>Propaganda</strong> (qualificação do contato; sem invalidar tickets automaticamente).</p>
 
                     <form id="etiquetaForm" class="form-multicolumn">
                         <input type="hidden" id="etiquetaEditId" value="" />
@@ -2580,6 +3013,47 @@
                     </div>
                 </div>
 
+                <!-- Portal do Cliente: gestão de usuários (ADMIN/SUPERVISOR) -->
+                <div class="content-section config-admin-only" id="portalUsuariosSection">
+                    <div class="section-header">
+                        <h2>Portal do Cliente — Usuários</h2>
+                        <p class="section-subtitle">Cadastre e gerencie usuários com acesso ao portal de acompanhamento de tickets.</p>
+                    </div>
+                    <div id="alertBoxPortalUsuarios" class="alert hidden" role="alert"></div>
+                    <div class="admin-cadastro-panel">
+                        <h3 class="admin-panel-title">Cadastrar usuário do portal</h3>
+                        <form id="portalUsuarioCadastroForm" class="admin-analista-form" autocomplete="off">
+                            <div class="admin-form-grid">
+                                <label>Nome<input type="text" name="nome" required maxlength="150" /></label>
+                                <label>E-mail<input type="email" name="email" required maxlength="150" /></label>
+                                <label>Senha inicial<input type="password" name="senha" required minlength="8" autocomplete="new-password" /></label>
+                                <label>Cliente
+                                    <select name="clienteId" id="portalUsuarioClienteSelect" required>
+                                        <option value="">Selecione...</option>
+                                    </select>
+                                </label>
+                                <label class="admin-checkbox-label">
+                                    <input type="checkbox" name="ativo" checked />
+                                    Ativo
+                                </label>
+                            </div>
+                            <button type="submit" class="button button-primary">Cadastrar usuário</button>
+                        </form>
+                    </div>
+                    <div class="section-header" style="margin-top:16px;">
+                        <h3 class="admin-panel-title" style="margin:0;">Usuários cadastrados</h3>
+                        <div class="filter-group">
+                            <label for="portalUsuarioFiltroCliente">Filtrar por cliente</label>
+                            <select id="portalUsuarioFiltroCliente">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="portalUsuariosList" class="admin-perfis-list" role="list">
+                        <p class="empty-state">Carregando usuários do portal...</p>
+                    </div>
+                </div>
+
                 <div id="alertBoxConfiguracoes" class="alert hidden" role="alert"></div>
             </section>
         </main>
@@ -2589,12 +3063,135 @@
     <!-- MODAIS (globais; fora do appScreen)                                    -->
     <!-- ====================================================================== -->
 
+    <!-- MODAL EDITAR CONTATO (Clientes → Contatos) -->
+    <div
+        id="modalContatoGestaoEdit"
+        class="modal modal-contato-gestao"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contatoGestaoEditTitle"
+    >
+        <div class="modal-content modal-content--medium">
+            <header class="modal-header">
+                <h2 id="contatoGestaoEditTitle">Editar contato</h2>
+                <button type="button" id="fecharModalContatoGestaoEdit" aria-label="Fechar">âœ•</button>
+            </header>
+            <div class="modal-body">
+                <p id="contatoGestaoEditAlert" class="alert hidden" role="alert"></p>
+                <p
+                    id="contatoGestaoEditOperacionalAviso"
+                    class="contato-gestao-operacional-aviso hidden"
+                    role="status"
+                ></p>
+                <input type="hidden" id="contatoGestaoEditId" value="" />
+                <div class="form-row">
+                    <div class="form-col col-full">
+                        <label for="contatoGestaoEditCliente">Contratante</label>
+                        <input type="text" id="contatoGestaoEditCliente" readonly class="input-readonly" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col col-full">
+                        <label for="contatoGestaoEditWhatsapp">WhatsApp</label>
+                        <input
+                            type="text"
+                            id="contatoGestaoEditWhatsapp"
+                            readonly
+                            class="input-readonly"
+                            title="WhatsApp não pode ser alterado após a criação do contato."
+                        />
+                        <p class="field-hint">O WhatsApp é definido na criação do contato e não pode ser alterado.</p>
+                    </div>
+                </div>
+                <section class="contato-gestao-telefones" aria-labelledby="contatoGestaoTelefonesTitle">
+                    <h3 id="contatoGestaoTelefonesTitle" class="contato-gestao-telefones-title">Telefones do contato</h3>
+                    <p class="field-hint contato-gestao-telefones-lead">
+                        O WhatsApp principal identifica o contato. Números adicionais unificam o histórico de atendimento.
+                    </p>
+                    <p id="contatoGestaoEditTelefonesAlert" class="alert hidden" role="alert"></p>
+                    <ul id="contatoGestaoEditTelefonesLista" class="contato-gestao-telefones-list"></ul>
+                    <p id="contatoGestaoEditTelefonesEmpty" class="contato-gestao-telefones-empty hidden">
+                        Nenhum telefone adicional cadastrado.
+                    </p>
+                    <div class="contato-gestao-telefone-add form-row">
+                        <div class="form-col col-half">
+                            <label for="contatoGestaoEditTelefoneNovo">Incluir telefone adicional</label>
+                            <input
+                                type="tel"
+                                id="contatoGestaoEditTelefoneNovo"
+                                autocomplete="off"
+                                placeholder="Ex.: (11) 98888-7777"
+                            />
+                        </div>
+                        <div class="form-col col-half">
+                            <label for="contatoGestaoEditTelefoneOrigem">Origem (opcional)</label>
+                            <select id="contatoGestaoEditTelefoneOrigem">
+                                <option value="ADICIONAL">Informado pelo cliente</option>
+                                <option value="CADASTRO_MANUAL">Cadastro manual</option>
+                                <option value="UNIFICACAO">Unificação</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="contato-gestao-telefone-add-actions">
+                        <button
+                            type="button"
+                            class="button button-secondary button-small"
+                            id="contatoGestaoEditTelefoneIncluir"
+                        >
+                            Incluir telefone
+                        </button>
+                    </div>
+                </section>
+                <div class="form-row">
+                    <div class="form-col col-half">
+                        <label for="contatoGestaoEditNome">Nome *</label>
+                        <input type="text" id="contatoGestaoEditNome" required autocomplete="off" />
+                    </div>
+                    <div class="form-col col-half">
+                        <label for="contatoGestaoEditEmail">E-mail</label>
+                        <input type="email" id="contatoGestaoEditEmail" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col col-half">
+                        <label for="contatoGestaoEditEmpresaLocal">Empresa/local</label>
+                        <input type="text" id="contatoGestaoEditEmpresaLocal" autocomplete="off" />
+                    </div>
+                    <div class="form-col col-quarter">
+                        <label for="contatoGestaoEditCidade">Cidade</label>
+                        <input type="text" id="contatoGestaoEditCidade" autocomplete="off" />
+                    </div>
+                    <div class="form-col col-quarter">
+                        <label for="contatoGestaoEditUf">UF</label>
+                        <input type="text" id="contatoGestaoEditUf" maxlength="2" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col col-full">
+                        <label for="contatoGestaoEditObservacoes">Observações</label>
+                        <textarea id="contatoGestaoEditObservacoes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-col col-full">
+                        <span class="label-block">Etiquetas</span>
+                        <div id="contatoGestaoEditEtiquetas" class="contato-gestao-etiquetas-list" role="group"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button type="button" class="button button-secondary" id="contatoGestaoEditCancelar">Cancelar</button>
+                <button type="button" class="button button-primary" id="contatoGestaoEditSalvar">Salvar</button>
+            </footer>
+        </div>
+    </div>
+
     <!-- MODAL DETALHES DO TICKET -->
     <div id="modalDetalhes" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
         <div class="modal-content">
             <header class="modal-header">
                 <h2 id="detailTitle">Detalhes do Ticket</h2>
-                <button id="fecharModal" aria-label="Fechar">✕</button>
+                <button id="fecharModal" aria-label="Fechar">âœ•</button>
             </header>
             <div class="modal-body">
                 <section>
@@ -2604,14 +3201,12 @@
                         <dt>Status</dt><dd id="detailStatus"></dd>
                         <dt>Prioridade</dt><dd id="detailPrioridade"></dd>
                         <dt>Canal</dt><dd id="detailCanal"></dd>
-                        <dt>Conexão</dt><dd id="detailConexao"></dd>
-                        <dt>Carteira</dt><dd id="detailCarteira"></dd>
                         <dt>Analista Responsável</dt><dd id="detailAnalista"></dd>
                         <dt>Mensagem Inicial</dt><dd id="detailMensagem"></dd>
                         <dt>Data de Abertura</dt><dd id="detailAbertura"></dd>
                         <dt>Data Primeiro Atendimento</dt><dd id="detailPrimeiro"></dd>
-                        <dt>Vencimento 1º atendimento</dt><dd id="detailSlaVencimento"></dd>
-                        <dt>SLA 1º atendimento</dt><dd id="detailSlaStatus"></dd>
+                        <dt>Vencimento 1Âº atendimento</dt><dd id="detailSlaVencimento"></dd>
+                        <dt>SLA 1Âº atendimento</dt><dd id="detailSlaStatus"></dd>
                         <dt>Vencimento resolução</dt><dd id="detailSlaResolucaoVencimento"></dd>
                         <dt>SLA resolução</dt><dd id="detailSlaResolucaoStatus"></dd>
                         <dt>SLA pausado</dt><dd id="detailSlaPausado"></dd>
@@ -2635,9 +3230,9 @@
                         <dt>CNPJ</dt><dd id="detailCnpj"></dd>
                         <dt>Cidade</dt><dd id="detailCidade"></dd>
                         <dt>UF</dt><dd id="detailUf"></dd>
-                        <dt>Contato solicitante</dt><dd id="detailContatoSolicitante"></dd>
-                        <dt>Telefone/celular do contato</dt><dd id="detailContatoSolicitanteTelefone"></dd>
-                        <dt>E-mail do contato</dt><dd id="detailContatoSolicitanteEmail"></dd>
+                        <dt>Contato (WhatsApp)</dt><dd id="detailContatoWhatsappNome"></dd>
+                        <dt>WhatsApp do contato</dt><dd id="detailContatoWhatsapp"></dd>
+                        <dt>E-mail do contato</dt><dd id="detailContatoWhatsappEmail"></dd>
                     </dl>
                 </section>
 
@@ -2743,7 +3338,7 @@
         <div class="modal-content modal-content-compact">
             <header class="modal-header">
                 <h2 id="escalonamentoTitle">Escalonar ticket</h2>
-                <button type="button" id="fecharModalEscalonamento" aria-label="Fechar">✕</button>
+                <button type="button" id="fecharModalEscalonamento" aria-label="Fechar">âœ•</button>
             </header>
             <div class="modal-body">
                 <p id="escalonamentoTicketNumero" class="escalonamento-ticket-ref"></p>
@@ -2760,12 +3355,53 @@
         </div>
     </div>
 
+    <!-- MODAIS AUXILIARES — classificar ticket indevido (Sprint 276) -->
+    <div id="modalClassificarIndevido" class="modal" role="dialog" aria-modal="true" aria-labelledby="classificarIndevidoTitle" data-testid="modal-classificar-indevido">
+        <div class="modal-content">
+            <header class="modal-header modal-header-compact">
+                <h2 id="classificarIndevidoTitle">Classificar como indevido</h2>
+                <button id="fecharModalClassificarIndevido" type="button" aria-label="Fechar">âœ•</button>
+            </header>
+            <div class="modal-body">
+                <form id="classificarIndevidoForm" class="form-standard">
+                    <input type="hidden" id="classificarIndevidoNumero" />
+                    <p class="config-hint" role="note">
+                        O chamado sai da Fila e do Atendendo. Esta ação não altera etiquetas do contato.
+                    </p>
+                    <div class="form-group">
+                        <label for="classificarIndevidoMotivo">Motivo operacional *</label>
+                        <select id="classificarIndevidoMotivo" required data-testid="classificar-indevido-motivo">
+                            <option value="INDEVIDO">Indevido</option>
+                            <option value="CONTATO_PESSOAL">Contato Pessoal</option>
+                            <option value="PROPAGANDA">Propaganda</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="classificarIndevidoComentario">Comentário (opcional)</label>
+                        <textarea id="classificarIndevidoComentario" rows="3" maxlength="2000" placeholder="Observação interna sobre a classificação"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="classificarIndevidoConfirmacao" required data-testid="classificar-indevido-confirmacao" />
+                            Confirmo classificar este chamado como indevido
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="button button-secondary" id="cancelarClassificarIndevidoBtn">Cancelar</button>
+                        <button type="submit" class="button button-primary" id="confirmarClassificarIndevidoBtn" data-testid="classificar-indevido-submit">Classificar</button>
+                    </div>
+                    <div id="alertBoxClassificarIndevido" class="alert hidden" role="alert"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAIS AUXILIARES — encerramento de ticket -->
     <div id="modalEncerramento" class="modal modal-encerramento" role="dialog" aria-modal="true" aria-labelledby="closeTitle" data-testid="modal-encerramento">
         <div class="modal-content modal-content-encerramento">
             <header class="modal-header modal-header-compact">
                 <h2 id="closeTitle">Encerrar ticket</h2>
-                <button id="fecharModalEncerramento" type="button" aria-label="Fechar">✕</button>
+                <button id="fecharModalEncerramento" type="button" aria-label="Fechar">âœ•</button>
             </header>
             <div class="modal-body modal-body-encerramento">
                 <form id="encerrarTicketForm" class="form-standard encerramento-form">
@@ -2800,7 +3436,7 @@
                             <legend class="sr-only">Pesquisa de satisfação</legend>
                             <div class="encerramento-pesquisa-row" role="radiogroup" aria-label="Deseja enviar a pesquisa de satisfação?">
                                 <p id="encerramentoPesquisaLegend" class="encerramento-pesquisa-pergunta">
-                                    <span class="encerramento-pesquisa-star" aria-hidden="true">⭐</span>
+                                    <span class="encerramento-pesquisa-star" aria-hidden="true">â­</span>
                                     Deseja enviar a pesquisa de satisfação?
                                 </p>
                                 <div class="encerramento-pesquisa-opcoes">
@@ -2836,7 +3472,7 @@
         <div class="modal-content modal-content-large">
             <header class="modal-header">
                 <h2 id="analistaFilaTitle">Fila do Analista</h2>
-                <button id="fecharModalAnalistaFila" aria-label="Fechar">✕</button>
+                <button id="fecharModalAnalistaFila" aria-label="Fechar">âœ•</button>
             </header>
             <div class="modal-body">
                 <div class="analyst-expanded-header">
@@ -2857,7 +3493,7 @@
         <div class="modal-content profile-photo-view-modal">
             <header class="modal-header">
                 <h2 id="fotoVisualizarTitle">Foto do perfil</h2>
-                <button id="fecharModalFotoVisualizar" aria-label="Fechar">✕</button>
+                <button id="fecharModalFotoVisualizar" aria-label="Fechar">âœ•</button>
             </header>
             <div class="modal-body">
                 <img id="perfilFotoVisualizacao" class="profile-photo-view" src="" alt="Foto do perfil" />
@@ -2869,7 +3505,7 @@
     <div id="modalFotoAjuste" class="modal profile-adjust-modal" role="dialog" aria-modal="true" aria-labelledby="fotoAjusteTitle">
         <div class="profile-adjust-content">
             <header class="profile-adjust-header">
-                <button type="button" id="fecharModalFotoAjuste" aria-label="Fechar">✕</button>
+                <button type="button" id="fecharModalFotoAjuste" aria-label="Fechar">âœ•</button>
                 <h2 id="fotoAjusteTitle">Arraste o círculo para ajustar</h2>
                 <button type="button" id="perfilFotoConfirmarTopo" class="profile-adjust-confirm">Confirmar</button>
             </header>
@@ -2885,12 +3521,12 @@
                     <button type="button" id="perfilZoomMais">+</button>
                     <button type="button" id="perfilZoomMenos">-</button>
                 </div>
-                <button type="button" id="perfilFotoConfirmarCheck" class="profile-check-button" aria-label="Confirmar foto">✓</button>
+                <button type="button" id="perfilFotoConfirmarCheck" class="profile-check-button" aria-label="Confirmar foto">âœ“</button>
             </div>
         </div>
     </div>
 
     <!-- SCRIPTS -->
-    <script type="module" src="app.js?v=sprint117"></script>
+    <script type="module" src="app.js?v=sprint310-portal-visual"></script>
 </body>
 </html>

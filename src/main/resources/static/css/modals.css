@@ -28,6 +28,19 @@
     max-width: 480px;
 }
 
+.modal-content--medium {
+    max-width: 640px;
+    width: 100%;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 20px 20px;
+    border-top: 1px solid var(--border-subtle, #e5e7eb);
+}
+
 .escalonamento-ticket-ref {
     font-size: 14px;
     color: var(--text-muted, #6b7280);

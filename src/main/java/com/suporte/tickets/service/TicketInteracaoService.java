@@ -2,6 +2,7 @@ package com.suporte.tickets.service;
 
 import com.suporte.tickets.dto.TicketInteracaoRequestDTO;
 import com.suporte.tickets.dto.TicketInteracaoResponseDTO;
+import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketInteracao;
 import com.suporte.tickets.entity.TicketInteracaoTipo;
@@ -21,6 +22,7 @@ public class TicketInteracaoService {
 
     private final TicketInteracaoRepository ticketInteracaoRepository;
     private final TicketRepository ticketRepository;
+    private final ContatoAtendimentoOrigemService contatoAtendimentoOrigemService;
 
     @Transactional
     public TicketInteracaoResponseDTO criarInteracaoManual(String numeroTicket, TicketInteracaoRequestDTO request) {
@@ -48,11 +50,13 @@ public class TicketInteracaoService {
 
     @Transactional
     public void registrarAberturaAutomatica(Ticket ticket) {
-        registrarAutomatica(
-                ticket,
-                TicketInteracaoTipo.ABERTURA,
-                "Ticket aberto: " + textoSeguro(ticket.getMensagemInicial())
-        );
+        TicketInteracao interacao = new TicketInteracao();
+        interacao.setTicket(ticket);
+        interacao.setTipoInteracao(TicketInteracaoTipo.ABERTURA);
+        interacao.setVisibilidade(TicketInteracaoVisibilidade.PUBLICA);
+        interacao.setMensagem("Ticket aberto: " + textoSeguro(ticket.getMensagemInicial()));
+        copiarOrigemTicketParaInteracao(ticket, interacao);
+        ticketInteracaoRepository.save(interacao);
     }
 
     @Transactional
@@ -62,6 +66,31 @@ public class TicketInteracaoService {
                 TicketInteracaoTipo.ENCERRAMENTO,
                 "Ticket encerrado: " + textoSeguro(comentarioEncerramento)
         );
+    }
+
+    @Transactional
+    public void registrarEntradaOperacional(Ticket ticket, String motivoOperacional) {
+        registrarAutomatica(
+                ticket,
+                TicketInteracaoTipo.ENCERRAMENTO,
+                "Entrada bloqueada por etiqueta operacional: " + textoSeguro(motivoOperacional));
+    }
+
+    @Transactional
+    public void registrarClassificacaoIndevido(Ticket ticket, String motivoOperacional, String comentario) {
+        String msg = "Ticket classificado como indevido (" + textoSeguro(motivoOperacional) + ")";
+        if (comentario != null && !comentario.isBlank()) {
+            msg = msg + ": " + textoSeguro(comentario);
+        }
+        registrarAutomatica(ticket, TicketInteracaoTipo.ENCERRAMENTO, msg);
+    }
+
+    @Transactional
+    public void registrarReversaoIndevido(Ticket ticket) {
+        registrarAutomatica(
+                ticket,
+                TicketInteracaoTipo.COMENTARIO,
+                "Classificação indevida revertida. Ticket retornou para Aberto.");
     }
 
     @Transactional
@@ -75,6 +104,11 @@ public class TicketInteracaoService {
 
     @Transactional
     public void registrarMensagemEntradaExterna(Ticket ticket, String mensagem, String origemExternaId) {
+        registrarMensagemEntradaExterna(ticket, mensagem, origemExternaId, null);
+    }
+
+    public void registrarMensagemEntradaExterna(
+            Ticket ticket, String mensagem, String origemExternaId, String telefoneEntrada) {
         if (ticket == null) {
             throw new IllegalArgumentException("Ticket e obrigatorio");
         }
@@ -90,6 +124,7 @@ public class TicketInteracaoService {
         interacao.setTipoInteracao(TicketInteracaoTipo.MENSAGEM_CLIENTE);
         interacao.setVisibilidade(TicketInteracaoVisibilidade.PUBLICA);
         interacao.setMensagem(texto);
+        aplicarOrigemMensagem(ticket, interacao, telefoneEntrada);
         ticketInteracaoRepository.save(interacao);
     }
 
@@ -130,6 +165,30 @@ public class TicketInteracaoService {
         return texto == null ? "" : texto.trim();
     }
 
+    private void aplicarOrigemMensagem(Ticket ticket, TicketInteracao interacao, String telefoneEntrada) {
+        Contato contato = ticket != null ? ticket.getContato() : null;
+        if (contato == null || telefoneEntrada == null || telefoneEntrada.isBlank()) {
+            return;
+        }
+        contatoAtendimentoOrigemService.aplicarOrigemNaInteracao(interacao, contato, telefoneEntrada);
+    }
+
+    private static void copiarOrigemTicketParaInteracao(Ticket ticket, TicketInteracao interacao) {
+        if (ticket == null || interacao == null) {
+            return;
+        }
+        if (ticket.getAtendimentoTelefone() != null && !ticket.getAtendimentoTelefone().isBlank()) {
+            interacao.setTelefoneOrigem(ticket.getAtendimentoTelefone().trim());
+        }
+        if (ticket.getAtendimentoTelefoneNormalizado() != null
+                && !ticket.getAtendimentoTelefoneNormalizado().isBlank()) {
+            interacao.setTelefoneOrigemNormalizado(ticket.getAtendimentoTelefoneNormalizado().trim());
+        }
+        if (ticket.getAtendimentoTelefoneTipo() != null && !ticket.getAtendimentoTelefoneTipo().isBlank()) {
+            interacao.setTelefoneOrigemTipo(ticket.getAtendimentoTelefoneTipo().trim());
+        }
+    }
+
     private TicketInteracaoResponseDTO converterParaResponse(TicketInteracao interacao) {
         TicketInteracaoResponseDTO response = new TicketInteracaoResponseDTO();
         response.setId(interacao.getId());
@@ -138,6 +197,12 @@ public class TicketInteracaoService {
         response.setVisibilidade(interacao.getVisibilidade().name());
         response.setMensagem(interacao.getMensagem());
         response.setCriadoEm(interacao.getCriadoEm());
+        if (interacao.getTelefoneOrigem() != null && !interacao.getTelefoneOrigem().isBlank()) {
+            response.setTelefoneOrigem(interacao.getTelefoneOrigem().trim());
+        }
+        if (interacao.getTelefoneOrigemTipo() != null && !interacao.getTelefoneOrigemTipo().isBlank()) {
+            response.setTelefoneOrigemTipo(interacao.getTelefoneOrigemTipo().trim());
+        }
         return response;
     }
 }

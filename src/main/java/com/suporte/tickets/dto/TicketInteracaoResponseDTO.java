@@ -17,4 +17,6 @@ public class TicketInteracaoResponseDTO {
     private String visibilidade;
     private String mensagem;
     private LocalDateTime criadoEm;
+    private String telefoneOrigem;
+    private String telefoneOrigemTipo;
 }

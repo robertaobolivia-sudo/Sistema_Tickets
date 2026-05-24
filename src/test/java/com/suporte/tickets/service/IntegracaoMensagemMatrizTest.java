@@ -37,6 +37,8 @@ class IntegracaoMensagemMatrizTest {
     private ContatoService contatoService;
     @Mock
     private InteracaoPendenteDecisaoService interacaoPendenteDecisaoService;
+    @Mock
+    private ContatoEtiquetaService contatoEtiquetaService;
 
     @InjectMocks
     private IntegracaoMensagemEntradaService service;
@@ -64,8 +66,9 @@ class IntegracaoMensagemMatrizTest {
         Contato contato = new Contato();
         contato.setId(7);
         when(contatoService.buscarEntidade(7)).thenReturn(contato);
-        when(ticketAtivoService.buscarEntidadeAtiva(eq(50), eq(7), eq(null), eq("11999991111")))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(eq(50), eq(7), eq("11999991111")))
                 .thenReturn(Optional.empty());
+        when(contatoEtiquetaService.resolverClassificacaoOperacional(contato)).thenReturn(null);
         when(ticketAtivoService.buscarUltimoEncerradoPorClienteEContato(50, 7)).thenReturn(Optional.empty());
 
         TicketResponseDTO criado = new TicketResponseDTO();

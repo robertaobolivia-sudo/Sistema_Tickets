@@ -175,12 +175,12 @@
     margin-top: 4px;
 }
 .content-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
+    background: var(--corp-surface-card);
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-md);
+    padding: 20px 22px;
+    box-shadow: var(--corp-shadow-soft);
+    margin-bottom: 20px;
 }
 
 .hidden {
@@ -302,6 +302,12 @@
 .status-RESOLVIDO {
     background: #dcfce7;
     color: #166534;
+}
+
+.status-INDEVIDO {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
 }
 
 .status-CANCELADO {
@@ -603,12 +609,24 @@ html[data-theme="dark"] .data-table tbody tr.ticket-row-priority-alta td {
 
 .button-secondary {
     background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
+    color: var(--corp-text-on-light);
+    border: 1px solid var(--corp-border-strong);
 }
 
 .button-secondary:hover:not(:disabled) {
-    background: var(--surface-hover);
+    background: var(--corp-surface-muted);
+    border-color: rgba(0, 255, 170, 0.4);
+}
+
+.button-warning {
+    background: #b45309;
+    color: #fff;
+    border: none;
+}
+
+.button-warning:hover:not(:disabled) {
+    background: #92400e;
+    box-shadow: var(--corp-shadow-soft);
 }
 
 .button-large {

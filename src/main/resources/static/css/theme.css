@@ -197,6 +197,35 @@ html[data-theme="dark"] {
     --corp-info-soft-border: rgba(0, 255, 170, 0.32);
     --corp-info-soft-text: #ccfbf1;
     --color-info-soft: var(--corp-info-soft);
+
+    /* Sprint 251 — Dark Corporate Premium (corpo; piloto Dashboard) */
+    --corp-premium-bg: #0f222d;
+    --corp-premium-surface: #162e3c;
+    --corp-premium-text: #e8f0f4;
+    --corp-premium-muted: #8fa3b0;
+    --corp-premium-border: rgba(0, 255, 170, 0.2);
+    --corp-institutional-green: #00ffaa;
+    --corp-institutional-green-hover: #33ffc0;
+
+    /* Sprint 252 — botões principais escuros (sidebar), neon só destaque */
+    --corp-btn-shell-bg: #0f2f3a;
+    --corp-btn-shell-hover: #1a4455;
+    --corp-btn-shell-text: #e8f0f4;
+    --corp-btn-shell-border: rgba(143, 163, 176, 0.28);
+    --corp-outline-accent: rgba(0, 255, 170, 0.22);
+}
+
+html[data-theme='dark'] .button.button-primary {
+    background: var(--corp-btn-shell-bg);
+    color: var(--corp-btn-shell-text);
+    border: 1px solid var(--corp-btn-shell-border);
+    box-shadow: none;
+}
+
+html[data-theme='dark'] .button.button-primary:hover:not(:disabled) {
+    background: var(--corp-btn-shell-hover);
+    border-color: var(--corp-outline-accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 /* Overrides de superfície — tema escuro (shell: tokens corporativos) */

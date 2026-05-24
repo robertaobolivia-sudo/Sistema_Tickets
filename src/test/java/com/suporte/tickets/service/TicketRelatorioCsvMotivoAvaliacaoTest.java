@@ -46,6 +46,7 @@ class TicketRelatorioCsvMotivoAvaliacaoTest {
         String texto = new String(csv, StandardCharsets.UTF_8);
 
         assertTrue(texto.contains("Motivo"));
+        assertTrue(texto.contains("Origem ticket"));
         assertTrue(texto.contains("Status pesquisa"));
         assertTrue(texto.contains("Configuracao"));
         assertTrue(texto.contains("Respondida"));

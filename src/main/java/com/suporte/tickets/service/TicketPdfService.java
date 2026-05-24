@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,23 +56,14 @@ public class TicketPdfService {
             document.add(new Paragraph("Relatório do Ticket", titleFont));
             document.add(new Paragraph(" "));
 
-            adicionarSecao(document, sectionFont, labelFont, valueFont, "Dados do Ticket", new String[][]{
-                    {"Número do ticket", texto(ticket.getNumeroTicket())},
-                    {"Status", texto(ticket.getStatus())},
-                    {"Canal", texto(ticket.getCanal())},
-                    {"Conexão", texto(ticket.getConexao())},
-                    {"Analista responsável", texto(ticket.getAnalistaResponsavelNome())},
-                    {"Mensagem inicial", texto(ticket.getMensagemInicial())},
-                    {"Data de abertura", formatarData(ticket.getDataAbertura())},
-                    {"Data de primeiro atendimento", formatarData(ticket.getDataPrimeiroAtendimento())},
-                    {"Data de encerramento", formatarData(ticket.getDataEncerramento())}
-            });
+            adicionarSecao(document, sectionFont, labelFont, valueFont, "Dados do Ticket", montarLinhasDadosTicket(ticket));
 
             adicionarSecao(document, sectionFont, labelFont, valueFont, "Dados do Cliente", new String[][]{
-                    {"Nome", texto(ticket.getCliente())},
-                    {"Contato solicitante", texto(ticket.getContatoSolicitanteNome())},
-                    {"Telefone contato solicitante", texto(ticket.getContatoSolicitanteTelefone())},
-                    {"E-mail contato solicitante", texto(ticket.getContatoSolicitanteEmail())},
+                    {"Cliente contratante", texto(ticket.getCliente())},
+                    {"Contato atendido", texto(ticket.getContatoNome())},
+                    {"WhatsApp contato", texto(ticket.getContatoWhatsapp())},
+                    {"E-mail contato", texto(ticket.getContatoEmail())},
+                    {"Origem ticket", texto(ticket.getOrigemTicket())},
                     {"Telefone", texto(ticket.getTelefone())},
                     {"Telefone de contato", texto(ticket.getTelefoneContato())},
                     {"E-mail", texto(ticket.getEmail())},
@@ -113,6 +105,24 @@ public class TicketPdfService {
         } catch (Exception e) {
             throw new RuntimeException("Falha ao gerar PDF do ticket", e);
         }
+    }
+
+    String[][] montarLinhasDadosTicket(TicketResponseDTO ticket) {
+        List<String[]> linhas = new ArrayList<>();
+        linhas.add(new String[]{"Número do ticket", texto(ticket.getNumeroTicket())});
+        linhas.add(new String[]{"Status", texto(ticket.getStatus())});
+        linhas.add(new String[]{"Canal", texto(ticket.getCanal())});
+        linhas.add(new String[]{"Origem ticket", texto(ticket.getOrigemTicket())});
+        linhas.add(new String[]{"Analista responsável", texto(ticket.getAnalistaResponsavelNome())});
+        linhas.add(new String[]{"Mensagem inicial", texto(ticket.getMensagemInicial())});
+        linhas.add(new String[]{"Data de abertura", formatarData(ticket.getDataAbertura())});
+        linhas.add(new String[]{"Data de primeiro atendimento", formatarData(ticket.getDataPrimeiroAtendimento())});
+        linhas.add(new String[]{"Data de encerramento", formatarData(ticket.getDataEncerramento())});
+        return linhas.toArray(new String[0][]);
+    }
+
+    private static boolean temTexto(String valor) {
+        return valor != null && !valor.isBlank() && !"-".equals(valor.trim());
     }
 
     private void adicionarSecao(

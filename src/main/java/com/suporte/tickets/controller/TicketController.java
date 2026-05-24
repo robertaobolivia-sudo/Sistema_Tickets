@@ -5,10 +5,8 @@ import com.suporte.tickets.dto.EncerrarTicketRequestDTO;
 import com.suporte.tickets.dto.TicketAlertaDTO;
 import com.suporte.tickets.dto.TicketAlertaReferenciaDTO;
 import com.suporte.tickets.dto.TicketEscalonamentoRequestDTO;
-import com.suporte.tickets.dto.EtiquetaResponseDTO;
-import com.suporte.tickets.dto.TicketEtiquetasRequestDTO;
-import com.suporte.tickets.dto.TicketObservacaoAtendimentoRequestDTO;
 import com.suporte.tickets.dto.TicketFiltroDTO;
+import com.suporte.tickets.dto.TicketObservacaoAtendimentoRequestDTO;
 import com.suporte.tickets.dto.TicketResponseDTO;
 import com.suporte.tickets.dto.TicketWebhookRequestDTO;
 import com.suporte.tickets.entity.Analista;
@@ -18,7 +16,6 @@ import com.suporte.tickets.service.TicketBuscaService;
 import com.suporte.tickets.service.TicketPdfService;
 import com.suporte.tickets.service.TicketRelatorioCsvService;
 import com.suporte.tickets.service.TicketAtivoService;
-import com.suporte.tickets.service.TicketEtiquetaService;
 import com.suporte.tickets.service.TicketIndevidoService;
 import com.suporte.tickets.service.TicketService;
 import jakarta.validation.Valid;
@@ -47,7 +44,6 @@ import java.util.List;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final TicketEtiquetaService ticketEtiquetaService;
     private final TicketAtivoService ticketAtivoService;
     private final TicketBuscaService ticketBuscaService;
     private final TicketPdfService ticketPdfService;
@@ -137,29 +133,26 @@ public class TicketController {
 
     /**
      * GET /api/tickets/ativo — ticket ativo para o contexto informado.
-     * Consulta recomendada (F1/F5): {@code clienteId} + {@code contatoWhatsappId}.
-     * Apenas {@code clienteId} permanece legado/deprecado (pode retornar ticket de outro Contato).
+     * Consulta operacional (F6/F7): exige {@code clienteId} + {@code contatoWhatsappId}.
      */
     @GetMapping("/ativo")
     public ResponseEntity<TicketResponseDTO> buscarTicketAtivo(
             @RequestParam(required = false) String telefone,
             @RequestParam(required = false) Integer clienteId,
             @RequestParam(required = false) Integer contatoWhatsappId,
-            @RequestParam(required = false) Integer contatoSolicitanteId,
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
             @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
         perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
-        if (clienteId == null && contatoSolicitanteId == null && contatoWhatsappId == null
+        if (clienteId == null && contatoWhatsappId == null
                 && (telefone == null || telefone.isBlank())) {
             return ResponseEntity.badRequest().build();
         }
-        if (TicketAtivoService.isConsultaAtivoLegadoPorClienteSemContato(clienteId, contatoWhatsappId)) {
-            log.warn(
-                    "GET /api/tickets/ativo legado: clienteId={} sem contatoWhatsappId — preferir par Cliente+Contato",
-                    clienteId);
+        if (clienteId == null || contatoWhatsappId == null) {
+            throw new IllegalArgumentException(
+                    "Informe clienteId e contatoWhatsappId para consultar ticket ativo.");
         }
         return ticketAtivoService
-                .buscarTicketAtivo(clienteId, contatoWhatsappId, contatoSolicitanteId, telefone)
+                .buscarTicketAtivo(clienteId, contatoWhatsappId, telefone)
                 .map(dto -> ResponseEntity.ok().headers(headersConsultaTicketAtivo(dto)).body(dto))
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
@@ -308,35 +301,6 @@ public class TicketController {
         TicketResponseDTO ticketAtualizado = ticketIndevidoService.reverterIndevido(
                 numeroTicket, executor.getId());
         return ResponseEntity.ok(ticketAtualizado);
-    }
-
-    @GetMapping("/{numeroTicket}/etiquetas")
-    public ResponseEntity<List<EtiquetaResponseDTO>> listarEtiquetasDoTicket(
-            @PathVariable String numeroTicket,
-            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
-            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
-        perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
-        return ResponseEntity.ok(ticketEtiquetaService.listarPorNumeroTicket(numeroTicket));
-    }
-
-    @PutMapping("/{numeroTicket}/etiquetas")
-    public ResponseEntity<List<EtiquetaResponseDTO>> substituirEtiquetasDoTicket(
-            @PathVariable String numeroTicket,
-            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
-            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken,
-            @Valid @RequestBody(required = false) TicketEtiquetasRequestDTO requestDTO) {
-        Analista executor = perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
-        List<Long> ids = requestDTO != null && requestDTO.getEtiquetaIds() != null
-                ? requestDTO.getEtiquetaIds()
-                : List.of();
-        List<EtiquetaResponseDTO> atualizadas = ticketEtiquetaService.substituirVinculosAtivos(numeroTicket, ids);
-        auditoriaService.registrar(
-                AuditoriaService.ACAO_TICKET_ETIQUETAS,
-                AuditoriaService.ENTIDADE_TICKET,
-                numeroTicket,
-                "Etiquetas do ticket atualizadas",
-                executor);
-        return ResponseEntity.ok(atualizadas);
     }
 
     @PutMapping("/{numeroTicket}/observacao-atendimento")

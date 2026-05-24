@@ -6,7 +6,6 @@ import com.suporte.tickets.dto.TicketWebhookRequestDTO;
 import com.suporte.tickets.entity.Cliente;
 import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.Ticket;
-import com.suporte.tickets.repository.CarteiraRepository;
 import com.suporte.tickets.repository.ClienteRepository;
 import com.suporte.tickets.repository.GrupoCategoriaRepository;
 import com.suporte.tickets.repository.SubgrupoCategoriaRepository;
@@ -39,8 +38,6 @@ class TicketServiceCriacaoContatoTest {
     @Mock
     private ClienteRepository clienteRepository;
     @Mock
-    private CarteiraRepository carteiraRepository;
-    @Mock
     private GrupoCategoriaRepository grupoCategoriaRepository;
     @Mock
     private SubgrupoCategoriaRepository subgrupoCategoriaRepository;
@@ -48,8 +45,6 @@ class TicketServiceCriacaoContatoTest {
     private TicketInteracaoService ticketInteracaoService;
     @Mock
     private AnalistaService analistaService;
-    @Mock
-    private ContatoClienteService contatoClienteService;
     @Mock
     private ContatoService contatoService;
     @Mock
@@ -68,6 +63,8 @@ class TicketServiceCriacaoContatoTest {
     private PesquisaSatisfacaoEnvioService pesquisaSatisfacaoEnvioService;
     @Mock
     private MotivoService motivoService;
+    @Mock
+    private ContatoAtendimentoOrigemService contatoAtendimentoOrigemService;
     @InjectMocks
     private TicketService ticketService;
 
@@ -84,8 +81,9 @@ class TicketServiceCriacaoContatoTest {
     }
 
     @Test
-    void criarTicketPorWebhook_comTelefone_vinculaContato() {
+    void F8_criarTicketPorWebhook_soTelefone_naoCriaContatoOperacional() {
         when(clienteRepository.findByTelefone("11987654321")).thenReturn(Optional.of(cliente));
+        when(contatoService.clientePossuiContatoWhatsappAtivo(10)).thenReturn(false);
         when(ticketRepository.getNextSequence()).thenReturn(99);
         when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> {
             Ticket t = inv.getArgument(0);
@@ -93,17 +91,36 @@ class TicketServiceCriacaoContatoTest {
             return t;
         });
 
+        TicketWebhookRequestDTO dto = new TicketWebhookRequestDTO();
+        dto.setCliente("Maria");
+        dto.setTelefone("11987654321");
+        dto.setMensagem("Oi");
+        dto.setNomeContato("Maria");
+
+        ticketService.criarTicketPorWebhook(dto);
+
+        verify(contatoService, never()).criarSeNaoExistir(any(), any(), any());
+        ArgumentCaptor<Ticket> cap = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(cap.capture());
+        assertNull(cap.getValue().getContato());
+    }
+
+    @Test
+    void F8_criarTicketPorWebhook_comMatriz_criaContatoPeloTelefoneMensagem() {
+        when(clienteRepository.findById(10)).thenReturn(Optional.of(cliente));
+        when(ticketRepository.getNextSequence()).thenReturn(100);
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> {
+            Ticket t = inv.getArgument(0);
+            t.setId(3);
+            return t;
+        });
+        when(whatsappMatrizService.buscarEntidadeAtivaPorId(5)).thenReturn(new com.suporte.tickets.entity.WhatsappMatriz());
+
         ContatoResponseDTO contatoDto = new ContatoResponseDTO();
         contatoDto.setId(50);
-        contatoDto.setNome("Maria");
-        contatoDto.setWhatsapp("11987654321");
         when(contatoService.criarSeNaoExistir(eq(10), eq("11987654321"), any())).thenReturn(contatoDto);
-
         Contato contatoEnt = new Contato();
         contatoEnt.setId(50);
-        contatoEnt.setNome("Maria");
-        contatoEnt.setWhatsapp("11987654321");
-        contatoEnt.setWhatsappNormalizado("11987654321");
         contatoEnt.setCliente(cliente);
         when(contatoService.buscarEntidade(50)).thenReturn(contatoEnt);
         when(ticketRepository.findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(
@@ -111,19 +128,15 @@ class TicketServiceCriacaoContatoTest {
                 .thenReturn(Optional.empty());
 
         TicketWebhookRequestDTO dto = new TicketWebhookRequestDTO();
-        dto.setCliente("Maria");
+        dto.setClienteContratanteId(10);
         dto.setTelefone("11987654321");
-        dto.setMensagem("Oi");
-        dto.setNomeContato("Maria");
+        dto.setMensagem("WhatsApp");
+        dto.setWhatsappMatrizId(5);
 
         TicketResponseDTO res = ticketService.criarTicketPorWebhook(dto);
 
         assertEquals(50, res.getContatoId());
-        assertEquals("Maria", res.getContatoNome());
-        ArgumentCaptor<Ticket> cap = ArgumentCaptor.forClass(Ticket.class);
-        verify(ticketRepository).save(cap.capture());
-        assertNotNull(cap.getValue().getContato());
-        assertEquals(50, cap.getValue().getContato().getId());
+        verify(contatoService).criarSeNaoExistir(eq(10), eq("11987654321"), any());
     }
 
     @Test
@@ -131,6 +144,7 @@ class TicketServiceCriacaoContatoTest {
         cliente.setTelefone(null);
         cliente.setTelefoneContato(null);
         when(clienteRepository.findByNome("Sem Tel")).thenReturn(Optional.of(cliente));
+        when(contatoService.clientePossuiContatoWhatsappAtivo(10)).thenReturn(false);
         when(ticketRepository.getNextSequence()).thenReturn(1);
         when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> {
             Ticket t = inv.getArgument(0);

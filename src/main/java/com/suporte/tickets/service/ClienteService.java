@@ -4,9 +4,7 @@ import com.suporte.tickets.config.UploadStorageProperties;
 import com.suporte.tickets.dto.ClienteRequestDTO;
 import com.suporte.tickets.dto.ClienteResponseDTO;
 import com.suporte.tickets.entity.ClassificacaoCliente;
-import com.suporte.tickets.entity.Carteira;
 import com.suporte.tickets.entity.Cliente;
-import com.suporte.tickets.repository.CarteiraRepository;
 import com.suporte.tickets.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
-    private final CarteiraRepository carteiraRepository;
     private final UploadStorageProperties uploadStorageProperties;
 
     @Transactional
@@ -135,15 +132,33 @@ public class ClienteService {
     }
 
     private Cliente preencher(Cliente cliente, ClienteRequestDTO dto) {
-        cliente.setNome(dto.getNome().trim());
-        cliente.setTelefone(normalizarTelefone(dto.getTelefone()));
+        String responsavel = trimOrNull(dto.getResponsavel());
+        if (responsavel == null) {
+            responsavel = dto.getNome().trim();
+        }
+        cliente.setNome(responsavel);
+        cliente.setResponsavel(responsavel);
+
+        String razaoSocial = trimOrNull(dto.getRazaoSocial());
+        if (razaoSocial == null) {
+            razaoSocial = trimOrNull(dto.getEmpresa());
+        }
+        cliente.setRazaoSocial(razaoSocial);
+        cliente.setEmpresa(razaoSocial);
+
+        String whatsapp = normalizarTelefone(primeiroNaoVazio(dto.getWhatsapp(), dto.getTelefone()));
+        cliente.setWhatsapp(whatsapp);
+        cliente.setTelefone(whatsapp);
         cliente.setTelefoneContato(normalizarTelefone(dto.getTelefoneContato()));
         cliente.setEmail(dto.getEmail().trim().toLowerCase());
-        cliente.setEmpresa(trimOrNull(dto.getEmpresa()));
         cliente.setCnpj(trimOrNull(dto.getCnpj()));
+        cliente.setInscricaoEstadual(trimOrNull(dto.getInscricaoEstadual()));
         cliente.setCidade(trimOrNull(dto.getCidade()));
         cliente.setUf(trimOrNull(dto.getUf()));
         cliente.setEndereco(trimOrNull(dto.getEndereco()));
+        cliente.setCep(trimOrNull(dto.getCep()));
+        cliente.setSite(trimOrNull(dto.getSite()));
+        cliente.setHorarioFuncionamento(trimOrNull(dto.getHorarioFuncionamento()));
         String status = dto.getStatus() == null || dto.getStatus().isBlank()
                 ? "ATIVO"
                 : dto.getStatus().trim().toUpperCase();
@@ -152,22 +167,7 @@ public class ClienteService {
         cliente.setClassificacaoCliente(ClassificacaoCliente.parse(dto.getClassificacaoCliente()));
         cliente.setObservacoes(trimOrNull(dto.getObservacoes()));
 
-        aplicarCarteiraLegadoSeInformada(cliente, dto);
-
         return cliente;
-    }
-
-    /**
-     * Carteira deixa de ser conceito principal (Sprint 188). Só aplica FK se vier {@code carteiraId}
-     * explícito (integrações legadas). Não cria Carteira por nome nem altera vínculo na tela Clientes.
-     */
-    private void aplicarCarteiraLegadoSeInformada(Cliente cliente, ClienteRequestDTO dto) {
-        if (dto.getCarteiraId() == null) {
-            return;
-        }
-        Carteira carteira = carteiraRepository.findById(dto.getCarteiraId())
-                .orElseThrow(() -> new RuntimeException("Carteira nao encontrada: " + dto.getCarteiraId()));
-        cliente.setCarteira(carteira);
     }
 
     private String normalizarTelefone(String telefone) {
@@ -176,5 +176,17 @@ public class ClienteService {
 
     private String trimOrNull(String valor) {
         return valor == null || valor.isBlank() ? null : valor.trim();
+    }
+
+    private static String primeiroNaoVazio(String... valores) {
+        if (valores == null) {
+            return null;
+        }
+        for (String v : valores) {
+            if (v != null && !v.isBlank()) {
+                return v.trim();
+            }
+        }
+        return null;
     }
 }

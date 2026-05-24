@@ -13,6 +13,8 @@ import java.util.List;
 public class IndicadoresChamadosDTO {
 
     private long totalChamados;
+    /** Tickets INDEVIDO no período (grupo Não atendimento). */
+    private long totalNaoAtendimento;
     private long totalClientes;
     private List<IndicadorContagemDTO> chamadosPorAtendente = new ArrayList<>();
     private List<IndicadorContagemDTO> chamadosPorGrupo = new ArrayList<>();

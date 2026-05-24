@@ -83,8 +83,7 @@ public class TicketSlaResolucaoService {
     }
 
     private boolean isTicketFinalizado(Ticket ticket) {
-        return ticket.getStatus() == TicketStatus.RESOLVIDO
-                || ticket.getStatus() == TicketStatus.CANCELADO;
+        return TicketAtivoService.STATUS_FORA_ATENDIMENTO_OPERACIONAL.contains(ticket.getStatus());
     }
 
     private PrioridadeTicket resolverPrioridade(PrioridadeTicket prioridade) {

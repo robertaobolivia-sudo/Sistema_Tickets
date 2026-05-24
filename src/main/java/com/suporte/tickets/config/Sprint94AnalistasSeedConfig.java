@@ -1,14 +1,10 @@
 package com.suporte.tickets.config;
 
 import com.suporte.tickets.entity.Analista;
-import com.suporte.tickets.entity.Carteira;
-import com.suporte.tickets.entity.Cliente;
 import com.suporte.tickets.entity.StatusOperador;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.repository.AnalistaRepository;
-import com.suporte.tickets.repository.CarteiraRepository;
-import com.suporte.tickets.repository.ClienteRepository;
 import com.suporte.tickets.repository.TicketRepository;
 import com.suporte.tickets.service.AnalistaService;
 import lombok.RequiredArgsConstructor;
@@ -28,27 +24,16 @@ public class Sprint94AnalistasSeedConfig {
     private static final String NIVEL_PADRAO = "Nível 1";
     private static final String DUTY_BREAKER_EMAIL_ANTIGO = "robertaobolivia@gmail.com.br";
     private static final String DUTY_BREAKER_EMAIL = "robertaobolivia@gmail.com";
-    private static final String[] CONEXOES = {
-            "FastComércio", "Fênix", "Rocha Mendes", "Status Automação"
-    };
-    private static final String[] CANAIS = {
-            "WhatsApp", "Telefone", "Web", "E-mail"
-    };
 
     private final AnalistaRepository analistaRepository;
-    private final ClienteRepository clienteRepository;
-    private final CarteiraRepository carteiraRepository;
     private final TicketRepository ticketRepository;
 
     @Bean
     @Order(100)
     CommandLineRunner seedSprint94AnalistasUsuarios() {
         return args -> {
+            // Sprint 260: apenas garante analista ADMIN (sem massa DEV de clientes duplicados).
             salvarOuAtualizarAnalista(dutyBreaker());
-
-            List<Cliente> clientesPrincipais = criarClientesConexoes();
-            distribuirTicketsPorConexaoECliente(clientesPrincipais);
-            garantirPendenciasAbertas(clientesPrincipais);
         };
     }
 
@@ -138,82 +123,6 @@ public class Sprint94AnalistasSeedConfig {
             analistaTeste.setOnline(false);
             analistaRepository.save(analistaTeste);
         });
-    }
-
-    private List<Cliente> criarClientesConexoes() {
-        return List.of(
-                criarClienteConexao("FastComércio", "11910000001", "fastcomercio@clientes.local"),
-                criarClienteConexao("Fênix", "11910000002", "fenix@clientes.local"),
-                criarClienteConexao("Rocha Mendes", "11910000003", "rocha.mendes@clientes.local"),
-                criarClienteConexao("Status Automação", "11910000004", "status.automacao@clientes.local")
-        );
-    }
-
-    private Cliente criarClienteConexao(String nome, String telefone, String email) {
-        Carteira carteira = carteiraRepository.findByNome(nome)
-                .orElseGet(() -> {
-                    Carteira novaCarteira = new Carteira();
-                    novaCarteira.setNome(nome);
-                    return carteiraRepository.save(novaCarteira);
-                });
-
-        Cliente cliente = clienteRepository.findByNome(nome)
-                .orElseGet(() -> {
-                    Cliente novoCliente = new Cliente();
-                    novoCliente.setNome(nome);
-                    return novoCliente;
-                });
-        cliente.setTelefone(telefone);
-        cliente.setTelefoneContato(telefone);
-        cliente.setEmail(email);
-        cliente.setEmpresa(nome);
-        cliente.setCidade("São Paulo");
-        cliente.setUf("SP");
-        cliente.setCarteira(carteira);
-        return clienteRepository.save(cliente);
-    }
-
-    private void distribuirTicketsPorConexaoECliente(List<Cliente> clientesPrincipais) {
-        List<Ticket> tickets = ticketRepository.findAllByOrderByDataAberturaDesc();
-        for (int i = 0; i < tickets.size(); i++) {
-            Ticket ticket = tickets.get(i);
-            Cliente cliente = clientesPrincipais.get(i % clientesPrincipais.size());
-            ticket.setCliente(cliente);
-            ticket.setConexao(cliente.getNome());
-            ticketRepository.save(ticket);
-        }
-    }
-
-    private void garantirPendenciasAbertas(List<Cliente> clientesPrincipais) {
-        for (int i = 0; i < clientesPrincipais.size(); i++) {
-            Cliente cliente = clientesPrincipais.get(i);
-            if (existeTicketAbertoNaConexao(cliente.getNome())) {
-                continue;
-            }
-
-            Ticket ticket = new Ticket();
-            ticket.setNumeroTicket(gerarNumeroTicket());
-            ticket.setCliente(cliente);
-            ticket.setConexao(cliente.getNome());
-            ticket.setCanal(CANAIS[i % CANAIS.length]);
-            ticket.setMensagemInicial("Pendência operacional " + cliente.getNome());
-            ticket.setStatus(TicketStatus.ABERTO);
-            ticket.setDataAbertura(LocalDateTime.now().minusMinutes((i + 1) * 11L));
-            ticketRepository.save(ticket);
-        }
-    }
-
-    private boolean existeTicketAbertoNaConexao(String conexao) {
-        return ticketRepository.findByStatusInOrderByConexaoAscDataAberturaAsc(
-                        List.of(TicketStatus.ABERTO, TicketStatus.AGUARDANDO_CLIENTE)
-                )
-                .stream()
-                .anyMatch(ticket -> conexao.equals(ticket.getConexao()));
-    }
-
-    private String gerarNumeroTicket() {
-        Integer proximoNumero = ticketRepository.getNextSequence();
-        return String.format("TK-%06d", proximoNumero);
     }
 
     private record AnalistaSeed(

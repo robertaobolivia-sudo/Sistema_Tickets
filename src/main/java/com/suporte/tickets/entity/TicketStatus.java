@@ -7,13 +7,15 @@ package com.suporte.tickets.entity;
  * ABERTO -> EM_ATENDIMENTO -> RESOLVIDO
  * ABERTO -> AGUARDANDO_CLIENTE -> RESOLVIDO
  * ABERTO -> CANCELADO
+ * INDEVIDO — terminal, fora da fila operacional (Sprint 274)
  */
 public enum TicketStatus {
     ABERTO("Aberto"),
     EM_ATENDIMENTO("Em Atendimento"),
     AGUARDANDO_CLIENTE("Aguardando Cliente"),
     RESOLVIDO("Resolvido"),
-    CANCELADO("Cancelado");
+    CANCELADO("Cancelado"),
+    INDEVIDO("Indevido");
 
     private final String descricao;
 

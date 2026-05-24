@@ -1,8 +1,65 @@
 # E2E Playwright — suporte-tickets
 
+> **Domínio e regras:** [README_MESTRE.md](../README_MESTRE.md).  
+> **Auditoria:** [Auditoria/AUDITORIA-004-pos-reestruturacao.md](../Auditoria/AUDITORIA-004-pos-reestruturacao.md).
+
+## Validação oficial (F46)
+
+Esteira mínima pós-reestruturação: **Maven → Vitest → package → HTTP 200 → Playwright F45**.
+
+```powershell
+# Raiz do projeto (recomendado)
+.\scripts\validar-pos-reestruturacao.ps1
+
+# Dois terminais (mais estável no Windows)
+.\scripts\start-dev-server.ps1          # terminal 1
+.\scripts\validar-pos-reestruturacao.ps1 -NoAutoStartServer   # terminal 2
+```
+
+| Script | Uso |
+|--------|-----|
+| `scripts/stop-java-8080.ps1` | Antes de `mvn package` / `clean` |
+| `scripts/start-dev-server.ps1` | `package` + JAR em janela dedicada |
+| `scripts/validar-pos-reestruturacao.ps1` | Esteira completa |
+
+Checklist de aprovação de sprint: `docs/SPRINT_F46_VALIDACAO_OFICIAL_POS_REESTRUTURACAO.md`.
+
+**Gate PR/CI (F51):** workflow `Gate pos-reestruturacao` — required check em `main` (ver [docs/SPRINT_F51_REQUIRED_CHECK_GATE.md](../docs/SPRINT_F51_REQUIRED_CHECK_GATE.md)).
+
+**Lock JAR:** pare o Java na 8080 antes do `package`. Exit **4294967295** = processo Java encerrado de fora (reinicie o servidor).
+
+---
+
+## Suite principal pós-reestruturação (F45)
+
+**Comando E2E** (app já em :8080):
+
+```powershell
+.\scripts\stop-java-8080.ps1    # só se for rebuild antes
+.\scripts\start-dev-server.ps1  # ou java -jar em terminal dedicado
+cd e2e
+$env:E2E_SKIP_WEB_SERVER = '1'
+npm run test:pos-reestruturacao
+```
+
+| Item | Detalhe |
+|------|---------|
+| Spec | `tests/smoke-pos-reestruturacao.spec.ts` |
+| Massa | `e2e/.massa-pos-reestruturacao.json` (1 Cliente, 2 Contatos, Matriz, ticket manual + receptivo) |
+| Helpers | `helpers/massaPosReestruturacao.ts`, `helpers/e2eUi.ts`, `helpers/f44Massa.ts` (CSV/PDF API) |
+| Doc sprint | `docs/SPRINT_F45_SUITE_E2E_POS_REESTRUTURACAO.md` |
+
+Specs legados (ainda válidos isolados): F42 `smoke-reestruturacao-final.spec.ts`, F43 `smoke-receptivo-whatsapp-final.spec.ts`, F44 `smoke-relatorios-csv-pdf-origem.spec.ts`.
+
+---
+
 Regressão do fluxo principal:
 
 **Chats/Fila → encerramento com pesquisa (Sim/Não) → link público → avaliação → bloqueio da 2ª resposta → detalhe do ticket** (Sprints 214–215, estabilizado na 219).
+
+**F42 — smoke pós reestruturação:** `tests/smoke-reestruturacao-final.spec.ts` (Login → Cliente/Contato → Ticket ATIVO_MANUAL → Chats → Relatórios → Config). Ver `docs/SPRINT_F42_PLAYWRIGHT_SMOKE_FINAL.md`.
+
+**F43 — receptivo WhatsApp simulado:** `tests/smoke-receptivo-whatsapp-final.spec.ts` (`POST /api/integracoes/whatsapp/mensagens` → `RECEPTIVO_WHATSAPP` → Chats). Ver `docs/SPRINT_F43_E2E_RECEPTIVO_WHATSAPP.md`.
 
 ---
 

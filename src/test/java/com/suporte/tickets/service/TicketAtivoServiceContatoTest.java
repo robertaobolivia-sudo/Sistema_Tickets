@@ -5,7 +5,6 @@ import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.repository.ClienteRepository;
-import com.suporte.tickets.repository.ContatoClienteRepository;
 import com.suporte.tickets.repository.TicketRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +31,6 @@ class TicketAtivoServiceContatoTest {
     @Mock
     private ClienteRepository clienteRepository;
     @Mock
-    private ContatoClienteRepository contatoClienteRepository;
-    @Mock
     private TicketService ticketService;
 
     @InjectMocks
@@ -46,7 +43,7 @@ class TicketAtivoServiceContatoTest {
                 eq(10), eq(100), any(List.class)))
                 .thenReturn(Optional.of(ticketA));
 
-        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, 100, null, "5511999000001");
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, 100, "5511999000001");
 
         assertTrue(found.isPresent());
         assertEquals("TK-A", found.get().getNumeroTicket());
@@ -59,22 +56,62 @@ class TicketAtivoServiceContatoTest {
                 eq(10), eq(200), any(List.class)))
                 .thenReturn(Optional.empty());
 
-        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, 200, null, "5511999000002");
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, 200, "5511999000002");
 
         assertTrue(found.isEmpty());
         verify(ticketRepository, never()).findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(any(), any());
     }
 
     @Test
-    void semContatoWhatsapp_mantemLegadoPorCliente() {
-        Ticket ticketCliente = ticket("TK-LEG", 10, null);
-        when(ticketRepository.findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(eq(10), any(List.class)))
-                .thenReturn(Optional.of(ticketCliente));
+    void semContatoWhatsapp_naoBuscaPorClienteSo_F6() {
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, null, null);
 
-        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, null, null, null);
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(any(), any());
+    }
 
-        assertTrue(found.isPresent());
-        assertEquals("TK-LEG", found.get().getNumeroTicket());
+    @Test
+    void whatsappSemContatoId_naoReutilizaPorCliente() {
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(10, null, "5511999000002");
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(any(), any());
+    }
+
+    @Test
+    void whatsappOutroContato_naoConsultaTicketAtivoSoDoCliente() {
+        when(ticketRepository.findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(
+                eq(10), eq(200), any(List.class)))
+                .thenReturn(Optional.empty());
+
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(10, 200, "5511999000002");
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndStatusInOrderByDataAberturaDesc(any(), any());
+    }
+
+    @Test
+    void F7_telefoneSozinho_naoRetornaTicketAtivo() {
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(null, null, "5511999000001");
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(any(), any(), any());
+    }
+
+    @Test
+    void F36_semCliente_contatoWhatsappId_naoRetornaTicketAtivo() {
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(null, 99, null);
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(any(), any(), any());
+    }
+
+    @Test
+    void F7_clienteComTelefone_semContatoWhatsappId_naoRetorna() {
+        Optional<Ticket> found = ticketAtivoService.buscarEntidadeAtiva(10, null, "5511999000001");
+
+        assertTrue(found.isEmpty());
+        verify(ticketRepository, never()).findFirstByCliente_IdAndContato_IdAndStatusInOrderByDataAberturaDesc(any(), any(), any());
     }
 
     private static Ticket ticket(String numero, int clienteId, Integer contatoId) {

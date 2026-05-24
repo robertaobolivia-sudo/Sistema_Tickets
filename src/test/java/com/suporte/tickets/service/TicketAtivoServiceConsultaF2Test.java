@@ -6,7 +6,6 @@ import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.Ticket;
 import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.repository.ClienteRepository;
-import com.suporte.tickets.repository.ContatoClienteRepository;
 import com.suporte.tickets.repository.TicketRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,8 +32,6 @@ class TicketAtivoServiceConsultaF2Test {
     @Mock
     private ClienteRepository clienteRepository;
     @Mock
-    private ContatoClienteRepository contatoClienteRepository;
-    @Mock
     private TicketService ticketService;
 
     @InjectMocks
@@ -60,7 +57,7 @@ class TicketAtivoServiceConsultaF2Test {
         when(ticketService.converterParaResponseSeguro(ticket)).thenReturn(dto);
 
         Optional<TicketResponseDTO> found =
-                ticketAtivoService.buscarTicketAtivo(10, 200, null, "5511999000002");
+                ticketAtivoService.buscarTicketAtivo(10, 200, "5511999000002");
 
         assertTrue(found.isPresent());
         assertEquals("TK-2", found.get().getNumeroTicket());

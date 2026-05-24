@@ -1,0 +1,125 @@
+{
+  "$schema": "auditoria-context-v4",
+  "processo": "AUDITORIA-004",
+  "titulo": "Estado pos-reestruturacao Cliente Contato WhatsApp Ticket",
+  "data_execucao": "2026-05-24",
+  "estado": "REESTRUTURACAO_CONCLUIDA",
+  "documento_principal": "README_MESTRE.md",
+  "auditoria_complementar": "Auditoria/AUDITORIA-004-pos-reestruturacao.md",
+  "auditorias_historicas": [
+    "AUDITORIA-001-inventario-estrutural.md",
+    "AUDITORIA-001-context.json",
+    "AUDITORIA-002-matriz-fluxos-criticos.md",
+    "AUDITORIA-002-context.json",
+    "AUDITORIA-002-addendum-whatsapp-provedor-pendente.md",
+    "AUDITORIA-003-migracao-legado-cliente-contato-whatsapp.md",
+    "AUDITORIA-003-context.json"
+  ],
+  "instrucao_ia": "Decisoes de runtime e produto devem usar AUDITORIA-004. AUDITORIA-001/002/003 explicam o passado pre-reestruturacao; AUDITORIA-003-context.json e log de sprints F24-F46.",
+  "modelo_atual": [
+    "Cliente contratante",
+    "Contato atendido",
+    "WhatsApp Matriz",
+    "Ticket",
+    "origemTicket: ATIVO_MANUAL | RECEPTIVO_WHATSAPP",
+    "Etiqueta: ContatoEtiqueta",
+    "Chats: Cliente + Contato + Entrada + Chamado sem Carteira/Conexao operacional",
+    "Relatorios/CSV: origemTicket cliente contato status datas sem conexao/carteira operacional"
+  ],
+  "legados_removidos_runtime": [
+    "ticket.conexao",
+    "tickets.conexao",
+    "Cliente.carteira_id",
+    "clientes.carteira_id",
+    "ContatoCliente",
+    "contatos_clientes",
+    "tickets.contato_solicitante_id",
+    "TicketEtiqueta",
+    "ticket_etiquetas",
+    "fallback Carteira/Conexao Chats",
+    "fallback ContatoCliente abertura manual",
+    "fallback TicketEtiqueta Chats",
+    "Dashboard por Conexao",
+    "CSV/PDF Conexao operacional",
+    "filtro conexao relatorio/busca"
+  ],
+  "legados_isolados": [
+    "Carteira entity repository service controller",
+    "/api/carteiras",
+    "Configuracoes Conexoes/Revendas",
+    "uploads/conexoes",
+    "backups F29 F34 F38 F40",
+    "docs historicas",
+    "patches drop backfill"
+  ],
+  "validacoes": {
+    "marco": "F41 REESTRUTURACAO_CONCLUIDA",
+    "maven": "mvn test OK (referencia F46)",
+    "vitest": "219/219 (referencia F46)",
+    "mvn_package": "OK apos stop-java-8080 (F46)",
+    "playwright_pos_reestruturacao": "npm run test:pos-reestruturacao 1 passed (F45/F46)",
+    "http": "200",
+    "comando_oficial": ".\\scripts\\validar-pos-reestruturacao.ps1",
+    "e2e_spec": "e2e/tests/smoke-pos-reestruturacao.spec.ts",
+    "gate_f48": {
+      "workflow": ".github/workflows/pos-reestruturacao.yml",
+      "script_ci_local": "scripts/validar-pos-reestruturacao-ci.ps1",
+      "documento": "docs/SPRINT_F48_GATE_CI_POS_REESTRUTURACAO.md"
+    }
+  },
+  "whatsapp": {
+    "provider_real": "pendencia_planejada",
+    "noop_sender": "adapter_temporario_nao_e_bug",
+    "entrada_simulada": "POST /api/integracoes/whatsapp/mensagens",
+    "validado": "F43 F45"
+  },
+  "riscos_residuais": {
+    "C01": "mitigado — revisar auth webhook em deploy",
+    "C02": "mitigado — ticket ativo Cliente+Contato",
+    "C03": "mitigado — ContatoEtiqueta sem TicketEtiqueta runtime",
+    "C04": "aberto — race Chats fora escopo",
+    "M01": "reavaliar agregacao dashboard se escala",
+    "M02": "atual — auth headers/token",
+    "M03": "mitigado — arte Chats via Cliente",
+    "M04": "reavaliar com sprint provider",
+    "M05": "revisar pageKey se nova rota"
+  },
+  "proximos_blocos_recomendados": [
+    "Ativar required check Gate pos-reestruturacao na UI GitHub (main)",
+    "Provider WhatsApp real",
+    "C04 Chats se refator",
+    "Deprecar E2E F42-F44 isolados"
+  ],
+  "f48_gate_ci": {
+    "status": "concluido",
+    "workflow": ".github/workflows/pos-reestruturacao.yml"
+  },
+  "f47_atualizacao_pacote_auditoria": {
+    "status": "concluido",
+    "addendum_historico": "Auditoria/AUDITORIA-001-002-003-HISTORICO-ADDENDUM.md"
+  },
+  "f49_varredura_legado": {
+    "status": "concluido",
+    "documento": "Auditoria/LEGADO-LIMPEZA-F49.md"
+  },
+  "f50_readme_mestre": {
+    "status": "concluido",
+    "documento": "README_MESTRE.md"
+  },
+  "f51_required_check_gate": {
+    "status": "documentado",
+    "workflow": ".github/workflows/pos-reestruturacao.yml",
+    "check_name": "Gate pos-reestruturacao / Gate pos-reestruturacao",
+    "documento": "docs/SPRINT_F51_REQUIRED_CHECK_GATE.md",
+    "ativacao_github_ui": "pendencia_admin_repositorio",
+    "branch_padrao": "main",
+    "secret_recomendado": "SMOKE_ADMIN_SENHA"
+  },
+  "f52_validacao_github_actions": {
+    "status": "pendente_push_ou_admin",
+    "branch_trabalho": "chore/f52-gate-pos-reestruturacao",
+    "documento": "docs/SPRINT_F52_VALIDACAO_REQUIRED_CHECK.md",
+    "actions_verde": "preencher_apos_push",
+    "required_check_ativo": "preencher_apos_admin"
+  }
+}

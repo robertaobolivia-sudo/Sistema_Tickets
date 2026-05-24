@@ -1,21 +1,289 @@
-﻿/* Sprint 111 — perfil */
+/* ============================================================
+   Perfil — Sprint 311 redesign
+   Single card · two-column grid · group separators
+   inline editing · corp tokens · no desktop scroll
+   ============================================================ */
 
-.profile-section {
-    max-width: 960px;
+/* --- CSS tokens scoped to perfil --- */
+#page-perfil {
+    --pf-padding: 20px;
+    --pf-radius: 8px;
+    --pf-label: 11px;
+    --pf-value: 14px;
+    --pf-col-gap: 16px;
+    --pf-row-gap: 8px;
+    --pf-group-gap: 20px;
+    --pf-sep: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.profile-header {
+html[data-theme='dark'] #page-perfil {
+    --pf-sep: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* --- Main card --- */
+.perfil-card {
+    max-width: 1100px;
+    max-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--corp-border-subtle);
+    border-radius: var(--corp-radius-md);
+    background: var(--corp-surface-card);
+    box-shadow: var(--corp-shadow-soft);
+    overflow: hidden;
+}
+
+html[data-theme='dark'] .perfil-card {
+    background: var(--corp-surface-elevated);
+}
+
+/* --- Card header: avatar + name/status --- */
+.perfil-card-header {
     display: flex;
     align-items: center;
-    gap: 18px;
-    margin-bottom: 24px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    padding: var(--pf-padding) var(--pf-padding) 16px;
+    border-bottom: var(--pf-sep);
+    flex-shrink: 0;
 }
 
-.profile-header h2 {
-    margin-bottom: 4px;
+.perfil-header-info {
+    flex: 1;
+    min-width: 0;
 }
+
+.perfil-header-info h2 {
+    margin: 0 0 2px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--corp-text-on-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.015em;
+}
+
+html[data-theme='dark'] .perfil-header-info h2 {
+    color: var(--corp-accent-neon);
+}
+
+.perfil-header-info #perfilStatus {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--corp-text-muted-on-light);
+}
+
+/* --- Card body: scrollable, groups stacked --- */
+.perfil-card-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--pf-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--pf-group-gap);
+    min-height: 0;
+}
+
+/* Alert in body */
+.perfil-card-body > .alert {
+    margin: 0;
+}
+
+/* --- Group --- */
+.perfil-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.perfil-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.perfil-group-title {
+    font-size: var(--pf-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--corp-text-muted-on-light);
+}
+
+html[data-theme='dark'] .perfil-group-title {
+    color: rgba(0, 255, 170, 0.55);
+}
+
+/* --- Edit button --- */
+.perfil-edit-btn {
+    background: transparent;
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--corp-text-muted-on-light);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    flex-shrink: 0;
+}
+
+.perfil-edit-btn:hover {
+    border-color: var(--corp-accent-neon);
+    background: rgba(0, 255, 170, 0.1);
+    color: var(--corp-bg-deep);
+}
+
+html[data-theme='dark'] .perfil-edit-btn:hover {
+    color: var(--corp-accent-neon);
+}
+
+.perfil-edit-btn.active {
+    border-color: var(--corp-accent-neon);
+    background: rgba(0, 255, 170, 0.14);
+    color: var(--corp-bg-deep);
+}
+
+html[data-theme='dark'] .perfil-edit-btn.active {
+    color: var(--corp-accent-neon);
+}
+
+.perfil-edit-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--corp-focus-ring);
+}
+
+/* --- Field grid (two columns) --- */
+.perfil-group-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--pf-row-gap) var(--pf-col-gap);
+}
+
+.perfil-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.perfil-field--full {
+    grid-column: 1 / -1;
+}
+
+/* --- Label --- */
+.perfil-label {
+    display: block;
+    font-size: var(--pf-label);
+    font-weight: 600;
+    color: var(--corp-text-muted-on-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* --- Value (read mode) --- */
+.perfil-value {
+    font-size: var(--pf-value);
+    color: var(--corp-text-on-light);
+    line-height: 1.45;
+    min-height: 20px;
+    word-break: break-word;
+}
+
+html[data-theme='dark'] .perfil-value {
+    color: var(--text);
+}
+
+/* --- Input (edit mode) --- */
+.perfil-input {
+    font-size: var(--pf-value);
+    padding: 5px 9px;
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    line-height: 1.4;
+}
+
+.perfil-input:focus {
+    outline: none;
+    border-color: var(--corp-focus-border);
+    box-shadow: var(--corp-focus-ring);
+}
+
+.perfil-input.hidden {
+    display: none;
+}
+
+.perfil-value.hidden {
+    display: none;
+}
+
+/* --- Linear separator between groups --- */
+.perfil-separator {
+    border: none;
+    border-top: var(--pf-sep);
+    margin: 0;
+}
+
+/* --- Card footer (save/cancel, hidden until editing) --- */
+.perfil-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px var(--pf-padding);
+    border-top: var(--pf-sep);
+    flex-shrink: 0;
+    background: var(--corp-surface-card);
+}
+
+html[data-theme='dark'] .perfil-card-footer {
+    background: var(--corp-surface-elevated);
+}
+
+.perfil-card-footer.hidden {
+    display: none;
+}
+
+.perfil-footer-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* --- Success toast --- */
+.perfil-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 10px 18px;
+    background: var(--corp-bg-deep);
+    color: var(--corp-accent-neon);
+    border: 1px solid rgba(0, 255, 170, 0.35);
+    border-radius: var(--corp-radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    z-index: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.perfil-toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* ============================================================
+   Photo components
+   ============================================================ */
 
 .profile-photo-column {
     position: relative;
@@ -23,18 +291,18 @@
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
-    width: 96px;
+    width: 76px;
 }
 
 .profile-photo-wrapper {
     position: relative;
-    width: 88px;
-    height: 88px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
-    border: 3px solid var(--surface);
-    box-shadow: var(--shadow-lg);
+    border: 3px solid var(--corp-border-strong);
+    box-shadow: var(--corp-shadow-soft);
     background: var(--corp-bg-deep);
 }
 
@@ -44,7 +312,12 @@
 
 .profile-photo-wrapper:focus {
     outline: none;
-    box-shadow: var(--shadow-lg), var(--corp-focus-ring);
+    box-shadow: var(--corp-shadow-soft), var(--corp-focus-ring);
+}
+
+.profile-photo-wrapper:focus-visible {
+    outline: none;
+    box-shadow: var(--corp-shadow-soft), var(--corp-focus-ring);
 }
 
 .profile-photo-wrapper .analyst-avatar.analyst-avatar-profile {
@@ -52,7 +325,7 @@
     height: 100%;
     min-width: 0;
     min-height: 0;
-    font-size: 28px;
+    font-size: 22px;
     border: none;
     box-shadow: none;
     border-radius: 50%;
@@ -78,12 +351,12 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.52);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.02em;
     opacity: 0;
@@ -101,13 +374,17 @@
     top: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%);
-    width: 210px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow-lg);
-    padding: 8px;
+    width: 180px;
+    background: var(--corp-surface-card);
+    border: 1px solid var(--corp-border-strong);
+    border-radius: var(--corp-radius-md);
+    box-shadow: var(--corp-shadow-soft);
+    padding: 6px;
     z-index: 20;
+}
+
+html[data-theme='dark'] .profile-photo-menu {
+    background: var(--corp-surface-elevated);
 }
 
 .profile-photo-menu button {
@@ -117,60 +394,39 @@
     color: var(--text);
     cursor: pointer;
     text-align: left;
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
 }
 
 .profile-photo-menu button:hover {
-    background: var(--surface-hover);
+    background: rgba(var(--corp-accent-neon-rgb), 0.08);
 }
 
 .profile-photo-menu button::before {
     display: inline-block;
-    width: 22px;
+    width: 20px;
     color: var(--text-muted);
 }
 
-#perfilMostrarFotoBtn::before {
-    content: "◉";
-}
-
-#perfilCarregarFotoBtn::before {
-    content: "↑";
-}
+#perfilMostrarFotoBtn::before { content: "◉"; }
+#perfilCarregarFotoBtn::before { content: "↑"; }
 
 #perfilRemoverFotoBtn {
-    border-top: 1px solid var(--border);
-    margin-top: 6px;
-    padding-top: 12px;
+    border-top: 1px solid var(--corp-border-subtle);
+    margin-top: 4px;
+    padding-top: 10px;
 }
 
-#perfilRemoverFotoBtn::before {
-    content: "×";
-}
+#perfilRemoverFotoBtn::before { content: "×"; }
 
 .profile-photo-menu .danger {
     color: var(--danger);
 }
 
-.profile-grid {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 12px 20px;
-    margin-bottom: 24px;
-}
-
-.profile-grid dt {
-    font-weight: 600;
-}
-
-.profile-grid dd {
-    color: var(--text-muted);
-    margin: 0;
-}
-
-/* --- Sprint 246: Perfil — padrão corporativo --- */
+/* ============================================================
+   Page header corp styling
+   ============================================================ */
 
 #page-perfil .page-header {
     border-bottom-color: var(--corp-border-strong);
@@ -181,64 +437,63 @@
     letter-spacing: -0.02em;
 }
 
-#page-perfil .content-section {
-    border: 1px solid var(--corp-border-subtle);
-    border-radius: var(--corp-radius-md);
-    box-shadow: var(--corp-shadow-soft);
-    background: var(--corp-surface-card);
-}
-
-html[data-theme='dark'] #page-perfil .content-section {
-    background: var(--corp-surface-elevated);
-}
-
-#page-perfil .profile-header {
-    border-bottom-color: var(--corp-border-strong);
-}
-
-#page-perfil .profile-header h2 {
-    color: var(--corp-text-on-light);
-}
-
-#page-perfil .profile-grid dt {
-    color: var(--corp-text-on-light);
-}
-
-#page-perfil .profile-grid dd {
-    color: var(--corp-text-muted-on-light);
-}
-
-#page-perfil .profile-photo-wrapper {
-    border-color: var(--corp-border-strong);
-    background: var(--corp-bg-deep);
-}
-
-#page-perfil .profile-photo-wrapper:focus-visible {
-    box-shadow: var(--corp-shadow-lg), var(--corp-focus-ring);
-}
-
-#page-perfil .profile-photo-menu {
-    border: 1px solid var(--corp-border-strong);
-    border-radius: var(--corp-radius-md);
-    background: var(--corp-surface-card);
-}
-
-html[data-theme='dark'] #page-perfil .profile-photo-menu {
-    background: var(--corp-surface-elevated);
-}
-
-#page-perfil .profile-photo-menu button:hover {
-    background: rgba(var(--corp-accent-neon-rgb), 0.08);
-}
+/* ============================================================
+   Buttons inside perfil card
+   ============================================================ */
 
 #page-perfil .button.button-primary {
     background: var(--corp-btn-primary-bg);
     color: var(--corp-btn-primary-text);
     border: none;
     border-radius: var(--corp-radius-sm);
+    font-weight: 600;
 }
 
 #page-perfil .button.button-secondary {
     border: 1px solid var(--corp-btn-secondary-border);
     border-radius: var(--corp-radius-sm);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 1023px) {
+    .perfil-card {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .perfil-card-body {
+        overflow-y: visible;
+    }
+
+    .perfil-group-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-field--full {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .perfil-card-header {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .profile-photo-column {
+        width: auto;
+    }
+
+    .perfil-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .perfil-footer-actions {
+        justify-content: flex-end;
+    }
 }

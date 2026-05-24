@@ -17,4 +17,6 @@ public class DashboardSlaDTO {
     private List<DashboardSlaPrioridadeDTO> porPrioridade = new ArrayList<>();
     private List<DashboardSlaTicketCriticoDTO> ticketsCriticosSla = new ArrayList<>();
     private long ticketsEscalonados;
+    /** Sprint 284 — resumo operacional (tickets ativos, sem INDEVIDO). */
+    private DashboardSlaVivoResumoDTO vivo = new DashboardSlaVivoResumoDTO();
 }

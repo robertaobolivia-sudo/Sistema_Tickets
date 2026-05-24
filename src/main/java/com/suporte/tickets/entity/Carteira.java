@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidade que representa uma carteira de atendimento
- * 
- * Uma carteira agrupa clientes relacionados para fins de organização
- * e gestão de tickets de suporte.
+ * Cadastro global Conexões/Revendas (Configurações). Não vincula Cliente contratante (F40).
  */
 @Entity
 @Table(name = "carteiras")

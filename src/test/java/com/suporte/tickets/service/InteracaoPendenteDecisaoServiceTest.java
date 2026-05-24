@@ -50,7 +50,7 @@ class InteracaoPendenteDecisaoServiceTest {
         service.vincularAoTicketAnterior(1L, 99L);
 
         verify(ticketInteracaoService).registrarMensagemEntradaExterna(
-                eq(p.getTicketAnterior()), eq("Oi"), eq(null));
+                eq(p.getTicketAnterior()), eq("Oi"), eq(null), eq(null));
         verify(ticketService, never()).atualizarStatus(any(), any());
         assertEquals(InteracaoPendenteDecisaoStatus.VINCULADA_ANTERIOR, p.getStatus());
     }

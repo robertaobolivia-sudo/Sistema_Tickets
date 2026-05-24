@@ -163,7 +163,6 @@ public class KanbanMassaTesteSeedConfig {
             ticket.setCliente(cliente);
             ticket.setAnalistaResponsavel(analista);
             ticket.setCanal(CANAIS[i % CANAIS.length]);
-            ticket.setConexao("Remoto");
             ticket.setMensagemInicial(assunto);
             ticket.setStatus(TicketStatus.EM_ATENDIMENTO);
             ticket.setDataAbertura(agora.minusMinutes((assuntos.length - i) * 3L));

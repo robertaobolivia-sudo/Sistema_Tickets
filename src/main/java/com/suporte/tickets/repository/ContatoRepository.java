@@ -13,4 +13,6 @@ public interface ContatoRepository extends JpaRepository<Contato, Integer> {
     Optional<Contato> findByCliente_IdAndWhatsappNormalizado(Integer clienteId, String whatsappNormalizado);
 
     boolean existsByCliente_IdAndWhatsappNormalizado(Integer clienteId, String whatsappNormalizado);
+
+    List<Contato> findAllByOrderByNomeAsc();
 }

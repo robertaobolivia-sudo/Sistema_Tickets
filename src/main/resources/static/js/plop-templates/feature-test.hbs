@@ -1,0 +1,8 @@
+import { describe, it, expect } from 'vitest';
+import { init{{pascalCase name}}Page } from '@features/{{name}}/{{name}}-page.js';
+
+describe('{{name}}-page', () => {
+    it('initializes without throwing', () => {
+        expect(() => init{{pascalCase name}}Page({})).not.toThrow();
+    });
+});

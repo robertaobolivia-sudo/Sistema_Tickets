@@ -17,6 +17,8 @@ public class DashboardResumoDTO {
     private long ticketsEmAtendimento;
     private long ticketsResolvidos;
     private long ticketsCancelados;
+    /** Sprint 277 — classificados como indevido (Não atendimento). */
+    private long ticketsNaoAtendimento;
     private long ticketsSemAnalista;
     private long ticketsAbertosHoje;
     private long ticketsResolvidosHoje;
@@ -27,6 +29,7 @@ public class DashboardResumoDTO {
     private String tempoMedioPrimeiroAtendimento = "-";
     private String tempoMedioResolucao = "-";
     private List<DashboardGrupoDTO> ticketsPorStatus = new ArrayList<>();
-    private List<DashboardGrupoDTO> ticketsPorConexao = new ArrayList<>();
+    /** Agrupamento operacional por Cliente contratante. */
+    private List<DashboardGrupoDTO> ticketsPorCliente = new ArrayList<>();
     private List<DashboardAnalistaResumoDTO> ticketsPorAnalista = new ArrayList<>();
 }

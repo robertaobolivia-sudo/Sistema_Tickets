@@ -4,6 +4,7 @@ import com.suporte.tickets.dto.EtiquetaResponseDTO;
 import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.ContatoEtiqueta;
 import com.suporte.tickets.entity.Etiqueta;
+import com.suporte.tickets.entity.TicketClassificacaoOperacional;
 import com.suporte.tickets.repository.ContatoEtiquetaRepository;
 import com.suporte.tickets.repository.ContatoRepository;
 import com.suporte.tickets.repository.EtiquetaRepository;
@@ -37,7 +38,7 @@ public class ContatoEtiquetaService {
     @Transactional
     public List<EtiquetaResponseDTO> substituirVinculosAtivos(Integer contatoId, List<Long> etiquetaIds) {
         Contato contato = buscarContato(contatoId);
-        List<Long> idsAtivosSolicitados = TicketEtiquetaService.normalizarIdsEtiqueta(etiquetaIds);
+        List<Long> idsAtivosSolicitados = EtiquetaVinculoIdsNormalizer.normalizarIdsEtiqueta(etiquetaIds);
 
         List<ContatoEtiqueta> atuais = contatoEtiquetaRepository.findByContatoOrderByEtiqueta_NomeAsc(contato);
         Set<Long> legadoInativos = atuais.stream()
@@ -68,6 +69,30 @@ public class ContatoEtiquetaService {
         }
 
         return listarPorContatoId(contatoId);
+    }
+
+    /**
+     * Sprint 303: resolve classificação operacional pela primeira etiqueta do contato
+     * que corresponda a um valor de TicketClassificacaoOperacional (ex: "Indevido", "Contato Pessoal").
+     */
+    @Transactional(readOnly = true)
+    public TicketClassificacaoOperacional resolverClassificacaoOperacional(Contato contato) {
+        if (contato == null) {
+            return null;
+        }
+        List<ContatoEtiqueta> vinculos = contatoEtiquetaRepository.findByContatoOrderByEtiqueta_NomeAsc(contato);
+        for (ContatoEtiqueta vinculo : vinculos) {
+            String nome = vinculo.getEtiqueta().getNome();
+            if (nome == null) {
+                continue;
+            }
+            String normalizado = nome.trim().toUpperCase().replace(' ', '_').replace('-', '_');
+            try {
+                return TicketClassificacaoOperacional.valueOf(normalizado);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        return null;
     }
 
     private Contato buscarContato(Integer contatoId) {

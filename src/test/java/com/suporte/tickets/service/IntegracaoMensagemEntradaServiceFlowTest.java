@@ -56,7 +56,7 @@ class IntegracaoMensagemEntradaServiceFlowTest {
         cliente.setId(1);
         ticket.setCliente(cliente);
 
-        when(ticketAtivoService.buscarEntidadeAtiva(null, null, null, "11999990000"))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(null, null, "11999990000"))
                 .thenReturn(Optional.of(ticket));
 
         IntegracaoWhatsappMensagemRequestDTO req = new IntegracaoWhatsappMensagemRequestDTO();
@@ -68,13 +68,14 @@ class IntegracaoMensagemEntradaServiceFlowTest {
         assertFalse(res.isTicketCriado());
         assertEquals("TK-100", res.getNumeroTicket());
         assertTrue(res.isMensagemRegistrada());
-        verify(ticketInteracaoService).registrarMensagemEntradaExterna(eq(ticket), eq("Oi"), eq(null));
+        verify(ticketInteracaoService)
+                .registrarMensagemEntradaExterna(eq(ticket), eq("Oi"), eq(null), eq("11999990000"));
         verify(ticketService, never()).criarTicketPorWebhook(any());
     }
 
     @Test
     void semTicketAtivo_criaNovo() {
-        when(ticketAtivoService.buscarEntidadeAtiva(null, null, null, "11988887777"))
+        when(ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(null, null, "11988887777"))
                 .thenReturn(Optional.empty());
 
         TicketResponseDTO criado = new TicketResponseDTO();
@@ -91,6 +92,6 @@ class IntegracaoMensagemEntradaServiceFlowTest {
         assertTrue(res.isTicketCriado());
         assertEquals("TK-200", res.getNumeroTicket());
         verify(ticketService).criarTicketPorWebhook(any());
-        verify(ticketInteracaoService, never()).registrarMensagemEntradaExterna(any(), any(), any());
+        verify(ticketInteracaoService, never()).registrarMensagemEntradaExterna(any(), any(), any(), any());
     }
 }

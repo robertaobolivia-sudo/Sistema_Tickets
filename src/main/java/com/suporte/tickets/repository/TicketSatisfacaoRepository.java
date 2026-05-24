@@ -1,6 +1,7 @@
 package com.suporte.tickets.repository;
 
 import com.suporte.tickets.entity.TicketSatisfacao;
+import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.entity.TicketSatisfacaoStatus;
 import com.suporte.tickets.entity.TicketStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -56,6 +57,7 @@ public interface TicketSatisfacaoRepository extends JpaRepository<TicketSatisfac
               AND (:motivoId IS NULL OR m.id = :motivoId)
               AND (:statusPesquisa IS NULL OR s.status = :statusPesquisa)
               AND (:nota IS NULL OR s.nota = :nota)
+              AND t.status <> :statusIndevido
             """)
     List<TicketSatisfacao> findForIndicadoresEncerramento(
             @Param("inicio") LocalDateTime inicio,
@@ -63,5 +65,25 @@ public interface TicketSatisfacaoRepository extends JpaRepository<TicketSatisfac
             @Param("clienteId") Integer clienteId,
             @Param("motivoId") Long motivoId,
             @Param("statusPesquisa") TicketSatisfacaoStatus statusPesquisa,
-            @Param("nota") Integer nota);
+            @Param("nota") Integer nota,
+            @Param("statusIndevido") TicketStatus statusIndevido);
+
+    /** Sprint 265 — contato com pesquisa respondida nota &lt;= 2 (avaliação ruim). */
+    @Query("""
+            SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+            FROM TicketSatisfacao s
+            JOIN s.ticket t
+            WHERE t.contato.id = :contatoId
+              AND s.nota IS NOT NULL
+              AND s.nota <= 2
+            """)
+    boolean existsAvaliacaoRuimPorContatoId(@Param("contatoId") Integer contatoId);
+
+    @Query("""
+            SELECT s FROM TicketSatisfacao s
+            JOIN FETCH s.ticket t
+            WHERE t.status <> :statusIndevido
+            """)
+    List<TicketSatisfacao> findAllOperacionalExcluindoIndevido(
+            @Param("statusIndevido") TicketStatus statusIndevido);
 }

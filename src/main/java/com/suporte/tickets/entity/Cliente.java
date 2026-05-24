@@ -9,14 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * Contratante F5 (conexão/carteira da operação).
+ * Contratante F5.
  *
- * <p>Modelo alvo (Sprint 188+): cadastro do cliente da F5 — dono da conexão, arte White Label
- * do Chats e futuros WhatsApps matriz. A pessoa final atendida via WhatsApp será a entidade
- * {@code Contato} (sprint futura).</p>
- *
- * <p>Legado: FK opcional {@link #carteira} e telefones no cadastro ainda usados por tickets/Chats
- * até a Fase 1 completa.</p>
+ * <p>Modelo operacional: Cliente → Contato → Ticket. Arte Chats no cadastro do Cliente.</p>
  */
 @Entity
 @Table(name = "clientes")
@@ -33,8 +28,17 @@ public class Cliente {
     @Column(nullable = false, length = 150)
     private String nome;
 
+    @Column(name = "razao_social", length = 200)
+    private String razaoSocial;
+
+    @Column(name = "responsavel", length = 150)
+    private String responsavel;
+
     @Column(length = 20)
     private String telefone;
+
+    @Column(length = 20)
+    private String whatsapp;
 
     @Column(name = "telefone_contato", length = 20)
     private String telefoneContato;
@@ -48,6 +52,9 @@ public class Cliente {
     @Column(length = 18)
     private String cnpj;
 
+    @Column(name = "inscricao_estadual", length = 30)
+    private String inscricaoEstadual;
+
     @Column(length = 100)
     private String cidade;
 
@@ -56,6 +63,15 @@ public class Cliente {
 
     @Column(length = 255)
     private String endereco;
+
+    @Column(length = 12)
+    private String cep;
+
+    @Column(length = 255)
+    private String site;
+
+    @Column(name = "horario_funcionamento", length = 120)
+    private String horarioFuncionamento;
 
     @Column(length = 30)
     private String status = "ATIVO";
@@ -75,10 +91,6 @@ public class Cliente {
 
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "carteira_id", nullable = true)
-    private Carteira carteira;
 
     /** URL pública da arte do header Chats (Sprint 180). */
     @Column(name = "arte_header_chats_url", length = 512)

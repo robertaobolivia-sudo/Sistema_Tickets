@@ -1,9 +1,16 @@
 package com.suporte.tickets.controller;
 
+import com.suporte.tickets.dto.IndicadoresAtendentesDTO;
 import com.suporte.tickets.dto.IndicadoresChamadosDTO;
+import com.suporte.tickets.dto.IndicadoresClientesDTO;
 import com.suporte.tickets.dto.IndicadoresEncerramentoAvaliacaoDTO;
+import com.suporte.tickets.dto.IndicadoresSlaDTO;
+import com.suporte.tickets.entity.Analista;
+import com.suporte.tickets.service.IndicadoresAtendentesService;
 import com.suporte.tickets.service.IndicadoresChamadosService;
+import com.suporte.tickets.service.IndicadoresClientesService;
 import com.suporte.tickets.service.IndicadoresEncerramentoAvaliacaoService;
+import com.suporte.tickets.service.IndicadoresSlaService;
 import com.suporte.tickets.service.PerfilAcessoAutorizacaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,6 +30,9 @@ public class IndicadoresController {
 
     private final IndicadoresChamadosService indicadoresChamadosService;
     private final IndicadoresEncerramentoAvaliacaoService indicadoresEncerramentoAvaliacaoService;
+    private final IndicadoresClientesService indicadoresClientesService;
+    private final IndicadoresAtendentesService indicadoresAtendentesService;
+    private final IndicadoresSlaService indicadoresSlaService;
     private final PerfilAcessoAutorizacaoService perfilAcessoAutorizacaoService;
 
     @GetMapping("/chamados")
@@ -49,5 +59,35 @@ public class IndicadoresController {
         perfilAcessoAutorizacaoService.exigirAdminOuSupervisor(analistaId, analistaToken);
         return ResponseEntity.ok(indicadoresEncerramentoAvaliacaoService.obter(
                 dataInicio, dataFim, clienteId, motivoId, statusPesquisa, notaAvaliacao));
+    }
+
+    @GetMapping("/clientes")
+    public ResponseEntity<IndicadoresClientesDTO> clientes(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
+        perfilAcessoAutorizacaoService.exigirAdminOuSupervisor(analistaId, analistaToken);
+        return ResponseEntity.ok(indicadoresClientesService.obter(dataInicio, dataFim));
+    }
+
+    @GetMapping("/atendentes")
+    public ResponseEntity<IndicadoresAtendentesDTO> atendentes(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
+        Analista executor = perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
+        return ResponseEntity.ok(indicadoresAtendentesService.obter(dataInicio, dataFim, executor));
+    }
+
+    @GetMapping("/sla")
+    public ResponseEntity<IndicadoresSlaDTO> sla(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
+        perfilAcessoAutorizacaoService.exigirAdminOuSupervisor(analistaId, analistaToken);
+        return ResponseEntity.ok(indicadoresSlaService.obter(dataInicio, dataFim));
     }
 }

@@ -1,0 +1,16 @@
+import { showAlert, clearAlert } from '@shared/ui/presentation.js';
+
+let showAlertFn = () => {};
+let clearAlertFn = () => {};
+let listenersBound = false;
+
+export function init{{pascalCase name}}Page(deps = {}) {
+    if (deps.showAlert) showAlertFn = deps.showAlert;
+    if (deps.clearAlert) clearAlertFn = deps.clearAlert;
+    if (listenersBound) return;
+    listenersBound = true;
+}
+
+export async function load{{pascalCase name}}Page() {
+    // load logic here
+}

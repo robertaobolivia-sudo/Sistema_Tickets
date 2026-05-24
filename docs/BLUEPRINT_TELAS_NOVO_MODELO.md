@@ -160,10 +160,11 @@ Unificar blocos longos da página única em âncoras ou abas (somente visual/UX)
 
 ### Dashboard
 
-- Encerramento e satisfação (período + **Cliente** — Sprint 230)
-- Prioridades, categorias recorrentes, top grupos/subgrupos
-- Tickets críticos/altos, SLA 1º atendimento e resolução, escalonados
-- Indicadores operacionais, painel por conexão
+**Alvo (Sprint 279):** ver **`docs/DASHBOARD_OPERACIONAL_BLUEPRINT.md`** — operação em tempo real, **sem** filtros analíticos de período; entrada por **Operação Agora**; **sem** bloco hero “Tickets Devidos/Indevidos”.
+
+Blocos finais: Operação Agora (Fila + Atendimento) → Analistas Online → Cliente B2B (TME/TMA + Acompanhar) → SLA vivo → Encerramentos do dia → Avaliação em tempo real. Submenu: **Visão geral** | **Acompanhamento** (read-only).
+
+*Transição (UI atual):* cards legados, encerramento com período 7/30/90 dias — a retirar nas sprints 280–285 do roadmap do blueprint operacional.
 
 ### Chats
 

@@ -43,7 +43,10 @@ public class WebhookController {
      */
     @PostMapping("/tickets")
     public ResponseEntity<TicketResponseDTO> receberTicketWebhook(
-            @Valid @RequestBody TicketWebhookRequestDTO request) {
+            @Valid @RequestBody TicketWebhookRequestDTO request,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_ID, required = false) Long analistaId,
+            @RequestHeader(value = PerfilAcessoAutorizacaoService.HEADER_ANALISTA_TOKEN, required = false) String analistaToken) {
+        perfilAcessoAutorizacaoService.exigirSessaoValida(analistaId, analistaToken);
 
         TicketResponseDTO ticketCriado = ticketService.criarTicketPorWebhook(request);
         

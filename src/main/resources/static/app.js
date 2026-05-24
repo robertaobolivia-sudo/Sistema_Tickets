@@ -1,5 +1,9 @@
-﻿import { MSG_ERRO, mensagemErroSessaoApi } from './js/core/messages.js';
-import { getLoggedAnalyst, setLoggedAnalystState } from './js/core/state.js';
+﻿import { MSG_ERRO, mensagemErroSessaoApi } from '@shared/ui/messages.js';
+import {
+    getLoggedAnalyst,
+    setLoggedAnalystState,
+    clearLoggedAnalystSession
+} from '@shared/auth/state.js';
 import {
     configureAuth,
     setLoggedAnalyst,
@@ -7,8 +11,8 @@ import {
     fetchAnalistaPorId,
     logout,
     restoreSessionFromServer
-} from './js/core/auth.js';
-import { canAccessPage } from './js/core/permissions.js';
+} from '@shared/auth/auth.js';
+import { canAccessPage } from '@shared/permissions/permissions.js';
 import {
     formatDateTime,
     formatDate,
@@ -35,18 +39,19 @@ import {
     sortTicketsByPriority,
     getTicketPriorityRowClass,
     escapeAttr
-} from './js/core/presentation.js';
-import { configureRouter, showPage, openApp, applyMenuPermissions } from './js/core/router.js';
-import * as ticketService from './js/services/ticketService.js';
-import { initAuditoriaPage, loadAuditoriaPage } from './js/pages/auditoriaPage.js';
-import { initRelatoriosPage, loadRelatoriosPage } from './js/pages/relatoriosPage.js';
+} from '@shared/ui/presentation.js';
+import { applyAnalystAvatarToElement, getAnalystPhotoUrl } from '@shared/ui/analyst-avatar.js';
+import { configureRouter, showPage, openApp, applyMenuPermissions } from '@shared/router/router.js';
+import * as ticketService from '@features/tickets/ticket-service.js';
+import { initAuditoriaPage, loadAuditoriaPage } from '@features/auditoria/auditoria-page.js';
+import { initRelatoriosPage, initRelatoriosSidebarNav, loadRelatoriosPage } from '@features/relatorios/relatorios-page.js';
 import {
     initIndicadoresPage,
     initIndicadoresSidebarNav,
     loadIndicadoresPage
-} from './js/pages/indicadoresPage.js';
-import { initClientesPage, loadClientesPage } from './js/pages/clientesPage.js';
-import { initConfiguracoesPage, loadConfiguracoesPage } from './js/pages/configuracoesPage.js';
+} from '@features/indicadores/indicadores-page.js';
+import { initClientesPage, initClientesSidebarNav, loadClientesPage, navegarParaContatosDoCliente } from '@features/clientes/clientes-page.js';
+import { initConfiguracoesPage, loadConfiguracoesPage } from '@features/configuracoes/configuracoes-page.js';
 import {
     initAtendentesPage,
     loadAtendentesPage,
@@ -54,25 +59,31 @@ import {
     loadAdminPerfisGestao,
     updateAdminPerfisSectionVisibility,
     closeAnalystQueue
-} from './js/pages/atendentesPage.js';
-import { initTicketsPage, loadTicketTable } from './js/pages/ticketsPage.js';
-import { initChatsPage, loadChatsPage } from './js/pages/chatsPage.js';
+} from '@features/atendentes/atendentes-page.js';
+import { initTicketsPage, loadTicketTable } from '@features/tickets/tickets-page.js';
+import { initChatsPage, loadChatsPage, scheduleOpenChatsConversation } from '@features/chats/chats-page.js';
 import {
     initDashboardPage,
     loadDashboard,
     loadDashboardSla,
     updateDashboardFromResumo,
     parseDashboardMetricNumber,
-    getDashboardAlertMetricElements
-} from './js/pages/dashboardPage.js';
-import { initAbrirTicketPage, loadAbrirTicketPage } from './js/pages/abrirTicketPage.js';
+    getDashboardAlertMetricElements,
+    refreshDashboardStatusOperador
+} from '@features/dashboard/dashboard-page.js';
+import {
+    initDashboardAcompanhamentoPage,
+    initDashboardSidebarNav,
+    loadDashboardAcompanhamentoPage
+} from '@features/dashboard/dashboard-acompanhamento-page.js';
+import { initAbrirTicketPage, loadAbrirTicketPage } from '@features/tickets/abrir-ticket-page.js';
 import {
     initPerfilPage,
     loadPerfilPage,
     renderPerfil,
     applyPerfilFotoWrapperState,
     closePerfilOverlays
-} from './js/pages/perfilPage.js';
+} from '@features/perfil/perfil-page.js';
 import {
     initTicketDetailsModal,
     openDetails,
@@ -80,20 +91,21 @@ import {
     closeModalDetail,
     closeCloseTicketModal,
     fecharModalEscalonamentoUi
-} from './js/components/ticketDetailsModal.js';
+} from '@components/ticket-details-modal/ticket-details-modal.js';
 import {
     initNotificacoesPanel,
     refreshNotificacoesUi,
     refreshNotificacoesContador,
     fecharNotificacoesPainel
-} from './js/components/notificacoesPanel.js';
+} from '@components/notificacoes-panel/notificacoes-panel.js';
 import {
     initTopbar,
     initUserPreferences,
     initThemeOnLoad,
     closeTopbarUserMenu,
     updateTopbarAvatar,
-} from './js/components/topbar.js';
+    refreshTopbarStatusMenuFromSession
+} from '@components/topbar/topbar.js';
 import {
     initAlertaTicket,
     initAlertasUsuarioOnOpenApp,
@@ -107,12 +119,14 @@ import {
     toggleAlertaTicket,
     isAlertaTicketEnabled,
     getTicketAlertKey
-} from './js/components/alertaTicket.js';
-import * as analistaService from './js/services/analistaService.js';
-import { initAvaliacaoPublicaPage } from './js/pages/avaliacaoPublicaPage.js';
+} from '@components/alerta-ticket/alerta-ticket.js';
+import * as analistaService from '@features/atendentes/analista-service.js';
+import { initAvaliacaoPublicaPage } from '@features/satisfacao/avaliacao-publica-page.js';
+import { initClientePortalPage, loadPortalUsuariosAdmin } from '@features/cliente-portal/cliente-portal-page.js';
 
 const pages = {
     dashboard: document.getElementById('page-dashboard'),
+    'dashboard-acompanhamento': document.getElementById('page-dashboard-acompanhamento'),
     clientes: document.getElementById('page-clientes'),
     atendentes: document.getElementById('page-atendentes'),
     perfil: document.getElementById('page-perfil'),
@@ -120,6 +134,7 @@ const pages = {
     tickets: document.getElementById('page-tickets'),
     chats: document.getElementById('page-chats'),
     relatorios: document.getElementById('page-relatorios'),
+    'relatorios-evolucao': document.getElementById('page-relatorios-evolucao'),
     indicadores: document.getElementById('page-indicadores'),
     configuracoes: document.getElementById('page-configuracoes'),
     auditoria: document.getElementById('page-auditoria')
@@ -151,6 +166,7 @@ function updateLoggedAnalystUi() {
         operadorStatusSelect.value = session.statusOperador;
     }
     updateTopbarAvatar(session);
+    refreshTopbarStatusMenuFromSession();
     applyMenuPermissions();
     updateAdminPerfisSectionVisibility();
     if (pages.atendentes?.classList.contains('active')) {
@@ -166,23 +182,9 @@ function updateLoggedAnalystUi() {
 }
 
 function setAnalystAvatarElement(element, analyst) {
-    if (!element) return;
-    const isProfilePhoto = element.id === 'perfilFoto';
-    const isTopbarAvatar = element.id === 'topbarPerfilAvatar';
-    const hasPhoto = Boolean(analyst?.fotoUrl);
-    element.className = isProfilePhoto
-        ? 'analyst-avatar analyst-avatar-profile'
-        : isTopbarAvatar
-            ? 'analyst-avatar analyst-avatar-topbar'
-            : 'analyst-avatar analyst-avatar-large';
-    element.classList.toggle('has-photo', hasPhoto);
-    if (isProfilePhoto) {
-        applyPerfilFotoWrapperState(hasPhoto);
-    }
-    if (hasPhoto) {
-        element.innerHTML = `<img src="${analyst.fotoUrl}" alt="${analyst.nome || 'Analista'}" />`;
-    } else {
-        element.textContent = getAnalystInitials(analyst?.nome);
+    applyAnalystAvatarToElement(element, analyst);
+    if (element?.id === 'perfilFoto') {
+        applyPerfilFotoWrapperState(Boolean(getAnalystPhotoUrl(analyst)));
     }
 }
 
@@ -214,7 +216,17 @@ async function changeTicketStatus(ticketNumber, action) {
 }
 
 pageButtons.forEach(button => {
-    if (button.dataset.indicadoresSub || button.id === 'navIndicadoresToggle') {
+    if (
+        !button.dataset.page ||
+        button.dataset.indicadoresSub ||
+        button.id === 'navIndicadoresToggle' ||
+        button.dataset.clientesMode ||
+        button.id === 'navClientesToggle' ||
+        button.dataset.dashboardSub ||
+        button.id === 'navDashboardToggle' ||
+        button.dataset.relatoriosSub ||
+        button.id === 'navRelatoriosToggle'
+    ) {
         return;
     }
     button.addEventListener('click', () => showPage(button.dataset.page));
@@ -226,9 +238,15 @@ refreshButton2?.addEventListener('click', loadTicketTable);
 
 loginForm?.addEventListener('submit', async event => {
     event.preventDefault();
+    const email = loginUser?.value?.trim() || '';
+    const senha = loginPass?.value || '';
+    if (!email || !senha) {
+        showAlert(MSG_ERRO.CAMPOS_OBRIGATORIOS, loginAlert);
+        return;
+    }
     try {
         clearAlert(loginAlert);
-        const analista = await loginAnalista(loginUser.value.trim(), loginPass.value);
+        const analista = await loginAnalista(email, senha);
         setLoggedAnalyst(analista);
         try {
             const analistaAtualizado = await fetchAnalistaPorId(analista.id);
@@ -238,8 +256,12 @@ loginForm?.addEventListener('submit', async event => {
         }
         openApp();
     } catch (error) {
-        setLoggedAnalystState(null);
-        showAlert(error.message, loginAlert);
+        clearLoggedAnalystSession();
+        const msg =
+            error instanceof Error && error.message
+                ? error.message
+                : MSG_ERRO.OPERACAO_FALHOU;
+        showAlert(msg, loginAlert);
     }
 });
 
@@ -289,12 +311,38 @@ initAlertaTicket({
     resolveTicketNumber
 });
 
+async function updateOperadorStatusFromTopbar(statusOperador) {
+    const session = getLoggedAnalyst();
+    if (!session?.id) {
+        showAlert('Sessão inválida.', alertBox);
+        return statusOperador;
+    }
+    try {
+        const updated = await updateAnalystStatus(session.id, statusOperador);
+        setLoggedAnalyst({
+            ...session,
+            statusOperador: updated.statusOperador,
+            online: updated.online
+        });
+        refreshTopbarStatusMenuFromSession();
+        if (pages.dashboard?.classList.contains('active')) {
+            await refreshDashboardStatusOperador();
+        }
+        showAlert('Status operador atualizado.', alertBox, 'success');
+    } catch (error) {
+        showAlert(error?.message || 'Não foi possível atualizar o status.', alertBox);
+    }
+    return statusOperador;
+}
+
 initTopbar({
     showPage,
     logout,
     loadTicketTable,
     toggleAlertaTicket,
-    setAnalystAvatarElement
+    setAnalystAvatarElement,
+    getLoggedAnalyst,
+    updateOperadorStatus: updateOperadorStatusFromTopbar
 });
 
 initTicketDetailsModal({
@@ -353,10 +401,21 @@ initIndicadoresSidebarNav({
     canAccessIndicadoresFn: () => canAccessPage('indicadores')
 });
 
+initRelatoriosSidebarNav({ showPageFn: showPage });
+
 initClientesPage({
     showAlert,
     clearAlert,
-    onRefreshDashboard: () => loadDashboard()
+    onRefreshDashboard: () => loadDashboard(),
+    openChatsFromHistoricoFn: async (protocolo, status) => {
+        scheduleOpenChatsConversation(protocolo, status);
+        showPage('chats');
+        await loadChatsPage();
+    }
+});
+
+initClientesSidebarNav({
+    showPageFn: showPage
 });
 
 initConfiguracoesPage({
@@ -426,9 +485,20 @@ initDashboardPage({
     refreshNotificacoesUi
 });
 
+initDashboardAcompanhamentoPage({
+    showAlert,
+    displayValue,
+    formatDateTime
+});
+initDashboardSidebarNav({ showPageFn: showPage });
+
 initAbrirTicketPage({
     showAlert,
     clearAlert,
+    onCadastrarContato: async clienteId => {
+        showPage('clientes');
+        await navegarParaContatosDoCliente(clienteId);
+    },
     onTicketCreatedSuccess: async createdTicket => {
         loadDashboard();
         if (isAlertaTicketEnabled()) {
@@ -464,6 +534,7 @@ configureRouter({
     showAlert,
     pageLoaders: {
         dashboard: () => loadDashboard(),
+        'dashboard-acompanhamento': () => loadDashboardAcompanhamentoPage(),
         atendentes: () => loadAtendentesPage(),
         clientes: () => loadClientesPage(),
         'abrir-ticket': () => loadAbrirTicketPage(),
@@ -474,8 +545,9 @@ configureRouter({
         },
         chats: () => loadChatsPage(),
         relatorios: () => loadRelatoriosPage(),
+        'relatorios-evolucao': () => {},
         indicadores: () => loadIndicadoresPage(),
-        configuracoes: () => loadConfiguracoesPage(),
+        configuracoes: () => { loadConfiguracoesPage(); loadPortalUsuariosAdmin(); },
         auditoria: () => loadAuditoriaPage()
     },
     onOpenApp: () => {
@@ -506,6 +578,8 @@ configureAuth({
     }
 });
 
+const { tryRestorePortalSession } = initClientePortalPage({ loginScreen });
+
 window.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     const page = params.get('page');
@@ -514,6 +588,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (initAvaliacaoPublicaPage(token)) {
             return;
         }
+    }
+    if (tryRestorePortalSession && tryRestorePortalSession()) {
+        return;
     }
     setLoggedAnalystState(null);
     loginScreen.classList.add('screen-active');

@@ -1,6 +1,6 @@
 package com.suporte.tickets.service;
 
-import com.suporte.tickets.dto.ConexaoPendenciasDTO;
+import com.suporte.tickets.dto.ClientePendenciasDTO;
 import com.suporte.tickets.dto.DashboardAnalistaResumoDTO;
 import com.suporte.tickets.dto.DashboardGerencialDTO;
 import com.suporte.tickets.dto.DashboardGrupoDTO;
@@ -9,9 +9,10 @@ import com.suporte.tickets.dto.DashboardResumoDTO;
 import com.suporte.tickets.dto.DashboardSatisfacaoResumoDTO;
 import com.suporte.tickets.dto.DashboardSubgrupoResumoDTO;
 import com.suporte.tickets.dto.IndicadoresEncerramentoAvaliacaoDTO;
-import com.suporte.tickets.dto.TicketPendenciaConexaoDTO;
+import com.suporte.tickets.dto.TicketPendenciaClienteDTO;
 import com.suporte.tickets.dto.TicketResponseDTO;
 import com.suporte.tickets.entity.Analista;
+import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.PrioridadeTicket;
 import com.suporte.tickets.entity.StatusOperador;
 import com.suporte.tickets.entity.Ticket;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DashboardService {
 
-    private static final String CONEXAO_NAO_INFORMADA = "Sem conexão";
+    private static final String CLIENTE_NAO_INFORMADO = "Sem cliente";
     private static final int TOP_CATEGORIAS = 5;
     private static final int LIMITE_TICKETS_CRITICOS_ALTOS = 10;
     /** Período padrão dos cards de encerramento/satisfação no Dashboard (Sprint 203). */
@@ -59,7 +60,9 @@ public class DashboardService {
         resumo.setTicketsEmAtendimento(ticketRepository.countByStatus(TicketStatus.EM_ATENDIMENTO));
         resumo.setTicketsResolvidos(ticketRepository.countByStatus(TicketStatus.RESOLVIDO));
         resumo.setTicketsCancelados(ticketRepository.countByStatus(TicketStatus.CANCELADO));
-        resumo.setTicketsSemAnalista(ticketRepository.countByAnalistaResponsavelIsNull());
+        resumo.setTicketsNaoAtendimento(ticketRepository.countByStatus(TicketStatus.INDEVIDO));
+        resumo.setTicketsSemAnalista(ticketRepository.countByAnalistaResponsavelIsNullAndStatusIn(
+                List.copyOf(TicketAtivoService.STATUS_ATIVOS)));
         resumo.setTicketsAbertosHoje(ticketRepository.countByDataAberturaGreaterThanEqual(inicioHoje));
         resumo.setTicketsResolvidosHoje(
                 ticketRepository.countByStatusAndDataEncerramentoGreaterThanEqual(TicketStatus.RESOLVIDO, inicioHoje));
@@ -72,7 +75,7 @@ public class DashboardService {
         resumo.setTempoMedioPrimeiroAtendimento(calcularTempoMedioPrimeiroAtendimento());
         resumo.setTempoMedioResolucao(calcularTempoMedioResolucao());
         resumo.setTicketsPorStatus(agruparPorStatus());
-        resumo.setTicketsPorConexao(agruparPorConexao());
+        resumo.setTicketsPorCliente(agruparPorCliente());
         resumo.setTicketsPorAnalista(agruparPorAnalista());
 
         return resumo;
@@ -104,7 +107,9 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public DashboardGerencialDTO obterGerencial() {
-        List<Ticket> tickets = ticketRepository.findAll();
+        List<Ticket> tickets = ticketRepository.findAll().stream()
+                .filter(t -> TicketAtivoService.isAtendimentoOperacionalValido(t.getStatus()))
+                .toList();
         DashboardGerencialDTO gerencial = new DashboardGerencialDTO();
         gerencial.setTotaisPorPrioridade(agruparPorPrioridade(tickets));
         gerencial.setTopGrupos(agruparTopGrupos(tickets));
@@ -114,22 +119,23 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public List<ConexaoPendenciasDTO> listarPendenciasPorConexao() {
-        List<Ticket> ticketsPendentes = ticketRepository.findByStatusInOrderByConexaoAscDataAberturaAsc(
-                List.of(TicketStatus.ABERTO, TicketStatus.AGUARDANDO_CLIENTE)
+    public List<ClientePendenciasDTO> listarPendenciasPorCliente() {
+        LocalDateTime agora = LocalDateTime.now();
+        List<Ticket> ticketsAtivos = ticketRepository.findByStatusInOrderByDataAberturaAsc(
+                List.of(TicketStatus.ABERTO, TicketStatus.AGUARDANDO_CLIENTE, TicketStatus.EM_ATENDIMENTO)
         );
 
-        Map<String, List<TicketPendenciaConexaoDTO>> pendenciasPorConexao = new LinkedHashMap<>();
-        for (Ticket ticket : ticketsPendentes) {
-            String conexao = normalizarConexao(ticket.getConexao());
-            pendenciasPorConexao
-                    .computeIfAbsent(conexao, chave -> new ArrayList<>())
-                    .add(converterPendencia(ticket));
+        Map<String, List<TicketPendenciaClienteDTO>> porCliente = new LinkedHashMap<>();
+        for (Ticket ticket : ticketsAtivos) {
+            String cliente = normalizarNomeCliente(ticket);
+            porCliente
+                    .computeIfAbsent(cliente, chave -> new ArrayList<>())
+                    .add(converterPendencia(ticket, agora));
         }
 
-        return pendenciasPorConexao.entrySet()
+        return porCliente.entrySet()
                 .stream()
-                .map(entry -> new ConexaoPendenciasDTO(
+                .map(entry -> new ClientePendenciasDTO(
                         entry.getKey(),
                         entry.getValue().size(),
                         entry.getValue()
@@ -137,27 +143,62 @@ public class DashboardService {
                 .toList();
     }
 
-    private String normalizarConexao(String conexao) {
-        if (conexao == null || conexao.isBlank()) {
-            return CONEXAO_NAO_INFORMADA;
+    private String normalizarNomeCliente(Ticket ticket) {
+        if (ticket.getCliente() != null && ticket.getCliente().getNome() != null
+                && !ticket.getCliente().getNome().isBlank()) {
+            return ticket.getCliente().getNome().trim();
         }
-        return conexao;
+        return CLIENTE_NAO_INFORMADO;
     }
 
-    private TicketPendenciaConexaoDTO converterPendencia(Ticket ticket) {
+    private TicketPendenciaClienteDTO converterPendencia(Ticket ticket, LocalDateTime agora) {
         String cliente = ticket.getCliente() != null ? ticket.getCliente().getNome() : "-";
-        return new TicketPendenciaConexaoDTO(
+        String contato = resolverContatoPendencia(ticket);
+        boolean emAtendimento = ticket.getStatus() == TicketStatus.EM_ATENDIMENTO;
+        String tipoStatus = emAtendimento ? "ATENDENDO" : "EM_ESPERA";
+        String analista = "-";
+        String tmaFormatado = "-";
+        if (emAtendimento && ticket.getAnalistaResponsavel() != null) {
+            String nome = ticket.getAnalistaResponsavel().getNome();
+            analista = (nome != null && !nome.isBlank()) ? nome.trim() : "-";
+            LocalDateTime inicio = ticket.getDataPrimeiroAtendimento() != null
+                    ? ticket.getDataPrimeiroAtendimento()
+                    : ticket.getDataAbertura();
+            if (inicio != null) {
+                long tmaSeg = Duration.between(inicio, agora).getSeconds();
+                tmaFormatado = tmaSeg >= 0 ? formatarDuracaoSeg(tmaSeg) : "-";
+            }
+        }
+        return new TicketPendenciaClienteDTO(
                 ticket.getNumeroTicket(),
                 cliente,
+                contato,
                 ticket.getMensagemInicial(),
                 ticket.getStatus().name(),
+                tipoStatus,
+                analista,
+                tmaFormatado,
                 ticket.getDataAbertura()
         );
+    }
+
+    private String resolverContatoPendencia(Ticket ticket) {
+        Contato ct = ticket.getContato();
+        if (ct != null && ct.getNome() != null && !ct.getNome().isBlank()) {
+            return ct.getNome().trim();
+        }
+        return "-";
+    }
+
+    private static String formatarDuracaoSeg(long segundos) {
+        Duration d = Duration.ofSeconds(segundos);
+        return String.format("%02d:%02d:%02d", d.toHours(), d.toMinutesPart(), d.toSecondsPart());
     }
 
     private String calcularTempoMedioPrimeiroAtendimento() {
         List<Ticket> tickets = ticketRepository.findByDataPrimeiroAtendimentoIsNotNullAndDataAberturaIsNotNull();
         return formatarMediaDuracao(tickets.stream()
+                .filter(t -> TicketAtivoService.isAtendimentoOperacionalValido(t.getStatus()))
                 .map(ticket -> Duration.between(ticket.getDataAbertura(), ticket.getDataPrimeiroAtendimento()).getSeconds())
                 .filter(segundos -> segundos >= 0)
                 .toList());
@@ -166,6 +207,7 @@ public class DashboardService {
     private String calcularTempoMedioResolucao() {
         List<Ticket> tickets = ticketRepository.findByDataEncerramentoIsNotNullAndDataAberturaIsNotNull();
         return formatarMediaDuracao(tickets.stream()
+                .filter(t -> TicketAtivoService.isAtendimentoOperacionalValido(t.getStatus()))
                 .map(ticket -> Duration.between(ticket.getDataAbertura(), ticket.getDataEncerramento()).getSeconds())
                 .filter(segundos -> segundos >= 0)
                 .toList());
@@ -250,6 +292,7 @@ public class DashboardService {
 
     private List<TicketResponseDTO> listarTicketsCriticosAltos(List<Ticket> tickets) {
         return tickets.stream()
+                .filter(ticket -> TicketAtivoService.isStatusAtivo(ticket.getStatus()))
                 .filter(ticket -> ticket.getPrioridade() == PrioridadeTicket.CRITICA
                         || ticket.getPrioridade() == PrioridadeTicket.ALTA)
                 .sorted(Comparator
@@ -283,10 +326,10 @@ public class DashboardService {
                 .toList();
     }
 
-    private List<DashboardGrupoDTO> agruparPorConexao() {
+    private List<DashboardGrupoDTO> agruparPorCliente() {
         Map<String, Long> agrupado = ticketRepository.findAll().stream()
                 .collect(Collectors.groupingBy(
-                        ticket -> normalizarConexao(ticket.getConexao()),
+                        this::normalizarNomeCliente,
                         Collectors.counting()
                 ));
 
@@ -300,6 +343,9 @@ public class DashboardService {
         Map<String, DashboardAnalistaResumoDTO> agrupado = new LinkedHashMap<>();
 
         for (Ticket ticket : ticketRepository.findAll()) {
+            if (TicketAtivoService.isTicketIndevido(ticket.getStatus())) {
+                continue;
+            }
             Analista analista = ticket.getAnalistaResponsavel();
             String nome = analista != null ? textoOuPadrao(analista.getNome(), "Analista") : "Sem analista";
             String status = analista != null && analista.getStatusOperador() != null

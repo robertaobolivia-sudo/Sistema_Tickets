@@ -8,6 +8,7 @@ import com.suporte.tickets.entity.PrioridadeTicket;
 import com.suporte.tickets.entity.TicketSatisfacao;
 import com.suporte.tickets.entity.TicketSatisfacaoEnvioStatus;
 import com.suporte.tickets.entity.TicketSatisfacaoStatus;
+import com.suporte.tickets.entity.TicketOrigem;
 import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.repository.TicketRepository;
 import com.suporte.tickets.repository.TicketSatisfacaoRepository;
@@ -44,7 +45,7 @@ public class TicketBuscaService {
     public List<TicketResponseDTO> buscar(TicketFiltroDTO filtro) {
         List<TicketResponseDTO> resultado;
         if (!possuiFiltros(filtro)) {
-            resultado = aplicarFiltroSla(ticketService.listarTodos(), filtro);
+            resultado = aplicarFiltroSla(filtrarIndevidoPadrao(ticketService.listarTodos(), filtro), filtro);
         } else {
             Specification<Ticket> specification = montarSpecification(filtro);
             resultado = ticketRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "dataAbertura"))
@@ -120,7 +121,6 @@ public class TicketBuscaService {
                 || temTexto(filtro.getStatus())
                 || temTexto(filtro.getPrioridade())
                 || filtro.getAnalistaId() != null
-                || temTexto(filtro.getConexao())
                 || temTexto(filtro.getCanal())
                 || temTexto(filtro.getGrupo())
                 || temTexto(filtro.getSubgrupo())
@@ -133,7 +133,8 @@ public class TicketBuscaService {
                 || filtro.getMotivoId() != null
                 || temTexto(filtro.getStatusPesquisa())
                 || filtro.getNotaAvaliacao() != null
-                || temTexto(filtro.getEnvioStatus());
+                || temTexto(filtro.getEnvioStatus())
+                || temTexto(filtro.getOrigemTicket());
     }
 
     private boolean temFiltroSla(String valor) {
@@ -166,21 +167,20 @@ public class TicketBuscaService {
 
             if (temTexto(filtro.getStatus()) && TicketStatus.isValido(filtro.getStatus())) {
                 predicates.add(cb.equal(root.get("status"), TicketStatus.valueOf(filtro.getStatus())));
+            } else if (!incluirIndevidoPorPadrao(filtro)) {
+                predicates.add(cb.notEqual(root.get("status"), TicketStatus.INDEVIDO));
             }
 
             if (temTexto(filtro.getPrioridade()) && PrioridadeTicket.isValido(filtro.getPrioridade())) {
                 predicates.add(cb.equal(root.get("prioridade"), PrioridadeTicket.valueOf(filtro.getPrioridade())));
             }
 
-            if (filtro.getAnalistaId() != null) {
-                predicates.add(cb.equal(analistaJoin.get("id"), filtro.getAnalistaId()));
+            if (temTexto(filtro.getOrigemTicket()) && TicketOrigem.isValido(filtro.getOrigemTicket())) {
+                predicates.add(cb.equal(root.get("origemTicket"), TicketOrigem.valueOf(filtro.getOrigemTicket().trim())));
             }
 
-            if (temTexto(filtro.getConexao())) {
-                predicates.add(cb.like(
-                        cb.lower(root.get("conexao")),
-                        "%" + filtro.getConexao().trim().toLowerCase(Locale.ROOT) + "%"
-                ));
+            if (filtro.getAnalistaId() != null) {
+                predicates.add(cb.equal(analistaJoin.get("id"), filtro.getAnalistaId()));
             }
 
             if (temTexto(filtro.getCanal())) {
@@ -227,11 +227,13 @@ public class TicketBuscaService {
 
             if (temTexto(filtro.getTextoLivre())) {
                 String termo = "%" + filtro.getTextoLivre().trim().toLowerCase(Locale.ROOT) + "%";
+                Join<Object, Object> contatoJoin = root.join("contato", JoinType.LEFT);
                 // mensagemInicial (@Lob/CLOB): lower() no criteria causa HTTP 500 no MySQL — fora do texto livre (Sprint 238)
                 predicates.add(cb.or(
                         cb.like(cb.lower(root.get("numeroTicket")), termo),
                         cb.like(cb.lower(clienteJoin.get("nome")), termo),
-                        cb.like(cb.lower(cb.coalesce(root.get("conexao"), "")), termo),
+                        cb.like(cb.lower(cb.coalesce(contatoJoin.get("nome"), "")), termo),
+                        cb.like(cb.lower(cb.coalesce(contatoJoin.get("whatsapp"), "")), termo),
                         cb.like(cb.lower(cb.coalesce(grupoJoin.get("nome"), "")), termo),
                         cb.like(cb.lower(cb.coalesce(subgrupoJoin.get("nome"), "")), termo)
                 ));
@@ -288,6 +290,25 @@ public class TicketBuscaService {
         }
         sub.where(conds.toArray(new Predicate[0]));
         return cb.exists(sub);
+    }
+
+    private static boolean incluirIndevidoPorPadrao(TicketFiltroDTO filtro) {
+        return filtro != null
+                && temTextoStatic(filtro.getStatus())
+                && TicketStatus.INDEVIDO.name().equalsIgnoreCase(filtro.getStatus().trim());
+    }
+
+    private static boolean temTextoStatic(String valor) {
+        return valor != null && !valor.isBlank();
+    }
+
+    private List<TicketResponseDTO> filtrarIndevidoPadrao(List<TicketResponseDTO> tickets, TicketFiltroDTO filtro) {
+        if (tickets == null || tickets.isEmpty() || incluirIndevidoPorPadrao(filtro)) {
+            return tickets;
+        }
+        return tickets.stream()
+                .filter(t -> t.getStatus() == null || !TicketStatus.INDEVIDO.name().equalsIgnoreCase(t.getStatus()))
+                .toList();
     }
 
     private boolean temTexto(String valor) {

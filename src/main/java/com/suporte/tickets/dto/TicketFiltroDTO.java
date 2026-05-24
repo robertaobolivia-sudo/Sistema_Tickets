@@ -15,7 +15,6 @@ public class TicketFiltroDTO {
     private String status;
     private String prioridade;
     private Long analistaId;
-    private String conexao;
     private String canal;
     private String grupo;
     private String subgrupo;
@@ -43,4 +42,7 @@ public class TicketFiltroDTO {
 
     /** TicketSatisfacaoEnvioStatus. */
     private String envioStatus;
+
+    /** Sprint F18: {@link com.suporte.tickets.entity.TicketOrigem} persistido em origem_ticket. */
+    private String origemTicket;
 }

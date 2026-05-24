@@ -45,7 +45,8 @@ public class InteracaoPendenteDecisaoService {
             WhatsappMatriz whatsappMatriz,
             String mensagem,
             String canal,
-            String origemExternaId) {
+            String origemExternaId,
+            String telefoneEntrada) {
         if (cliente == null || contato == null || ticketAnterior == null) {
             throw new IllegalArgumentException("Cliente, contato e ticket anterior sao obrigatorios.");
         }
@@ -62,6 +63,7 @@ public class InteracaoPendenteDecisaoService {
         p.setMensagem(mensagem);
         p.setCanal(canal);
         p.setOrigemExternaId(origemExternaId);
+        p.setTelefoneEntrada(telefoneEntrada);
         p.setStatus(InteracaoPendenteDecisaoStatus.PENDENTE);
         return pendenteRepository.save(p);
     }
@@ -73,7 +75,8 @@ public class InteracaoPendenteDecisaoService {
         ticketInteracaoService.registrarMensagemEntradaExterna(
                 anterior,
                 p.getMensagem(),
-                p.getOrigemExternaId());
+                p.getOrigemExternaId(),
+                p.getTelefoneEntrada());
         p.setStatus(InteracaoPendenteDecisaoStatus.VINCULADA_ANTERIOR);
         p.setDecididaEm(LocalDateTime.now());
         p.setDecididaPorAnalistaId(analistaId);
@@ -98,8 +101,11 @@ public class InteracaoPendenteDecisaoService {
         TicketWebhookRequestDTO dto = new TicketWebhookRequestDTO();
         dto.setClienteContratanteId(p.getCliente().getId());
         dto.setCliente(p.getCliente().getNome());
-        dto.setConexao(p.getCliente().getNome());
-        dto.setTelefone(p.getContato().getWhatsapp());
+        String telefoneWebhook = p.getTelefoneEntrada();
+        if (telefoneWebhook == null || telefoneWebhook.isBlank()) {
+            telefoneWebhook = p.getContato().getWhatsapp();
+        }
+        dto.setTelefone(telefoneWebhook);
         dto.setNomeContato(p.getContato().getNome());
         dto.setMensagem(p.getMensagem());
         dto.setCanal(p.getCanal() != null ? p.getCanal() : "WHATSAPP");

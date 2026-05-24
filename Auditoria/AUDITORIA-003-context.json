@@ -1,0 +1,238 @@
+{
+  "auditoria": "003",
+  "ultima_atualizacao": "2026-05-24",
+  "contexto_vigente_auditoria": {
+    "usar_para_decisoes_runtime": "AUDITORIA-004",
+    "json": "Auditoria/AUDITORIA-004-context.json",
+    "md": "Auditoria/AUDITORIA-004-pos-reestruturacao.md",
+    "aviso": "Este arquivo (003-context) e o log abaixo sao historico de execucao F24-F47. Nao substituem AUDITORIA-004."
+  },
+  "f24_parar_escrita_ticket_conexao": {
+    "status": "concluido",
+    "escrita_ativa_removida": [
+      "TicketService.criarTicketPorWebhook — setConexao",
+      "TicketService.criarTicketEntradaOperacional — setConexao",
+      "TicketService.resolverConexaoLegado — metodo removido"
+    ],
+    "mantido_historico": [
+      "Ticket.conexao coluna/campo",
+      "TicketResponseDTO.conexao leitura",
+      "converterParaResponse setConexao de entidade"
+    ],
+    "fora_escopo_intocado": [
+      "seeds DEV setConexao",
+      "IntegracaoMensagemEntradaService webhook.setConexao",
+      "Chats Relatorios Dashboard schema"
+    ]
+  },
+  "f25_deprecar_filtro_conexao": {
+    "status": "concluido",
+    "filtros_removidos": ["conexao em TicketBuscaService", "ticketFiltroConexao UI", "buildTicketBuscaParams conexao"],
+    "texto_livre": "sem match em ticket.conexao; inclui contato nome/whatsapp",
+    "csv": "coluna Conexão histórica (Opção A)",
+    "mantido_historico": ["TicketResponseDTO.conexao", "coluna CSV valor legado", "detailConexao modal"]
+  },
+  "f26_dashboard_pdf_payload": {
+    "status": "concluido",
+    "metricas_removidas": ["ticketsPorConexao", "agrupamento pendencias por ticket.conexao"],
+    "substituicao": ["ticketsPorCliente", "GET /dashboard/clientes-pendencias"],
+    "pdf": "Conexão histórica condicional",
+    "payload_abertura": "sem conexao"
+  },
+  "f27_auditoria_consumidores_conexao": {
+    "status": "concluido",
+    "documento": "Auditoria/CONEXAO-CONSUMIDORES-F27.md",
+    "drop_seguro_agora": false,
+    "consumidores_vivos_resumo": [
+      "TicketResponseDTO.conexao -> modal, CSV, PDF",
+      "TicketWebhookRequestDTO.conexao -> buscarOuCriarCliente (Carteira)",
+      "seeds DEV setConexao",
+      "TicketRepository.findByStatusInOrderByConexao (Sprint94)"
+    ],
+    "proxima_sprint": "F28 contrato DTO UI backup DROP"
+  },
+  "f28_remover_consumidores_conexao": {
+    "status": "concluido",
+    "drop_seguro_agora": false,
+    "motivo_coluna_mantida": "Ticket.conexao + tickets.conexao ate F29 backup+DROP",
+    "removido": [
+      "TicketWebhookRequestDTO.conexao",
+      "TicketResponseDTO.conexao",
+      "TicketFiltroDTO.conexao",
+      "ConexaoPendenciasDTO",
+      "findByStatusInOrderByConexaoAsc",
+      "seeds setConexao",
+      "CSV PDF modal Conexao historica",
+      "dashboard-conexao CSS renomeado dashboard-cliente"
+    ],
+    "mantido_ate_f29": ["Ticket.conexao entidade", "coluna tickets.conexao"],
+    "proxima_sprint": "F29 backup SQL DROP COLUMN"
+  },
+  "f29_drop_coluna_conexao": {
+    "status": "concluido",
+    "patch": "TicketConexaoDropF29Patch",
+    "backup_table": "tickets_conexao_backup_f29",
+    "entidade_ticket_sem_conexao": true,
+    "dto_renomeado": "TicketPendenciaClienteDTO"
+  },
+  "f30_limpeza_nomes_conexao": {
+    "status": "concluido",
+    "seed_sprint94_codigo_morto_removido": true,
+    "chats_dom_sem_chatsConexao_fallback": true
+  },
+  "f31_auditoria_ticket_etiqueta": {
+    "status": "concluido",
+    "documento": "Auditoria/TICKETETIQUETA-CONTATOETIQUETA-F31.md",
+    "drop_ticket_etiqueta_seguro": false,
+    "proxima_sprint": "F32 migracao + deprecar endpoints ticket"
+  },
+  "f32_migracao_ticket_etiqueta": {
+    "status": "concluido",
+    "patch": "TicketEtiquetaMigracaoF32Patch",
+    "chats_sem_fallback_ticket": true
+  },
+  "f33_runtime_ticket_etiqueta_removido": {
+    "status": "concluido",
+    "endpoints_ticket_etiquetas": "410 Gone (removidos na F34)",
+    "ticket_etiqueta_service_removido": true,
+    "tabela_mantida": false
+  },
+  "f34_drop_ticket_etiquetas": {
+    "status": "concluido",
+    "patch": "TicketEtiquetaDropF34Patch",
+    "backup_table": "ticket_etiquetas_backup_f34",
+    "entity_repository_removidos": true,
+    "endpoints_ticket_etiquetas": "removidos"
+  },
+  "f35_nomenclatura_etiquetas_contato": {
+    "status": "concluido",
+    "dto": "ContatoEtiquetasRequestDTO",
+    "auditoria": "CONTATO_ETIQUETAS",
+    "backfill_service": "ContatoEtiquetaLegadoBackfillService",
+    "runtime_ticket_etiqueta": false
+  },
+  "f36_contato_cliente_primeiro_corte": {
+    "status": "concluido",
+    "documento": "Auditoria/CONTATOCLIENTE-F36.md",
+    "ticket_novo_vincula_contato_cliente": false,
+    "endpoints_contato_cliente": "deprecated",
+    "drop_contatos_clientes": "f37_plus"
+  },
+  "f37_ui_endpoints_contato_cliente": {
+    "status": "concluido",
+    "documento": "Auditoria/CONTATOCLIENTE-F37.md",
+    "ui_clientes_legado_removida": true,
+    "endpoints_410": true,
+    "inventario_patch": "ContatoClienteInventarioF37Patch"
+  },
+  "f38_drop_contato_cliente": {
+    "status": "concluido",
+    "documento": "Auditoria/CONTATOCLIENTE-F38.md",
+    "patch": "ContatoClienteDropF38Patch",
+    "backup_tables": [
+      "contatos_clientes_backup_f38",
+      "tickets_contato_solicitante_backup_f38"
+    ],
+    "entity_repository_service_controllers_removidos": true,
+    "tickets_contato_solicitante_id_removido": true,
+    "contatos_clientes_removido": true
+  },
+  "f39_limpeza_carteira_conexao_ticket": {
+    "status": "concluido",
+    "documento": "Auditoria/CONEXAO-CARTEIRA-F39.md",
+    "ticket_response_sem_carteira": true,
+    "ticket_service_sem_carteira_repository": true,
+    "buscarOuCriarCliente_sem_conexao": true,
+    "config_carteira_global_mantida": true
+  },
+  "f40_cliente_sem_carteira_id": {
+    "status": "concluido",
+    "documento": "Auditoria/CLIENTE-CARTEIRA-F40.md",
+    "patch": "ClienteCarteiraDropF40Patch",
+    "backup_table": "clientes_carteira_backup_f40",
+    "cliente_entity_sem_carteira": true,
+    "cliente_dto_sem_carteira": true
+  },
+  "f41_smoke_reestruturacao_concluida": {
+    "status": "concluido",
+    "documento": "Auditoria/REESTRUTURACAO-F41-SMOKE.md",
+    "marco": "REESTRUTURACAO_CONCLUIDA",
+    "mvn_test": "ok",
+    "vitest": "217/217",
+    "http_200": true,
+    "config_carteira_global_mantida": true,
+    "whatsapp_provider_real": false
+  },
+  "f42_playwright_smoke_final": {
+    "status": "concluido",
+    "documento": "docs/SPRINT_F42_PLAYWRIGHT_SMOKE_FINAL.md",
+    "spec": "e2e/tests/smoke-reestruturacao-final.spec.ts",
+    "playwright": "1 passed",
+    "credencial_email": "robertaobolivia@gmail.com"
+  },
+  "f43_e2e_receptivo_whatsapp": {
+    "status": "concluido",
+    "documento": "docs/SPRINT_F43_E2E_RECEPTIVO_WHATSAPP.md",
+    "spec": "e2e/tests/smoke-receptivo-whatsapp-final.spec.ts",
+    "endpoint": "POST /api/integracoes/whatsapp/mensagens",
+    "playwright": "1 passed",
+    "whatsapp_provider_real": false
+  },
+  "f44_smoke_relatorios_csv_pdf_origem": {
+    "status": "concluido",
+    "documento": "docs/SPRINT_F44_RELATORIOS_CSV_PDF_ORIGEM.md",
+    "spec": "e2e/tests/smoke-relatorios-csv-pdf-origem.spec.ts",
+    "helper": "e2e/tests/helpers/f44Massa.ts",
+    "playwright": "1 passed",
+    "vitest": "219/219",
+    "mvn_test": "ok",
+    "http_200": true,
+    "mvn_package": "jar_locked_local_dev",
+    "pdf_texto_e2e": "flate — conteudo via API + TicketPdfServiceF26Test"
+  },
+  "f45_suite_e2e_pos_reestruturacao": {
+    "status": "concluido",
+    "documento": "docs/SPRINT_F45_SUITE_E2E_POS_REESTRUTURACAO.md",
+    "spec": "e2e/tests/smoke-pos-reestruturacao.spec.ts",
+    "massa": "e2e/.massa-pos-reestruturacao.json",
+    "helpers": ["massaPosReestruturacao.ts", "e2eUi.ts", "f44Massa.ts"],
+    "npm_script": "test:pos-reestruturacao",
+    "playwright": "1 passed",
+    "vitest": "219/219",
+    "mvn_test": "ok",
+    "mvn_package": "ok",
+    "http_200": true
+  },
+  "f46_validacao_oficial_pos_reestruturacao": {
+    "status": "concluido",
+    "documento": "docs/SPRINT_F46_VALIDACAO_OFICIAL_POS_REESTRUTURACAO.md",
+    "scripts": [
+      "scripts/stop-java-8080.ps1",
+      "scripts/start-dev-server.ps1",
+      "scripts/validar-pos-reestruturacao.ps1"
+    ],
+    "comando_unico": ".\\scripts\\validar-pos-reestruturacao.ps1",
+    "e2e_oficial": "npm run test:pos-reestruturacao"
+  },
+  "f47_atualizacao_pacote_auditoria": {
+    "status": "concluido",
+    "documento": "Auditoria/AUDITORIA-004-pos-reestruturacao.md",
+    "json": "Auditoria/AUDITORIA-004-context.json",
+    "addendum_historico": "Auditoria/AUDITORIA-001-002-003-HISTORICO-ADDENDUM.md",
+    "readme_auditoria_atualizado": true
+  },
+  "f48_gate_ci_pos_reestruturacao": {
+    "status": "concluido",
+    "documento": "docs/SPRINT_F48_GATE_CI_POS_REESTRUTURACAO.md",
+    "workflow": ".github/workflows/pos-reestruturacao.yml",
+    "scripts": [
+      "scripts/validar-pos-reestruturacao-ci.ps1",
+      "scripts/validar-pos-reestruturacao.ps1"
+    ]
+  },
+  "f49_varredura_legado_ruido": {
+    "status": "concluido",
+    "documento": "Auditoria/LEGADO-LIMPEZA-F49.md",
+    "legado_arquivado": "docs/LEGADO_ARQUIVADO.md"
+  }
+}

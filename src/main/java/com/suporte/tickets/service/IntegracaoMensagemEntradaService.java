@@ -9,6 +9,7 @@ import com.suporte.tickets.entity.Cliente;
 import com.suporte.tickets.entity.Contato;
 import com.suporte.tickets.entity.InteracaoPendenteDecisao;
 import com.suporte.tickets.entity.Ticket;
+import com.suporte.tickets.entity.TicketClassificacaoOperacional;
 import com.suporte.tickets.entity.TicketStatus;
 import com.suporte.tickets.entity.WhatsappMatriz;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class IntegracaoMensagemEntradaService {
     private final WhatsappMatrizService whatsappMatrizService;
     private final ContatoService contatoService;
     private final InteracaoPendenteDecisaoService interacaoPendenteDecisaoService;
+    private final ContatoEtiquetaService contatoEtiquetaService;
 
     @Transactional
     public IntegracaoMensagemEntradaResponseDTO processarMensagemWhatsapp(IntegracaoWhatsappMensagemRequestDTO request) {
@@ -52,10 +54,9 @@ public class IntegracaoMensagemEntradaService {
 
         Integer contatoWhatsappId = contatoWhatsapp != null ? contatoWhatsapp.getId() : null;
 
-        Optional<Ticket> ticketAtivo = ticketAtivoService.buscarEntidadeAtiva(
+        Optional<Ticket> ticketAtivo = ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(
                 clienteIdBusca,
                 contatoWhatsappId,
-                request.getContatoSolicitanteId(),
                 telefoneNorm);
 
         if (ticketAtivo.isPresent()) {
@@ -63,8 +64,24 @@ public class IntegracaoMensagemEntradaService {
             ticketInteracaoService.registrarMensagemEntradaExterna(
                     ticket,
                     mensagem,
-                    request.getOrigemExternaId());
+                    request.getOrigemExternaId(),
+                    telefoneNorm);
             return montarResposta(false, ticket.getNumeroTicket(), ticket.getStatus(), true, false, null);
+        }
+
+        // Sprint 303: contato com etiqueta operacional não abre atendimento válido.
+        if (clienteIdBusca != null && contatoWhatsapp != null) {
+            TicketClassificacaoOperacional classificacaoOp =
+                    contatoEtiquetaService.resolverClassificacaoOperacional(contatoWhatsapp);
+            if (classificacaoOp != null) {
+                TicketWebhookRequestDTO webhookOp = construirWebhookDto(resolucao, request, telefoneNorm, mensagem);
+                webhookOp.setContatoWhatsappId(contatoWhatsapp.getId());
+                TicketResponseDTO criado = ticketService.criarTicketEntradaOperacional(webhookOp, classificacaoOp);
+                IntegracaoMensagemEntradaResponseDTO resp = montarResposta(
+                        true, criado.getNumeroTicket(), parseStatusResposta(criado.getStatus()), true, false, null);
+                resp.setMotivoOperacional(classificacaoOp.name());
+                return resp;
+            }
         }
 
         if (clienteIdBusca != null && contatoWhatsapp != null) {
@@ -79,7 +96,8 @@ public class IntegracaoMensagemEntradaService {
                         resolucao.whatsappMatriz,
                         mensagem,
                         resolverCanal(request.getCanal()),
-                        request.getOrigemExternaId());
+                        request.getOrigemExternaId(),
+                        telefoneNorm);
                 return montarResposta(
                         false,
                         ultimoEncerrado.get().getNumeroTicket(),
@@ -91,36 +109,24 @@ public class IntegracaoMensagemEntradaService {
         }
 
         if (clienteIdBusca != null && contatoWhatsapp != null) {
-            Optional<Ticket> recheckAtivo = ticketAtivoService.buscarEntidadeAtiva(
+            Optional<Ticket> recheckAtivo = ticketAtivoService.buscarEntidadeAtivaAtendimentoWhatsapp(
                     clienteIdBusca,
                     contatoWhatsapp.getId(),
-                    request.getContatoSolicitanteId(),
                     telefoneNorm);
             if (recheckAtivo.isPresent()) {
                 Ticket ticket = recheckAtivo.get();
                 ticketInteracaoService.registrarMensagemEntradaExterna(
                         ticket,
                         mensagem,
-                        request.getOrigemExternaId());
+                        request.getOrigemExternaId(),
+                        telefoneNorm);
                 return montarResposta(false, ticket.getNumeroTicket(), ticket.getStatus(), true, false, null);
             }
         }
 
-        TicketWebhookRequestDTO webhook = new TicketWebhookRequestDTO();
-        if (resolucao.clienteContratante != null) {
-            webhook.setClienteContratanteId(resolucao.clienteContratante.getId());
-            webhook.setCliente(resolucao.clienteContratante.getNome());
-            webhook.setConexao(resolucao.clienteContratante.getNome());
-        } else {
-            webhook.setCliente(resolverNomeClienteLegado(request));
-        }
-        webhook.setNomeContato(request.getNomeContato());
-        webhook.setTelefone(telefoneNorm);
-        webhook.setMensagem(mensagem);
-        webhook.setCanal(resolverCanal(request.getCanal()));
-        webhook.setContatoSolicitanteId(request.getContatoSolicitanteId());
-        if (resolucao.whatsappMatriz != null) {
-            webhook.setWhatsappMatrizId(resolucao.whatsappMatriz.getId());
+        TicketWebhookRequestDTO webhook = construirWebhookDto(resolucao, request, telefoneNorm, mensagem);
+        if (contatoWhatsapp != null) {
+            webhook.setContatoWhatsappId(contatoWhatsapp.getId());
         }
 
         TicketResponseDTO criado = ticketService.criarTicketPorWebhook(webhook);
@@ -131,6 +137,31 @@ public class IntegracaoMensagemEntradaService {
                 true,
                 false,
                 null);
+    }
+
+    private TicketWebhookRequestDTO construirWebhookDto(
+            ResolucaoMatriz resolucao,
+            IntegracaoWhatsappMensagemRequestDTO request,
+            String telefoneNorm,
+            String mensagem) {
+        TicketWebhookRequestDTO webhook = new TicketWebhookRequestDTO();
+        if (resolucao.clienteContratante != null) {
+            webhook.setClienteContratanteId(resolucao.clienteContratante.getId());
+            webhook.setCliente(resolucao.clienteContratante.getNome());
+        } else {
+            if (request.getClienteId() != null) {
+                webhook.setClienteContratanteId(request.getClienteId());
+            }
+            webhook.setCliente(resolverNomeClienteLegado(request));
+        }
+        webhook.setNomeContato(request.getNomeContato());
+        webhook.setTelefone(telefoneNorm);
+        webhook.setMensagem(mensagem);
+        webhook.setCanal(resolverCanal(request.getCanal()));
+        if (resolucao.whatsappMatriz != null) {
+            webhook.setWhatsappMatrizId(resolucao.whatsappMatriz.getId());
+        }
+        return webhook;
     }
 
     private Contato resolverContatoWhatsapp(

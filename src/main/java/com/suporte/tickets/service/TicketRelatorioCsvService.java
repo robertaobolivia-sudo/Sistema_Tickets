@@ -38,10 +38,11 @@ public class TicketRelatorioCsvService {
         builder.append(linha(
                 "Número",
                 "Cliente",
+                "Origem ticket",
                 "Status",
+                "Classificação operacional",
                 "Prioridade",
                 "Canal",
-                "Conexão/Carteira",
                 "Analista responsável",
                 "Grupo",
                 "Subgrupo",
@@ -70,10 +71,11 @@ public class TicketRelatorioCsvService {
             builder.append(linha(
                     valor(ticket.getNumeroTicket()),
                     valor(ticket.getCliente()),
-                    valor(ticket.getStatus()),
+                    valor(ticket.getOrigemTicket()),
+                    valor(formatarStatusRelatorio(ticket.getStatus())),
+                    valor(formatarClassificacaoOperacional(ticket)),
                     valor(ticket.getPrioridade()),
                     valor(ticket.getCanal()),
-                    formatarConexaoCarteira(ticket),
                     valor(ticket.getAnalistaResponsavelNome()),
                     valor(ticket.getGrupoCategoriaNome()),
                     valor(ticket.getSubgrupoCategoriaNome()),
@@ -109,25 +111,36 @@ public class TicketRelatorioCsvService {
         return String.join(SEPARATOR, celulas) + "\r\n";
     }
 
+    private String formatarStatusRelatorio(String status) {
+        if (status == null || status.isBlank()) {
+            return "-";
+        }
+        if ("INDEVIDO".equalsIgnoreCase(status.trim())) {
+            return "Não atendimento (Indevido)";
+        }
+        return status.trim();
+    }
+
+    private String formatarClassificacaoOperacional(TicketResponseDTO ticket) {
+        if (ticket.getClassificacaoOperacional() != null && !ticket.getClassificacaoOperacional().isBlank()) {
+            return switch (ticket.getClassificacaoOperacional().trim()) {
+                case "INDEVIDO" -> "Indevido";
+                case "CONTATO_PESSOAL" -> "Contato Pessoal";
+                case "PROPAGANDA" -> "Propaganda";
+                default -> ticket.getClassificacaoOperacional().trim();
+            };
+        }
+        if (ticket.getStatus() != null && "INDEVIDO".equalsIgnoreCase(ticket.getStatus())) {
+            return "—";
+        }
+        return "-";
+    }
+
     private String valor(String value) {
         if (value == null || value.isBlank()) {
             return "-";
         }
         return value.trim();
-    }
-
-    private String formatarConexaoCarteira(TicketResponseDTO ticket) {
-        List<String> partes = new ArrayList<>();
-        if (ticket.getConexao() != null && !ticket.getConexao().isBlank()) {
-            partes.add(ticket.getConexao().trim());
-        }
-        if (ticket.getCarteira() != null && !ticket.getCarteira().isBlank()) {
-            partes.add(ticket.getCarteira().trim());
-        }
-        if (partes.isEmpty()) {
-            return "-";
-        }
-        return String.join(" / ", partes);
     }
 
     private String formatarData(LocalDateTime value) {

@@ -33,12 +33,6 @@ public class TicketResponseDTO {
     private String cnpj;
     private String cidade;
     private String uf;
-    private String carteira;
-    private Integer contatoSolicitanteId;
-    private String contatoSolicitanteNome;
-    private String contatoSolicitanteTelefone;
-    private String contatoSolicitanteEmail;
-    /** Contato WhatsApp (pessoa atendida), Sprint 189. */
     private Integer contatoId;
     private String contatoNome;
     private String contatoWhatsapp;
@@ -54,8 +48,9 @@ public class TicketResponseDTO {
     private Integer whatsappMatrizId;
     private String whatsappMatrizNumero;
     private String whatsappMatrizNome;
+    /** Sprint F16: RECEPTIVO_WHATSAPP | ATIVO_MANUAL (null em histórico sem preenchimento). */
+    private String origemTicket;
     private String canal;
-    private String conexao;
     private String mensagemInicial;
     private String status;
     private String prioridade;
