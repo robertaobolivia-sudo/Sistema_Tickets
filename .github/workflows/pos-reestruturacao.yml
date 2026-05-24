@@ -1,4 +1,4 @@
-# Gate pos-reestruturacao (F48): Maven + Vitest + package + Playwright F45
+# Gate pos-reestruturacao (F48/F54): Maven + Vitest + package + app em background + Playwright F45
 # Nucleo Cliente / Contato / Ticket — sem regressao de legado operacional.
 
 name: Gate pos-reestruturacao
@@ -83,11 +83,37 @@ jobs:
         working-directory: e2e
         run: npx playwright install --with-deps chromium
 
+      - name: Start Spring Boot (background)
+        run: |
+          nohup java -jar target/suporte-tickets-1.0.0.jar > spring-boot.log 2>&1 &
+          echo $! > spring-boot.pid
+          echo "Spring Boot PID=$(cat spring-boot.pid)"
+
+      - name: Wait for HTTP 200
+        run: |
+          set -e
+          ok=0
+          for i in $(seq 1 120); do
+            if curl -fsS http://localhost:8080/ > /dev/null; then
+              echo "HTTP 200 OK (tentativa $i)"
+              ok=1
+              break
+            fi
+            echo "Aguardando app... $i"
+            sleep 2
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "::error::App nao respondeu em http://localhost:8080/ apos 240s"
+            tail -n 300 spring-boot.log || true
+            exit 1
+          fi
+          curl -fsS http://localhost:8080/
+
       - name: Playwright F45 (pos-reestruturacao)
         working-directory: e2e
         env:
+          E2E_SKIP_WEB_SERVER: '1'
           # Required check: configure secret SMOKE_ADMIN_SENHA in repo Settings → Secrets.
-          # Fallback abaixo só para bootstrap CI; preferir secret em produção.
           SMOKE_ADMIN_SENHA: ${{ secrets.SMOKE_ADMIN_SENHA }}
         run: |
           if [ -z "${SMOKE_ADMIN_SENHA}" ]; then
@@ -96,12 +122,15 @@ jobs:
           fi
           npm run test:pos-reestruturacao
 
-      - name: Upload Playwright report (on failure)
+      - name: Upload CI debug artifacts (on failure)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-pos-reestruturacao
+          name: gate-pos-reestruturacao-debug
           path: |
+            spring-boot.log
             e2e/playwright-report/
             e2e/test-results/
+            target/surefire-reports/
+          if-no-files-found: ignore
           retention-days: 7

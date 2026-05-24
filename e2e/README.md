@@ -169,9 +169,9 @@ O script verifica MySQL (TCP 3306), roda `mvn package -DskipTests`, sobe o JAR (
 | `-UsePlaywrightServer` | Não inicia Java; Playwright usa `webServer` do `playwright.config.ts` |
 | `-KeepServer` | Não mata o processo Java iniciado pelo script |
 
-**GitHub Actions (Sprint 225):** workflow `.github/workflows/e2e.yml` — MySQL service, Java 21, Maven package, Playwright com `webServer` (**não** define `E2E_SKIP_WEB_SERVER`). Ver `docs/SPRINT_225_CI_GITHUB_ACTIONS.md`.
+**Gate pos-reestruturacao (F48/F54):** `.github/workflows/pos-reestruturacao.yml` — package, `nohup java -jar`, wait HTTP 200, Playwright com **`E2E_SKIP_WEB_SERVER=1`** (sem `webServer` do Playwright).
 
-**CI vs local:** no CI, `CI=true` e o Playwright **não** reutiliza servidor antigo (`reuseExistingServer: false`). Localmente o script `run-e2e-local.ps1` usa `E2E_SKIP_WEB_SERVER=1` para um único Java controlado; ou `npm test` sem skip para o mesmo modo do Actions.
+**GitHub Actions (Sprint 225):** workflow `.github/workflows/e2e.yml` — MySQL service, Java 21, Maven package, Playwright com `webServer` (**não** define `E2E_SKIP_WEB_SERVER`). Ver `docs/SPRINT_225_CI_GITHUB_ACTIONS.md`.
 
 ---
 

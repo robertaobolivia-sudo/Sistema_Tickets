@@ -26,9 +26,10 @@ export default defineConfig({
             use: { ...devices['Desktop Chrome'] }
         }
     ],
-    webServer: process.env.E2E_SKIP_WEB_SERVER
-        ? undefined
-        : {
+    webServer:
+        process.env.E2E_SKIP_WEB_SERVER === '1' || process.env.E2E_SKIP_WEB_SERVER === 'true'
+            ? undefined
+            : {
               command:
                   process.platform === 'win32'
                       ? `java -jar "${path.join(projectRoot, 'target', 'suporte-tickets-1.0.0.jar')}"`
