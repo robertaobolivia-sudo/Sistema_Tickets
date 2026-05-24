@@ -52,3 +52,6 @@ application-local.properties
 *.tmp
 *.swp
 Thumbs.db
+
+node_modules/
+e2e/.massa-*.json
