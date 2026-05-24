@@ -305,7 +305,8 @@ Inclui: Maven test, Vitest, package, HTTP 200, Playwright F45.
 - **Nome do check (required):** `Gate pos-reestruturacao / Gate pos-reestruturacao`  
 - **Doc gate:** `docs/SPRINT_F48_GATE_CI_POS_REESTRUTURACAO.md`  
 - **Required check (F51):** `docs/SPRINT_F51_REQUIRED_CHECK_GATE.md`  
-- **Validação push/Actions (F52):** `docs/SPRINT_F52_VALIDACAO_REQUIRED_CHECK.md`
+- **Validação push/Actions (F52):** `docs/SPRINT_F52_VALIDACAO_REQUIRED_CHECK.md`  
+- **Profile CI boot (F56):** `docs/SPRINT_F56_CI_PROFILE_BOOT_GATE.md` — `spring.profiles.active=ci`
 
 ### Required check no GitHub (`main`)
 

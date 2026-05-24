@@ -5,11 +5,13 @@ import com.suporte.tickets.repository.AnalistaRepository;
 import com.suporte.tickets.service.AnalistaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.dev.seeds.enabled", havingValue = "true", matchIfMissing = true)
 public class AnalistaSeedConfig {
 
     private final AnalistaRepository analistaRepository;

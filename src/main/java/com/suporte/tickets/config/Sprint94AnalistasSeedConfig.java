@@ -10,6 +10,7 @@ import com.suporte.tickets.service.AnalistaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.dev.seeds.enabled", havingValue = "true", matchIfMissing = true)
 public class Sprint94AnalistasSeedConfig {
 
     private static final String NIVEL_PADRAO = "Nível 1";

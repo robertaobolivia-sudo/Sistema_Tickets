@@ -1097,3 +1097,15 @@ Registro das sprints da fase de reestruturação. Sprints anteriores à 234 est�
 | **Doc** | `docs/SPRINT_F52_VALIDACAO_REQUIRED_CHECK.md` |
 | **Push/Actions** | Pendente credencial GitHub (`Repository not found` no ambiente agente) |
 | **Required check** | Admin após 1ª run verde |
+
+---
+
+## Sprint F56 — Profile CI boot Gate
+
+| Campo | Conteúdo |
+|-------|----------|
+| **Profile** | `spring.profiles.active=ci` |
+| **Doc** | `docs/SPRINT_F56_CI_PROFILE_BOOT_GATE.md` |
+| **Causa** | Boot CI com seeds DEV + SQL verbose → Tomcat não 200 em 240s |
+| **Fix** | `application-ci.properties`; seeds DEV off; `CiMinimalAdminSeedConfig`; workflow profile ci |
+| **Actions** | Validar após push |

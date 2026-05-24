@@ -1,4 +1,4 @@
-# Gate pos-reestruturacao (F48/F54): Maven + Vitest + package + app em background + Playwright F45
+# Gate pos-reestruturacao (F48/F54/F55/F56): Maven + Vitest + package + profile ci + Playwright F45
 # Nucleo Cliente / Contato / Ticket — sem regressao de legado operacional.
 
 name: Gate pos-reestruturacao
@@ -83,28 +83,76 @@ jobs:
         working-directory: e2e
         run: npx playwright install --with-deps chromium
 
-      - name: Start Spring Boot (background)
+      - name: Wait for MySQL port
         run: |
-          nohup java -jar target/suporte-tickets-1.0.0.jar > spring-boot.log 2>&1 &
+          for i in $(seq 1 60); do
+            if (echo >/dev/tcp/127.0.0.1/3306) 2>/dev/null; then
+              echo "MySQL porta 3306 aberta (tentativa $i)"
+              exit 0
+            fi
+            echo "Aguardando MySQL... $i"
+            sleep 2
+          done
+          echo "::error::MySQL nao abriu em 127.0.0.1:3306"
+          exit 1
+
+      - name: Start Spring Boot (background)
+        env:
+          SMOKE_ADMIN_SENHA: ${{ secrets.SMOKE_ADMIN_SENHA }}
+        run: |
+          : > spring-boot.log
+          ADMIN_PW="${SMOKE_ADMIN_SENHA:-@Hipcom123789}"
+          echo "Profile: ci | admin seed password: (from secret or dev fallback)"
+          nohup env \
+            SMOKE_ADMIN_SENHA="${ADMIN_PW}" \
+            CI=true \
+            java \
+            -Dspring.profiles.active=ci \
+            -Dapp.ci.admin-password="${ADMIN_PW}" \
+            -jar target/suporte-tickets-1.0.0.jar >> spring-boot.log 2>&1 &
           echo $! > spring-boot.pid
           echo "Spring Boot PID=$(cat spring-boot.pid)"
+          sleep 5
+          if ! kill -0 "$(cat spring-boot.pid)" 2>/dev/null; then
+            echo "::error::Spring Boot encerrou nos primeiros 5s"
+            tail -n 200 spring-boot.log || true
+            exit 1
+          fi
+          echo "--- spring-boot.log (inicio) ---"
+          tail -n 80 spring-boot.log || true
 
       - name: Wait for HTTP 200
         run: |
           set -e
+          PID="$(cat spring-boot.pid)"
           ok=0
           for i in $(seq 1 120); do
+            if ! kill -0 "$PID" 2>/dev/null; then
+              echo "::error::Spring Boot morreu (PID $PID) na tentativa $i"
+              echo "=== spring-boot.log (ultimas 400 linhas) ==="
+              tail -n 400 spring-boot.log || true
+              echo "=== grep diagnostico ==="
+              grep -E "Started |Tomcat started|APPLICATION FAILED|Exception|ERROR" spring-boot.log | tail -n 80 || true
+              exit 1
+            fi
             if curl -fsS http://localhost:8080/ > /dev/null; then
               echo "HTTP 200 OK (tentativa $i)"
               ok=1
               break
             fi
-            echo "Aguardando app... $i"
+            echo "Aguardando app... $i (PID $PID)"
+            if [ $((i % 15)) -eq 0 ]; then
+              echo "--- spring-boot.log (ultimas 40 linhas) ---"
+              tail -n 40 spring-boot.log || true
+            fi
             sleep 2
           done
           if [ "$ok" -ne 1 ]; then
             echo "::error::App nao respondeu em http://localhost:8080/ apos 240s"
-            tail -n 300 spring-boot.log || true
+            echo "=== spring-boot.log (ultimas 400 linhas) ==="
+            tail -n 400 spring-boot.log || true
+            echo "=== grep diagnostico ==="
+            grep -E "Started |Tomcat started|APPLICATION FAILED|Exception|ERROR" spring-boot.log | tail -n 80 || true
             exit 1
           fi
           curl -fsS http://localhost:8080/

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.dev.seeds.enabled", havingValue = "true", matchIfMissing = true)
 public class Sprint951LimpezaAtendentesSeedConfig {
 
     private static final Logger log = LoggerFactory.getLogger(Sprint951LimpezaAtendentesSeedConfig.class);

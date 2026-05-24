@@ -121,5 +121,14 @@
     "documento": "docs/SPRINT_F52_VALIDACAO_REQUIRED_CHECK.md",
     "actions_verde": "preencher_apos_push",
     "required_check_ativo": "preencher_apos_admin"
+  },
+  "f56_ci_profile_boot_gate": {
+    "status": "implementado_aguardando_actions",
+    "profile": "ci",
+    "application_ci": "src/main/resources/application-ci.properties",
+    "documento": "docs/SPRINT_F56_CI_PROFILE_BOOT_GATE.md",
+    "workflow": "-Dspring.profiles.active=ci",
+    "seeds_dev_ci": "desligados",
+    "admin_minimo": "CiMinimalAdminSeedConfig"
   }
 }
