@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TicketSatisfacaoResponderExpiracaoTest {
 
+    private static final ZoneId FUSO = CalendarioSlaHelper.FUSO_SLA;
+
+    private static LocalDateTime agoraSla() {
+        return LocalDateTime.now(FUSO);
+    }
+
     @Mock
     private TicketRepository ticketRepository;
     @Mock
@@ -38,7 +45,7 @@ class TicketSatisfacaoResponderExpiracaoTest {
     @Test
     void responder_pendenteValida_viraRespondida() {
         Ticket ticket = ticket("T-1", 1);
-        TicketSatisfacao s = pendente(10L, LocalDateTime.now().plusDays(2));
+        TicketSatisfacao s = pendente(10L, agoraSla().plusDays(2));
         s.setTicket(ticket);
         when(ticketRepository.findByNumeroTicket("T-1")).thenReturn(Optional.of(ticket));
         when(ticketSatisfacaoRepository.findByTicket_Id(1)).thenReturn(Optional.of(s));
@@ -91,7 +98,8 @@ class TicketSatisfacaoResponderExpiracaoTest {
     @Test
     void responder_expiradaNoPrazo_marcaExpiradaERejeita() {
         Ticket ticket = ticket("T-4", 4);
-        TicketSatisfacao s = pendente(11L, LocalDateTime.now().minusHours(1));
+        TicketSatisfacao s = pendente(11L, agoraSla().minusHours(1));
+        s.setTicket(ticket);
         when(ticketRepository.findByNumeroTicket("T-4")).thenReturn(Optional.of(ticket));
         when(ticketSatisfacaoRepository.findByTicket_Id(4)).thenReturn(Optional.of(s));
         when(ticketSatisfacaoRepository.save(any(TicketSatisfacao.class))).thenAnswer(i -> i.getArgument(0));
@@ -103,7 +111,7 @@ class TicketSatisfacaoResponderExpiracaoTest {
 
     @Test
     void job_expiraPendentesVencidas_idempotente() {
-        TicketSatisfacao vencida = pendente(20L, LocalDateTime.now().minusMinutes(5));
+        TicketSatisfacao vencida = pendente(20L, agoraSla().minusMinutes(5));
 
         when(ticketSatisfacaoRepository.findByStatusAndExpiraEmBefore(
                 eq(TicketSatisfacaoStatus.PENDENTE), any(LocalDateTime.class)))
